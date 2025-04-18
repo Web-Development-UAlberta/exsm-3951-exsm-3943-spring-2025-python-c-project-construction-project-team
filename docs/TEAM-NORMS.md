@@ -61,3 +61,4 @@ If a member is to be removed from the group, evidence of the relevant infraction
 
 #### Signatures
 Xiaojing Shi
+Evan Gamble
