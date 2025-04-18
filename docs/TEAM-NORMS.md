@@ -60,5 +60,10 @@ If a member is to be removed from the group, evidence of the relevant infraction
 2025-04-17
 
 #### Signatures
+
 Xiaojing Shi
+
 Evan Gamble
+
+Clarisse Buniel
+
