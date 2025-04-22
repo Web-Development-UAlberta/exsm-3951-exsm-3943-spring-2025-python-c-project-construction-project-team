@@ -1,0 +1,6 @@
+services:
+  renovationapp.server:
+    image: ${DOCKER_REGISTRY-}renovationappserver
+    build:
+      context: .
+      dockerfile: RenovationApp.Server/Dockerfile

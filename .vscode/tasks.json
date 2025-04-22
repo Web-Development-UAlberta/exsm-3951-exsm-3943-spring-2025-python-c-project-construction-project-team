@@ -1,0 +1,17 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "compose-up-dev",
+            "command": "docker-compose -f docker-compose.yml up -d",
+            "options": {
+                "cwd": "${workspaceFolder}/src/RenovationApp"
+            },
+            "presentation": {
+              "reveal": "always",
+              "panel": "new"
+            }
+        }
+    ]
+}
