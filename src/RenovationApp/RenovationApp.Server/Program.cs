@@ -12,7 +12,14 @@ var config = builder.Configuration;
 // Add services to the container.
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddMicrosoftIdentityWebApi(builder.Configuration, "AzureAd");
-
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("SecretAgentsOnly", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireRole("SecretForcast.Read");
+    });
+});
 
 
 builder.Services.AddControllers();
@@ -60,8 +67,8 @@ builder.Services.AddSwaggerGen(c =>
         {
             Implicit = new OpenApiOAuthFlow()
             {
-                AuthorizationUrl = new Uri("https://login.microsoftonline.com/e90f24c7-0844-464a-a0b1-aab345a6adff/oauth2/v2.0/authorize"),
-                TokenUrl = new Uri("https://login.microsoft.com/e90f24c7-0844-464a-a0b1-aab345a6adff/oauth2/v2.0/token"),
+                AuthorizationUrl = new Uri("https://renovationstationexsm3943.ciamlogin.com/e90f24c7-0844-464a-a0b1-aab345a6adff/oauth2/v2.0/authorize"),
+                //TokenUrl = new Uri("https://renovationstationexsm3943.ciamlogin.com/e90f24c7-0844-464a-a0b1-aab345a6adff/oauth2/v2.0/token"),
                 Scopes = scopes
             }
         }
@@ -77,7 +84,10 @@ app.UseStaticFiles();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.OAuthClientId(builder.Configuration["AzureAd:ClientId"]);
+    });
 }
 
 

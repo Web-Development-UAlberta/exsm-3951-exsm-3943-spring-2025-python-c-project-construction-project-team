@@ -34,6 +34,9 @@ namespace RenovationApp.Server.Controllers
         }
     }
 
+    [ApiController]
+    [Route("/api/[controller]")]
+    [Authorize(Policy = "SecretAgentsOnly")]
     public class RBACWeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
@@ -41,14 +44,14 @@ namespace RenovationApp.Server.Controllers
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
-        private readonly ILogger<WeatherForecastController> _logger;
+        private readonly ILogger<RBACWeatherForecastController> _logger;
 
-        public RBACWeatherForecastController(ILogger<WeatherForecastController> logger)
+        public RBACWeatherForecastController(ILogger<RBACWeatherForecastController> logger)
         {
             _logger = logger;
         }
         [RequiredScope("user_impersonation")]
-        [HttpGet(Name = "GetWeatherForecast")]
+        [HttpGet(Name = "GetSecretWeatherForecast")]
         public IEnumerable<SecretWeatherForecast> Get()
         {
             return Enumerable.Range(1, 5).Select(index => new SecretWeatherForecast
