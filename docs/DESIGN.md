@@ -1,28 +1,72 @@
-# Home Renovation Business Website – Design Document
+# Home Renovation Design Document
+- **Project Name:** Renovation Station  
+- **Client(s):** Bo Cen, James Grieve  
+- **Developer Team:** Clarisse Buniel, David Rochefort, Evan Gamble, Xiaojing Shi  
 
-## 1. Overview
+<details>
+<summary>Table of Contents</summary>
 
-- **Project Name:** Home Renovation Web System  
-- **Client:** Bo Cen, James Grieve  
-- **Developer:** Clarisse Buniel, David Rochefort, Evan Gamble, Xiaojing Shi  
-- **Tech Stack:** React, ASP.NET API, PostgreSQL, Docker
+1. [Introduction](#1-introduction)
+  
+    1.1 [Purpose](#11-purpose)
 
-## 2. Goals & Objectives
+    1.2 [Scope](#12-scope)
+2. [Functional Requirements](#2-functional-requirements)
 
-- Provide an intuitive platform for homeowners to browse services, get inspired, and submit renovation requests.  
-- Empower the renovation company team with an internal portal for CRM, task management, and quoting.  
-- Centralize data for better efficiency and customer relationship management.
+    **2.1** [Public Website (Homeowners)](#21-public-website-homeowners)
 
-## 3. Functional Requirements
+    2.1.1 [User Authentication](#211-user-authentication)
 
-### 3.1 Public Website (Homeowners)
+    2.1.2 [Services Browsing](#212-services-browsing)
 
-#### 3.1.1 User Authentication
+    2.1.3 [Renovation Request Form](#213-renovation-request-form)
+
+    **2.2** [Business Portal (Renovation Team)](#22-business-portal-renovation-team)
+
+    2.2.1 [Request Management](#221-request-management)
+
+    2.2.2 [CRM Dashboard](#222-crm-dashboard)
+3. [Solution-level Requirements](#3-solution-level-requirements)
+4. [System Architecture](#4-system-architecture)
+
+    4.1 [Architecture Overview](#41-architecture-overview)
+  
+    4.2 [Technology Stack](#42-technology-stack)
+  
+    4.3 [Database](#43-database)
+  
+    4.4 [Authentication and Roles](#44-authentication-and-roles)
+
+5. [UI/UX Wireframes](#5-uiux-wireframes)
+6. [3D Room Planning Tool (Optional / Future Phase)](#6-3d-room-planning-tool-optional--future-phase)
+7. [Deployment Plan](#7-deployment-plan)
+8. [Timeline (Tentative)](#8-timeline-tentative)
+9. [Risks & Assumptions](#9-risks--assumptions)
+
+</details>
+
+## 1. Introduction
+
+### 1.1 Purpose
+
+This document outlines the architecture and design for the Home Renovation System, Renovation Station, an intuitive platform for homeowner and project management.
+
+### 1.2 Scope
+
+The system will develop a comprehensive home renovation business platform, consisting of two main components:
+
+1. **Client (Homeowners) Portal:** A public-facing website for homeowners to browse the services and galleries before submitting a request.
+2. **Business Portal:** A secure backend for staff to manage renovation requests, generate quotes, and track projects through a Customer Relationship Management (CRM) system.
+
+## 2. Functional Requirements
+### 2.1 Public Website (Homeowners)
+
+#### 2.1.1 User Authentication
 
 - Register / Login / Logout  
 - Email confirmation / password reset
 
-#### 3.1.2 Services Browsing
+#### 2.1.2 Services Browsing
 
 - Pages for:
   - Kitchen Remodels
@@ -34,7 +78,7 @@
   - Photo Gallery (taggable by style, room type, budget)  
   - Filtering with tags or criteria
 
-#### 3.1.3 Renovation Request Form
+#### 2.1.3 Renovation Request Form
 
 - Multi-step form with fields:
   - Service Type  
@@ -44,19 +88,19 @@
   - Target Budget  
   - Location  
   - File Uploads (inspiration images, floorplans)  
-- Optional: Integration or placeholder for 3D modeling tool (future enhancement)  
 - Data captured and stored in database
+- *Optional (future enhancement):* Integration or placeholder for 3D modeling tool
 
-### 3.2 Admin Portal (Renovation Team)
+### 2.2 Business Portal (Renovation Team)
 
-#### 3.2.1 Request Management
+#### 2.2.1 Request Management
 
 - View all incoming renovation requests  
 - Commenting system on each request  
-- Assign requests to Project Managers  
+- Assign requests to Project Managers (PMs)
 - Generate customized quotes and previews
 
-#### 3.2.2 CRM Dashboard
+#### 2.2.2 CRM Dashboard
 
 - Customer profiles with contact info  
 - Communication history (email log, notes)  
@@ -65,9 +109,9 @@
 - Task lists for team members  
 - File uploads per project (invoices, contracts)  
 - Invoice creation and download  
-- Optional: Payment process (future enhancement)
+- *Optional (future enhancement):* Payment processsing
 
-## 4. Solution-level Requirements
+## 3. Solution-level Requirements
 
 - Responsive design  
 - Secure file uploads and authentication (HTTPS, token-based or cookies)  
@@ -75,32 +119,32 @@
 - Data validation on client and server side  
 - Activity logs for request processing
 
-## 5. System Architecture
+## 4. System Architecture
 
-### 5.1 Architecture Overview
+### 4.1 Architecture Overview
 
 The system follows a modular, service-oriented architecture designed to support both client-facing (Homeowners) and internal business operations through secure and scalable web applications.
 
 **Primary Components:**
 
 - React Single Page Applications (SPA) for UI  
-- .NET MVC-based RESTful API for business logic  
+- ASP.NET MVC RESTful API for business logic  
 - PostgreSQL database for data persistence  
 - File system for document and media storage  
 - JWT-based authentication and authorization
 
-### 5.2 Technology Stack
+### 4.2 Technology Stack
 
 - **Frontend:** React SPA  
-- **Backend:** ASP.NET MVC / Web API  
+- **Backend:** ASP.NET MVC / Web API (C#) 
 - **Database:** PostgreSQL  
-- **Authentication:** JWT (JSON Web Tokens)  
+- **Authentication:** JSON Web Tokens (JWT)
 
-### 5.3 Database (SQL Server)
+### 4.3 Database
 
 **Main Tables:**
 
-- Users (Homeowners and Admins)  
+- Users (Homeowners, Admins)  
 - Services  
 - Tags  
 - Photos
@@ -109,15 +153,15 @@ The system follows a modular, service-oriented architecture designed to support 
 - Invoices  
 - Tasks
 - Files  
-- Communications 
+- Communications
 
-### 5.4 Authentication & Roles
+### 4.4 Authentication and Roles
 
-- Role-based access (Admin, Project Manager, Homeowner)  
+- Role-based access control (Admin, Project Manager, Homeowner)  
 - ASP.NET Identity for authentication  
 - Authorization filters on controller actions
 
-## 6. UI/UX Wireframes
+## 5. UI/UX Wireframes
 
 ![Client Home Page](assets/Wireframes_ClientHomePage.png)
 ![Service Detail Page](assets/Wireframes_ServiceDetailPage.png)
@@ -125,18 +169,18 @@ The system follows a modular, service-oriented architecture designed to support 
 ![Admin Dashboard - Customers Page](assets/Wireframes_AdminDashboard_CustomersPage.png)
 ![Admin Dashboard - Customer Details Page](assets/Wireframes_AdminDashboard_CustomerDetailPage.png)
 
-## 7. 3D Room Planning Tool (Optional / Future Phase)
+## 6. 3D Room Planning Tool (Optional / Future Phase)
 
 - Embed existing web-based 3D planner (like Planner 5D, Roomstyler) or integrate a custom module via iframe  
 - Let users save/export designs with their request
 
-## 8. Deployment Plan
+## 7. Deployment Plan
 
 - **Hosting:** Azure or IIS-based Windows hosting  
 - **CI/CD:** Manual or GitHub Actions for deployments  
 - **Backups:** Daily SQL Server backups
 
-## 9. Timeline (Tentative)
+## 8. Timeline (Tentative)
 
 | Phase                | Duration | Description                          |
 |----------------------|----------|--------------------------------------|
@@ -146,8 +190,10 @@ The system follows a modular, service-oriented architecture designed to support 
 | Admin Panel          | 1 week   | Dashboard, CRM, invoice tools        |
 | Testing & QA         | 1 week   | Manual + automated tests             |
 
-## 10. Risks & Assumptions
+## 9. Risks & Assumptions
 
 - 3D tool might require third-party licensing  
 - Reference images and file uploads could be large – need file size limits  
 - Quote generator logic may grow in complexity
+
+<p align="right">(<a href="#home-renovation-design-document">back to top</a>)</p>

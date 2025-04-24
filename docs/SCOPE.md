@@ -1,7 +1,9 @@
 # Project Scope
-**Project Title:** Home Renovation Business Website & Online Management System
-**Client:** Bo Cen, James Grieve
-**Prepared by:** Clarisse Buniel, David Rochefort, Evan Gamble, Xiaojing Shi
+
+- **Project Name:** Renovation Station
+- **Client(s):** Bo Cen, James Grieve
+- **Prepared by:** Clarisse Buniel, David Rochefort, Evan Gamble, Xiaojing Shi
+- **Deadline:** May 21, 2025
 
 <details>
 <summary>Table of Contents</summary>
@@ -9,32 +11,36 @@
 1. [Project Purpose](#1-project-purpose)
 2. [Project Objectives](#2-project-objectives)
 3. [In Scope](#3-in-scope)
+
     3.1 [Client Portal](#31-client-portal)
+
     3.2 [Business Portal](#32-business-portal)
+
     3.3 [General Features](#33-general-features)
 4. [Out of Scope (For Now)](#4-out-of-scope-for-now)
 5. [Deliverables](#5-deliverables)
 6. [Assumptions](#6-assumptions)
-7. [Timeline (Estimated)](#8-timeline-estimated)
-8. [Approval](#9-approval)
+7. [Constraints](#7-constraints)
+8. [Timeline (Estimated)](#8-timeline-estimated)
+9. [Approval](#9-approval)
 </details>
 
 ## 1. Project Purpose
-To design and develop a comprehensive online platform for a home renovation business. The platform will serve both as a marketing site for homeowners and a project management/CRM tool for the business’s internal team.
+To design and develop a comprehensive online platform for a home renovation business. The platform will serve both as a marketing site for homeowners and for the admins/project managers, as a project management and Customer Relationship Management (CRM) tool.
 
 ## 2. Project Objectives
 - Provide a public-facing website where homeowners can:
     - Browse renovation services and project galleries
     - Submit detailed renovation requests
 - Offer a secure backend portal for the internal team to:
-    - Manage customer requests, project status, and scheduling
-    - Generate estimates and quotes
-    - Handle invoices, file uploads, and team communication
+    - Manage customer requests, project status, and scheduling.
+    - Generate estimates, and quotes.
+    - Handle invoices, file uploads, and team communication.
 
 ## 3. In Scope
 ### 3.1 Client Portal
 - Account registration/login for homeowners
-- Renovation services listing pages (kitchen, bathroom, basement, additions)
+- Renovation services listing pages (kitchen, bathroom, basement, and home additions)
 - Photo galleries for past projects
 - Gallery filtering system (e.g., by style, room type, budget)
 - Renovation request for quote (RFQ) submission form:
@@ -81,10 +87,17 @@ To design and develop a comprehensive online platform for a home renovation busi
     - Service descriptions and categories
     - Photos for galleries
     - Logo and branding material
-- All users will have internet access
+- Users will have internet access
 - File uploads are limited to images and PDFs under 10MB
 
-## 7. Timeline (Estimated)
+## 7. Constraints
+- **Time:** Project must be completed no later than May 21, 2025.
+- **Client Communication:** Limited client availability for feedback and approvals. A maximum 48-hour response time is expected. Delays in communication and unclear requirements may slow down development.
+- **Resource (internal) Availability:** Limited availability of team members or unexpected absences may slow down development.
+- **File Upload:** File uploads are limited to images and PDFs under 10MB as specified in the [Assumptions](#6-assumptions) section.
+
+
+## 8. Timeline (Estimated)
 | Phase                            | Duration |
 | -------------------------------- |:--------:|
 | Requirements & Planning          | 1 week   |
@@ -93,11 +106,11 @@ To design and develop a comprehensive online platform for a home renovation busi
 | Testing & QA                     | 1 week   |
 | Deployment & Handover            | 2-3 days |
 
-## 8. Approval
+## 9. Approval
 By approving this scope document, the client agrees to the functionalities, boundaries, and deliverables outlined above.
 
 ### Last Update
-2025-04-17
+2025-04-24
 
 ### Creation Date
 2025-04-17
