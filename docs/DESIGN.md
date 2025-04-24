@@ -67,7 +67,7 @@
 - Invoice creation and download  
 - Optional: Payment process (future enhancement)
 
-## 4. Non-Functional Requirements
+## 4. Solution-level Requirements
 
 - Responsive design  
 - Secure file uploads and authentication (HTTPS, token-based or cookies)  
@@ -119,11 +119,11 @@ The system follows a modular, service-oriented architecture designed to support 
 
 ## 6. UI/UX Wireframes
 
-- ![Client Home Page](assets/Wireframes_ClientHomePage.png)
-- ![Service Detail Page](assets/Wireframes_ServiceDetailPage.png)
-- ![Admin Dashboard - Request Page](assets/Wireframes_AdminDashboard_RequestPage.png)
-- ![Admin Dashboard - Customers Page](assets/Wireframes_AdminDashboard_CustomersPage.png)
-- ![Admin Dashboard - Customer Details Page](assets/Wireframes_AdminDashboard_CustomerDetailPage.png)
+![Client Home Page](assets/Wireframes_ClientHomePage.png)
+![Service Detail Page](assets/Wireframes_ServiceDetailPage.png)
+![Admin Dashboard - Request Page](assets/Wireframes_AdminDashboard_RequestPage.png)
+![Admin Dashboard - Customers Page](assets/Wireframes_AdminDashboard_CustomersPage.png)
+![Admin Dashboard - Customer Details Page](assets/Wireframes_AdminDashboard_CustomerDetailPage.png)
 
 ## 7. 3D Room Planning Tool (Optional / Future Phase)
 
