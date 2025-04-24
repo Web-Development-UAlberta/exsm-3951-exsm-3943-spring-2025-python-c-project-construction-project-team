@@ -1,0 +1,204 @@
+@startuml
+
+skinparam linetype ortho
+skinparam nodesep 100
+skinparam ranksep 100
+top to bottom direction
+
+entity "Renovation Type" as RenovationType {
+  +name : string <<PK>>
+  +description : text
+}
+
+
+package "Identity" <<frame>> {
+    entity "User" as User {
+    *id : int <<PK>>
+    *authentication_oid : guid
+    *created_timestamp : datetime
+    *name : string
+    *email : string
+    *role: string <<FK>>
+    +phone_number : string
+    +address : string
+    }
+
+    entity "Role" as UserRole {
+    *name : string <<PK>>
+    +description : text
+    }
+
+    User ||--|| UserRole
+}
+
+package "Request For Quote" <<frame>> {
+    entity "Request For Quote" as RFQ {
+    -- Metadata --
+    *id : int <<PK>>
+    *created_timestamp : datetime
+    -- Application Set --
+    *client_Id : int <<FK>>
+    *status : string <<FK>>
+    +assigned_employee_id: int <<FK>>
+    -- RFQ Form Set --
+    +preferred_material : text
+    +description : text
+    +renovation_type : string <<FK>>
+    +budget : decimal
+    +project_address : string
+    }
+
+    entity "RFQ Image" as RFQImage {
+    *id : int <<PK>>
+    *uploaded_timestamp : datetime
+    *image_uri : string
+    *rfq_id : int <<FK>>
+    }
+
+    entity "RFQ Status" as RFQStatus {
+    *status : string <<PK>>
+    }
+
+    User ||--|{ RFQ
+    RenovationType ||--|| RFQ
+    RFQ ||--o{ RFQImage
+    RFQStatus ||--|| RFQ
+} 
+
+package "Project" <<frame>> {
+    entity "Project Status" as ProjectStatus {
+    *status : string <<PK>>
+    }
+
+    entity "Project" as Project {
+    -- Metadata --
+    *id : int <<PK>> 
+    *created_timestamp : datetime
+    *created_by_employee : int <<FK>>
+    -- Application Set --
+    *client_Id : int <<FK>>
+    *status : string <<FK>>
+    *is_Public : boolean
+
+
+
+
+
+
+    }
+    package "Services" <<frame>> {
+        entity "Service Type" as ServiceType {
+            +name : string <<PK>>
+            +description : text
+        }
+        entity "Service Status" as ServiceStatus {
+            +status : string <<PK>>
+        }
+        entity "Service" as Service {
+            -- Metadata --
+            +id : int <<PK>>
+            +status : string <<FK>>
+            +project_id : int <<FK>>
+            -- General --
+            +name : string
+            +description : text
+            +service_type : string <<FK>>
+            +supplier_id : int <<FK>>
+            -- Quoting --
+            +price_quote : decimal
+            +cost_quote : decimal
+            +start_date_quote : datetime
+            +end_date_quote : datetime
+            -- Scheduling --
+            +actual_start_date : datetime
+            +actual_end_date : datetime
+        }
+        entity "Supplier" as Supplier {
+            -- Metadata --
+            +id : int <<PK>>
+            -- General --
+            +name_buisness : string
+            +name_salesman : string
+            +email : string
+            +phone_number : string
+            +address : string
+        }
+
+        entity "Service Invoice" as ServiceInvoice {
+            +id : int <<PK>>
+            +created_timestamp : datetime
+            +service_id : int <<FK>>
+            +amount : decimal
+            +paid : boolean
+        }
+
+        Service ||--o{ ServiceInvoice        
+        Service ||--|| ServiceType
+        Service ||--|| ServiceStatus
+        Service }o--|| Supplier
+        Supplier ||--|{ ServiceType
+
+    }
+
+    entity "Project Image" as ProjectImage {
+        *id : int <<PK>>
+        *uploaded_timestamp : datetime
+        *image_uri : string
+        *project_id : int <<FK>>
+    }
+
+    entity "Project Task" as ProjectTask {
+        *id : int <<PK>>
+        *created_timestamp : datetime
+        *project_id : int <<FK>>
+        +assigned_employee_id : int <<FK>>
+        +assigned_client_id : int <<FK>>
+        +title : string
+        +description : text
+        +status : string
+    }
+    
+    entity "Project Communication" as ProjectCommunication {
+        *id : int <<PK>>
+        *created_timestamp : datetime
+        *project_id : int <<FK>>
+        +from_userId : int <<FK>>
+        +to_userId : int <<FK>>
+        +title : string
+        +description : text
+    }
+
+    entity "Project Document" as ProjectDocument {
+        *id : int <<PK>>
+        *uploaded_timestamp : datetime
+        *document_uri : string
+        *project_id : int <<FK>>
+    }
+
+    Project ||--o{ ProjectCommunication
+    ProjectCommunication }o--o{ User
+    Project ||--o{ ProjectTask
+    ProjectTask |o--|| User
+    Project||--o{ ProjectDocument
+    Project||--o{ ProjectImage
+    ProjectStatus ||--|| Project
+    User ||--o{ Project
+    Project ||--|| RFQ
+    Service }o--|| Project
+    Project ||--o{ RenovationType
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@enduml
