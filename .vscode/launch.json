@@ -10,6 +10,14 @@
             "preLaunchTask": "compose-up-dev", // Ensure Docker container starts first
             "sourceMaps": true,
             "outFiles": ["${workspaceFolder}/src/RenovationApp/renovationapp.client/**/*.js"]
+        },
+        {
+            "name": "Chrome - Vite Only",
+            "type":"chrome",
+            "request":"launch",
+            "url":"https://localhost:63027",
+            "webRoot":"${workspaceFolder}/src/RenovationApp/renovationapp.client/src",
+            "preLaunchTask": "vite-start-dev"
         }
     ]
 }
