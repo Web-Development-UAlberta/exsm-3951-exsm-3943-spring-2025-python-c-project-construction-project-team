@@ -24,6 +24,29 @@ interface ForecastResponse {
 
 function App({ instance }: { instance: IPublicClientApplication }) {
   
+
+    console.log("Getting active account")
+    const activeAccount = instance.getActiveAccount();
+  
+    const handleLogout = () => {
+        instance.logoutRedirect().catch((error) => console.log(error));
+    }
+  
+    const handleRedirect = () => {
+        instance
+            .loginRedirect({
+                ...loginRequest,
+                prompt: 'login',
+            })
+            .catch((error) => console.log(error));
+    };
+  
+    const handlePopup = () => {
+        instance.loginPopup().catch((error) => console.log(error));
+    }
+  
+
+
     useEffect(() => {
   
       // Default to using the first account if no account is active once page load completes
@@ -61,40 +84,7 @@ function App({ instance }: { instance: IPublicClientApplication }) {
           <p className="read-the-docs">
             Click on the Vite and React logos to learn more
           </p>
-          <MainContent />
-        </>
-      </MsalProvider>
-    )
-  }
-
-  const MainContent = () => {
-    /**
-     * useMsal is hook that returns the PublicClientApplication instance,
-     * that tells you what msal is currently doing. For more, visit:
-     * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-react/docs/hooks.md
-     */
-    const { instance } = useMsal();
-    const activeAccount = instance.getActiveAccount();
-  
-    const handleLogout = () => {
-        instance.logoutRedirect().catch((error) => console.log(error));
-    }
-  
-    const handleRedirect = () => {
-        instance
-            .loginRedirect({
-                ...loginRequest,
-                prompt: 'login',
-            })
-            .catch((error) => console.log(error));
-    };
-  
-    const handlePopup = () => {
-        instance.loginPopup().catch((error) => console.log(error));
-    }
-  
-    return (
-        <div className="App">
+          <div className="App">
             <AuthenticatedTemplate>
                 <button className="signInButton" onClick={handleLogout}>
                     Log out
@@ -120,8 +110,10 @@ function App({ instance }: { instance: IPublicClientApplication }) {
                 </button>
             </UnauthenticatedTemplate>
         </div>
-    );
-  };
+        </>
+      </MsalProvider>
+    )
+  }
 
 function WeatherData(msalInstance: IPublicClientApplication) {
     const [forecasts, setForecasts] = useState<Forecast[]>();
