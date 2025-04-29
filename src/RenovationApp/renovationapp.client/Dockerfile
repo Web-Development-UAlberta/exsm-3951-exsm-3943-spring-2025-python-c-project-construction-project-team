@@ -1,19 +1,22 @@
-FROM node:22-alpine
-
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
+RUN mkdir -p /root/.aspnet/https
+RUN dotnet dev-certs https --trust --export-path /root/.aspnet/https/renovationapp.client.pem --format Pem -p certPassword
+RUN echo "certPassword" > /root/.aspnet/https/renovationapp.client.key
+RUN echo 'Made certs'
 
-COPY package.json .
 
+FROM node:18-alpine AS buildstage2
+COPY --from=build /root/.aspnet/https/renovationapp.client.pem /root/.aspnet/https/
+COPY --from=build /root/.aspnet/https/renovationapp.client.key /root/.aspnet/https/
+WORKDIR /app
+COPY package*.json ./
 RUN npm install
-
-RUN npm i -g serve
-
 COPY . .
-
-RUN mkdir -p /.aspnet/https
-
 RUN npm run build
-
-EXPOSE 3000
-
-CMD [ "serve", "-s", "dist" ]
+ 
+# Production Stage
+FROM nginx:stable-alpine AS production
+COPY --from=buildstage2 /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

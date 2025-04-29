@@ -1,4 +1,4 @@
-import { MsalProvider, AuthenticatedTemplate, useMsal, UnauthenticatedTemplate } from '@azure/msal-react';
+import { MsalProvider, AuthenticatedTemplate, UnauthenticatedTemplate } from '@azure/msal-react';
 import { IPublicClientApplication } from '@azure/msal-browser';
 import { loginRequest, silentRequest} from '../config/authConfig';
 import { useState, useEffect } from 'react'
@@ -149,7 +149,7 @@ function WeatherData(msalInstance: IPublicClientApplication) {
 
     return (
         <div>
-            <h1 id="tableLabel">Weather forecast</h1>
+            <h1 id="tableLabel">Weather Forecast</h1>
             <p>This component demonstrates fetching data from the server.</p>
             <div>
                 <h2>Forecast Request Status</h2>

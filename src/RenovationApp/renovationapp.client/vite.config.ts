@@ -16,6 +16,10 @@ const certificateName = "renovationapp.client";
 const certFilePath = path.join(baseFolder, `${certificateName}.pem`);
 const keyFilePath = path.join(baseFolder, `${certificateName}.key`);
 
+console.log('certFilePath:', certFilePath);
+console.log('exists:', fs.existsSync(certFilePath));
+console.log('keyFileExists: ', fs.existsSync(keyFilePath));
+
 if (!fs.existsSync(baseFolder)) {
     fs.mkdirSync(baseFolder, { recursive: true });
 }
@@ -30,14 +34,15 @@ if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
         'Pem',
         '--no-password',
     ], { stdio: 'inherit', }).status) {
+        console.log("Certificate generation failed. Please run the following command to generate a certificate: dotnet dev-certs https --trust"); 
         throw new Error("Could not create certificate.");
     }
 }
 
-//const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
-//    env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'https://localhost:8081';
+const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
+    env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'https://localhost/api';
 
-const target = 'https://localhost:56721/api'
+//const target = 'https://localhost/api'
 
 // https://vitejs.dev/config/
 export default defineConfig({
