@@ -46,6 +46,7 @@ package "Request For Quote" <<frame>> {
     +renovation_type : string <<FK>>
     +budget : decimal
     +project_address : string
+    +room_size : enum
     }
 
     entity "RFQ Image" as RFQImage {
@@ -60,7 +61,7 @@ package "Request For Quote" <<frame>> {
     }
 
     User ||--|{ RFQ
-    RenovationType ||--|| RFQ
+    RenovationType }|--|| RFQ
     RFQ ||--o{ RFQImage
     RFQStatus ||--|| RFQ
 } 
@@ -77,6 +78,13 @@ package "Project" <<frame>> {
     *is_public : boolean
     }
 
+    entity "Project Comment" as ProjectComment {
+        *id : int <<PK>>
+        *comment : text
+        *created_timestamp : datetime
+        *project_id : int <<FK>>
+        *created_by_employee : int <<FK>>
+    }
     entity "Project Status" as ProjectStatus {
         *status : string <<PK>>
         +description : text
@@ -109,11 +117,13 @@ package "Project" <<frame>> {
             -- Metadata --
             +id : int <<PK>>
             -- General --
+            +service_type : string <<FK>>
             +name_business : string
             +name_salesman : string
             +email : string
             +phone_number : string
             +address : string
+            
         }
 
         entity "Project Service Invoice" as ProjectServiceInvoice {
@@ -144,6 +154,8 @@ package "Project" <<frame>> {
     entity "Project Communication" as ProjectCommunication {
         *id : int <<PK>>
         *created_timestamp : datetime
+        *communication_timestamp : datetime
+        *communication_method : string
         *project_id : int <<FK>>
         +from_userId : int <<FK>>
         +to_userId : int <<FK>>
@@ -155,6 +167,7 @@ package "Project" <<frame>> {
         *id : int <<PK>>
         *uploaded_timestamp : datetime
         *file_uri : string
+        *file_name : string
         *project_id : int <<FK>>
         *type : enum
     }
@@ -169,6 +182,9 @@ package "Project" <<frame>> {
     ProjectService }o--|| Project
     Project ||--o{ RenovationType
     ProjectStatus ||--|| Project
+    ProjectComment }o--|| Project
+    ProjectComment }o--|| User
+    
 }
 
 
