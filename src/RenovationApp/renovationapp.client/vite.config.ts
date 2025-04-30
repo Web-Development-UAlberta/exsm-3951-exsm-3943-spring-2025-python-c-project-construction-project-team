@@ -46,7 +46,7 @@ if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
     }
 }
 
-const target = env.VITE_BACKEND_URI ? env.VITE_BACKEND_URI : 'https://localhost';
+const target = env.VITE_BACKEND_URI ? env.VITE_BACKEND_URI : 'https://localhost/';
 
 console.log('Target URI: ', target)
 
@@ -62,7 +62,7 @@ export default defineConfig({
     },
     server: {
         proxy: {
-            '^/weatherforecast': {
+            '^/api/weatherforecast': {
                 target,
                 secure: false
             }

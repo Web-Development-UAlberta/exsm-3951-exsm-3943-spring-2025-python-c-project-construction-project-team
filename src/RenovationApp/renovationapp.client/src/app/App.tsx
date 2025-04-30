@@ -167,7 +167,7 @@ function WeatherData(msalInstance: IPublicClientApplication) {
         headers.append("Authorization", `Bearer ${token.accessToken}`);
         console.log("Got a token")
         const response = await fetch(
-            'api/weatherforecast',
+            '/api/weatherforecast',
             { 
                 method: "GET",
                 headers: headers
