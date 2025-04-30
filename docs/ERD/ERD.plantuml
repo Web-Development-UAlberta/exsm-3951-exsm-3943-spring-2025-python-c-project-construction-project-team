@@ -76,6 +76,19 @@ package "Project" <<frame>> {
     *client_Id : int <<FK>>
     *status : string <<FK>>
     *is_public : boolean
+    *quote_price_override : decimal
+    *quote_schedule_start_override : datetime
+    *quote_schedule_end_override : datetime
+    }
+
+    entity "Client Invoice" as ClientInvoice {
+        *id : int <<PK>>
+        *created_timestamp : datetime
+        *project_id : int <<FK>>
+        *description : text
+        *payment_instructions : text
+        *amount : decimal
+        *paid : boolean
     }
 
     entity "Project Comment" as ProjectComment {
@@ -184,6 +197,7 @@ package "Project" <<frame>> {
     ProjectStatus ||--|| Project
     ProjectComment }o--|| Project
     ProjectComment }o--|| User
+    ClientInvoice }o--|| Project
     
 }
 
