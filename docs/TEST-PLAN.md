@@ -152,7 +152,7 @@ These rules serve as the basis for the positive, negative, and edge case test sc
 | Email                    | Required, valid email format                                                     | “Invalid email address format.”                     |
 | Phone Number             | Optional, numeric only, 10–15 digits                                             | “Please enter a valid phone number.”                |
 | Password (Registration)  | Required, min 8 chars, 1 uppercase, 1 number, 1 symbol                           | “Password must be at least 8 characters with…”      |
-| Room Dimensions (RFQ)    | Required, must be numeric, within range (e.g., 1–100 ft)                         | “Please enter valid room dimensions.”               |
+| Room Size (RFQ)    | Required, free-text string, 2–30 characters, alphabetic only                         | “Please enter a valid room size description (e.g., 'large room').”               |
 | Budget (RFQ)             | Required, must be a positive number                                              | “Budget must be greater than 0.”                    |
 | File Upload              | Max 10MB, allowed types: jpg, png, pdf                                           | “File exceeds 10MB or unsupported type.”            |
 | Design Style (RFQ)       | Optional, must be selected from dropdown                                         | “Invalid design style selected.”                    |
@@ -330,7 +330,7 @@ Backend test coverage for data validation, API behavior, and database interactio
 | Test Case ID | Description | Input | Expected Output |
 |--------------|-------------|-------|-----------------|
 | BE-RR-01 | Valid request | All required fields | `201 Created`, Request object returned |
-| BE-RR-02 | Missing dimensions | `roomSize=`, ... | `400 Bad Request`, Error: "Room dimensions required" |
+| BE-RR-02 | Missing size | `room_size=`, ... | `400 Bad Request`, Error: "Room size required" |
 | BE-RR-03 | Oversized budget | `budget=99999999` | `400 Bad Request`, Error: "Budget exceeds maximum allowed" |
 | BE-RR-04 | Invalid file upload | `file=exe file` | `400 Bad Request`, Error: "Invalid file type" |
 
@@ -376,7 +376,7 @@ The Table outlines negative test scenarios to verify that the system correctly h
 |-----------------------------------------|---------------------------------|------------------------------------------------------------|
 | Register with invalid email            | `user@invalid`                  | Error: "Invalid email address format."                    |
 | Register with weak password            | `password`                     | Error: "Password must include uppercase, number, and symbol." |
-| Submit RFQ with missing room dimensions | Leave Room Dimensions blank    | Error: "Please enter valid room dimensions."               |
+| Submit RFQ with missing room size | Leave Room size blank    | Error: "Please enter valid room size."               |
 | Submit RFQ with negative budget         | `-1000`                         | Error: "Budget must be greater than 0."                    |
 | Upload file exceeding size limit        | Upload 12MB file                | Error: "File exceeds maximum allowed size of 10MB."        |
 | Upload unsupported file type            | Upload `.exe` file              | Error: "Unsupported file type."                            |
@@ -394,7 +394,7 @@ The Edge Case Test Scenarios Table describes edge case scenarios to ensure the s
 | Register with maximum allowed first name length | 50-character first name         | Registration succeeds if within limit                         |
 | Submit RFQ with minimum budget                | Budget set to `0.01`             | RFQ submission succeeds if rules allow budget > 0              |
 | Upload maximum allowed file size              | Upload file exactly 10MB         | File accepted and uploaded successfully                       |
-| Enter minimum allowed room dimension          | Room dimension set to `1 ft`     | RFQ submission succeeds                                        |
+| Submit RFQ with uncommon room size label          | Room size set to `extra spacious`     | RFQ accepted if it meets validation (2–30 alpha-only chars); otherwise validation error                                        |
 | Upload maximum number of files (if multiple allowed) | Attach 5 images if limit is 5 | Upload succeeds; system does not accept more than allowed      |
 | Submit very large notes/comments in RFQ        | 5000 characters in Notes field   | Submission succeeds if within database/text field limits       |
 | Browse gallery with no available photos        | Empty gallery page               | User sees "No projects available" message instead of error     |
@@ -547,7 +547,7 @@ The diagram below illustrates the core data model relationships used in the Reno
 
 ### Last Update
 
-2025-04-29
+2025-04-30
 
 ### Creation Date
 
