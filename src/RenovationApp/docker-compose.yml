@@ -1,6 +1,62 @@
 services:
+  nginx:
+    image: nginx:latest
+    depends_on:
+      database:
+        condition: service_healthy
+      renovationapp.client:
+        condition: service_started
+      renovationapp.server:
+        condition: service_started
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certs:/etc/nginx/certs
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - internal-network
+    command: [nginx-debug, '-g', 'daemon off;']
+
   renovationapp.server:
     image: ${DOCKER_REGISTRY-}renovationappserver
     build:
       context: .
-      dockerfile: RenovationApp.Server/Dockerfile
+      dockerfile: RenovationApp.Server/iac/Dockerfile
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      SERVICE_PORT: 80
+    networks:
+      - internal-network
+
+  renovationapp.client:
+    build:
+      context: renovationapp.client/iac/
+      dockerfile: Dockerfile
+    networks:
+      - internal-network
+
+    environment:
+     VITE_BACKEND_URI: https://localhost/api
+
+
+
+
+  database:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    networks:
+      - internal-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+networks:
+  internal-network:
+    driver: bridge
