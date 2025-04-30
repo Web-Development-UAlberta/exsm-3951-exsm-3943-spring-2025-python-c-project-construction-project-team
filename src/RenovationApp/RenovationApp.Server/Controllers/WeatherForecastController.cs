@@ -5,7 +5,7 @@ using Microsoft.Identity.Web.Resource;
 namespace RenovationApp.Server.Controllers
 {
     [ApiController]
-    [Route("/api/[controller]")]
+    [Route("/[controller]")]
     [Authorize]
     public class WeatherForecastController : ControllerBase
     {
@@ -35,7 +35,7 @@ namespace RenovationApp.Server.Controllers
     }
 
     [ApiController]
-    [Route("/api/[controller]")]
+    [Route("/[controller]")]
     [Authorize(Policy = "SecretAgentsOnly")]
     public class RBACWeatherForecastController : ControllerBase
     {
