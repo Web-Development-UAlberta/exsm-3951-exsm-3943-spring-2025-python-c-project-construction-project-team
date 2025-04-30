@@ -1,11 +1,16 @@
 import { fileURLToPath, URL } from 'node:url';
 
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import plugin from '@vitejs/plugin-react';
 import fs from 'fs';
 import path from 'path';
 import child_process from 'child_process';
-import { env } from 'process';
+
+const env = loadEnv(
+    'all',
+    process.cwd()
+);
+
 
 const baseFolder =
     env.APPDATA !== undefined && env.APPDATA !== ''
@@ -16,9 +21,11 @@ const certificateName = "renovationapp.client";
 const certFilePath = path.join(baseFolder, `${certificateName}.pem`);
 const keyFilePath = path.join(baseFolder, `${certificateName}.key`);
 
+/* for debugging certificate builds
 console.log('certFilePath:', certFilePath);
 console.log('exists:', fs.existsSync(certFilePath));
 console.log('keyFileExists: ', fs.existsSync(keyFilePath));
+*/
 
 if (!fs.existsSync(baseFolder)) {
     fs.mkdirSync(baseFolder, { recursive: true });
@@ -39,10 +46,11 @@ if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
     }
 }
 
-const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
-    env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'https://localhost/api';
+const target = env.VITE_BACKEND_URI ? env.VITE_BACKEND_URI : 'https://localhost';
 
-//const target = 'https://localhost/api'
+console.log('Target URI: ', target)
+
+//const 
 
 // https://vitejs.dev/config/
 export default defineConfig({
