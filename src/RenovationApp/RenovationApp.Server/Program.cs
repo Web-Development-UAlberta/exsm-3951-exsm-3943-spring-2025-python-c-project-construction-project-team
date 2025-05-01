@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
+using Minio;
 using System.Reflection;
 using System;
 
@@ -88,6 +89,13 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+
+
+builder.Services.AddMinio(configureClient => configureClient
+            .WithEndpoint(builder.Configuration["MINIO_ENDPOINT"])
+            .WithCredentials(builder.Configuration["MINIO_ACCESSKEY"], builder.Configuration["MINIO_SECRET"])
+            .WithSSL()
+            .Build());
 
 var app = builder.Build();
 
