@@ -1,0 +1,136 @@
+@startuml
+|Client|
+
+start
+
+:Navigate to public site;
+:Sign in;
+:Navigate to RFQ page;
+:Complete form, attach images,
+submit form.;
+-> Create RFQ Object;
+|PM - Review RFQ|
+:Find new RFQ in RFQ list page;
+:Assign RFQ to self;
+:Review RFQ details page;
+if (RFQ Decision) is (Don't quote) then
+|Client|
+:RFQ Rejected;
+end
+else (Quote)
+|PM - Quoting|
+: Open Create Quote page
+from RFQ detail page;
+-> Create Project object;
+: **New Project Page**
+----
+* Assign Project to self
+* Complete remaining metadata fields
+* View project services
+* Add project services as required
+* Override total quote price
+* Override quote schedule;
+
+-> Create Project Service Obj;
+: **Project Service Form**
+----
+* Input name, description, and service type
+* Set cost and price
+* Set start and end dates
+* Pick supplier;
+
+-> New supplier
+: **Create Supplier Form**
+----
+* Set supplier information;
+
+-> Lines complete;
+
+:Set status to 'Quoted', forward 
+generated link to client;
+|Client|
+:Review Quote details page;
+if (Quote Decision) is (Don't proceed) then
+-> Status = rejected;
+:Quote Rejected;
+end
+else (Proceed)
+|PM - Active Project|
+: Project begins;
+
+fork
+|Client|
+    split
+        : **Projects List**
+        ----
+        * All active and complete projects;
+        detach
+    split again
+        
+        : **Project Homepage**
+        ----
+        * Project overview
+        * Schedule;
+        detach
+    split again
+        :**Invoices Page**
+        ----
+        *View list of invoices
+        *View invoice;
+        detach
+    end split
+fork again
+    |PM - Active Project|
+    
+    : **Project Homepage**
+    ----
+    * List project comments
+    * Add comment
+    * Change status;
+    
+    split
+        : **Client Invoice Page**
+        ----
+        * View list of client invoices
+        * Generate a client invoice
+        * Mark an invoice as paid;
+        detach
+    |PM - Active Project|
+    split again
+        :**Tasks page**
+        ----
+        * View list of all tasks on project
+        * Add and assign a task
+        * View and edit a task;
+        detach
+    split again
+        :**Communication Page**
+        ----
+        * View list of all project communications
+        * Add a communication
+        * View and edit a communication;
+        detach
+    split again
+        : **Files Page**
+        ----
+        * View list of all project files/images
+        * Add a file
+        * View and edit a file (metadata only)
+        * Delete a file;
+        detach
+    split again
+        : **Services Page**
+        ----
+        * View list of all project services
+        * Add a service
+        * View and edit a service
+        * Add a service invoice;
+        detach
+    split again
+    : Complete Project
+    Set "Public" to show on homepage;
+    
+    end split
+end fork
+end
+@enduml
