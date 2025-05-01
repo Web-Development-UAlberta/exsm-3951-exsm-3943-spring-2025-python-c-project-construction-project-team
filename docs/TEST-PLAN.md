@@ -1,17 +1,50 @@
 # Renovation Station Test Plan
 
+<details>
+<summary>Table of Contents</summary>
+
+- [Executive Summary](#-executive-summary)
+- [Overview](#-overview)
+- [Scope](#-scope)
+  - [Out of Scope](#️-out-of-scope)
+- [Stakeholder Roles in Testing](#-stakeholder-roles-in-testing)
+- [User Role Coverage Matrix](#-user-role-coverage-matrix)
+- [System Overview](#️-system-overview)
+- [Targeted User Scenarios](#-targeted-user-scenarios-)
+- [Form Validation Strategy](#-form-validation-strategy)
+  - [Form Validation Coverage Table](#-form-validation-coverage-table)
+- [Functional End-to-End Test Scenarios](#-functional-end-to-end-test-scenarios)
+- [Frontend UI Test Cases](#️-frontend-ui-test-cases)
+- [Backend Test Cases](#-backend-test-cases)
+- [Negative Test Scenarios (Invalid Input & Unauthorized Access)](#️-negative-test-scenarios-invalid-input--unauthorized-access)
+- [Edge Case Test Scenarios](#️-edge-case-test-scenarios)
+- [Success and Error Conditions](#️-success-and-error-conditions)
+- [Testing Tools](#-testing-tools)
+- [Testing Timeline](#️-testing-timeline)
+- [Risks and Assumptions](#️-risks-and-assumptions)
+- [Entry and Exit Criteria](#-entry-and-exit-criteria)
+- [Final Acceptance Criteria](#-final-acceptance-criteria)
+- [Appendix A: Entity Relationship Diagram (ERD)](#-appendix-a-entity-relationship-diagram-erd)
+- [Last Update / Creation Date](#last-update--creation-date)
+
+</details>
+
+## Executive Summary
+
+This test plan outlines the strategy, scenarios, and validation criteria used to ensure the Renovation Station platform delivers a reliable, secure, and user-friendly experience for homeowners and Project managers.
+
+
 ## Overview
 
-This test plan focuses on ensuring the platform functions correctly, meets client requirements, and delivers a seamless experience for homeowners and contractors.
-
-This document covers the scope, components, success and error conditions for a React-based web platform with a back-end service for the ***Renovations by Bob*** company.
+This document defines the scope, components, success and error conditions for a web platform with a back-end service designed to meet the requirements of the ***Bob & Susan Renovations*** company.
 
 
 ## Scope
 
-- **Frontend**: React-based UI for homeowners and contractors.
-- **Backend**: RESTful API using a modern backend framework (e.g., Node.js, ASP.NET MVC (C#), PostgreSQL).
-- **Authentication**: JWT-based login and registration.
+- **Frontend**: React-based UI for homeowners and Project managers.
+- **Backend**: RESTful API using a modern backend framework (e.g., Node.js, ASP.NET MVC (C#)).
+- **Database**: PostgreSQL.
+- **Authentication & Authorization**: Microsoft Entra ID (Azure Active Directory).
 
 ### Out of Scope:
 
@@ -46,7 +79,7 @@ This document covers the scope, components, success and error conditions for a R
 | Communication Log           | ✅              | ✅                   | ✅               |
 | Task Calendar Access        |                | ✅                   | ✅               |
 
-## System
+## System Overview
 
 ### Environment
 
@@ -56,7 +89,7 @@ This document covers the scope, components, success and error conditions for a R
 ### Models
 
 - **Homeowner**: First/Last Name, Address, Contact Info, Account Details
-- **Gallery**: Photos, Videos, Renovation Type, Tags
+- **Gallery**: Photos, Renovation Type, Tags
 - **RenovationType**: Name (e.g., Kitchen, Bathroom)
 - **RequestForQuote**: Room Dimensions, Materials, Budget, Notes, Requestor
 - **Project**: Linked RFQ, Status, Assigned Manager, Start Date, End Date
@@ -71,7 +104,7 @@ This document covers the scope, components, success and error conditions for a R
 - `/services`: Renovation services
 - `/gallery`: View past projects
 - `/submit-rfq`: RFQ submission
-- `/contractor`: Contractor dashboard
+- `/project-manager`: Project manager dashboard
 
 ### Controllers / Business Logic
 
@@ -80,25 +113,54 @@ This document covers the scope, components, success and error conditions for a R
 - Process RFQ
 - Manage project workflows
 
+## Targeted User Scenarios
 
-## Sample Test Scenarios
-
-- User Registration
-- User Authentication
-- Login
-- Email confirmation
-- Responsive/mobile layout behavior
-- Gallery Viewing/Browsing
-- RFQ Lifecycle
-    - RFQ Submission
-    - Comment on RFQ
-- Contractor Project Management
-    - Project Workflow
-    - Assigning Project Managers
-    - Invoicing (create/download)
+- [x] User Registration & Login
+- [x] Email Confirmation
+- [x] Responsive Layout Validation
+- [x] Gallery Viewing and Filtering
+- [x] RFQ Lifecycle (Submit, Comment, Quote)
+- [x] Project manager Dashboard Access
+- [x] Project Management and Task Updates
+- [x] Quote Generation and Invoicing
 
 
-### Sample Test Cases
+## Form Validation Strategy
+
+All forms (registration, login, RFQ submission) will undergo validation testing to ensure:
+- Required fields enforce input
+- Correct formats (email, phone numbers) are validated
+- Limits (e.g., maximum file size, allowed file types) are respected
+- Invalid submissions show user-friendly error messages
+- The form does not submit if validation fails
+- Valid submissions correctly post data to the backend API
+
+Validation will be tested using manual input testing and automated Playwright tests where appropriate.
+
+## Form Validation Coverage Table
+
+The Form Validation Coverage Table outlines the field-level validation rules applied to key forms across the platform, including user registration, login, and RFQ submission.  
+
+Each input is tested against specific constraints (such as required fields, character limits, acceptable formats, and upload restrictions) to ensure proper error handling and user guidance.  
+
+These rules serve as the basis for the positive, negative, and edge case test scenarios that follow.
+
+
+| Form Field               | Validation Rule                                                                 | Error Message                                       |
+|--------------------------|----------------------------------------------------------------------------------|-----------------------------------------------------|
+| First Name               | Required, 2–50 alphabetic characters only                                        | “Please enter a valid first name.”                  |
+| Last Name                | Required, 2–50 alphabetic characters only                                        | “Please enter a valid last name.”                   |
+| Email                    | Required, valid email format                                                     | “Invalid email address format.”                     |
+| Phone Number             | Optional, numeric only, 10–15 digits                                             | “Please enter a valid phone number.”                |
+| Preferred Materials  | Required, free-text string, 2–160 characters, alphanumeric only (letters and numbers, no symbols)                           | “Please enter a valid description of material using only letters and numbers.”      |
+| Room Size (RFQ)    | Required, free-text string, 2–30 characters, alphabetic only                         | “Please enter a valid room size description (e.g., 'large room').”               |
+| Budget (RFQ)             | Required, must be a positive number                                              | “Budget must be greater than 0.”                    |
+| File Upload              | Max 10MB, allowed types: jpg, png, pdf                                           | “File exceeds 10MB or unsupported type.”            |
+| Design Style (RFQ)       | Optional, must be selected from dropdown                                         | “Invalid design style selected.”                    |
+
+---
+
+### Functional Test Scenarios
 
 
 ```
@@ -119,16 +181,16 @@ Expected Result:
 ```
 
 ```
-Test Case #2: Role Access Restriction for Contractor
+Test Case #2: Role Access Restriction for Project manager
 
 Preconditions:
-- Contractor account is logged in
+- Project manager account is logged in
 
 Steps:
 1. Attempt to access `/admin` role
 
 Expected Result:
-- Contractor is redirected or shown “Access Denied”
+- Project manager is redirected or shown “Access Denied”
 - No data from admin panel is leaked
 ```
 
@@ -136,7 +198,7 @@ Expected Result:
 Test Case #3: File Upload Limit Exceeded
 
 Preconditions: 
-- User is logged in (homeowner or contractor)
+- User is logged in (homeowner or Project managers)
 - RFQ or Project File Upload form is available
 
 Steps:
@@ -174,7 +236,7 @@ Expected Result:
 Test Case #5: Log Communication on RFQ
 
 Preconditions:
-- Contractor is logged in
+- Project manager is logged in
 - A RFQ exists
 
 Steps:
@@ -193,7 +255,7 @@ Test Case #6: Assign Project Manager to RFQ
 
 Preconditions:
 - RFQ exists
-- contractor or admin logged in
+- Project manager or admin logged in
 
 Steps:
 1.	Open RFQ
@@ -239,49 +301,140 @@ Expected Result:
 - Assigned user can view the task in their dashboard
 ```
 
+---
+
+## Authentication Test Scenarios - Microsoft Entra ID (Azure AD) Integration Tests
+
+| Test Case ID | Scenario                                  | Expected Outcome                                |
+|--------------|-------------------------------------------|-------------------------------------------------|
+| AUTH-001     | Sign in with valid Microsoft account      | User is successfully authenticated              |
+| AUTH-002     | Sign in with unregistered Microsoft account | Access is denied with appropriate error message |
+| AUTH-003     | Token expiration                          | User is prompted to re-authenticate             |
+| AUTH-004     | Role-based access (Admin vs User)         | Access is granted or denied based on role       |
+
+---
+
+## Frontend UI Test Cases
+
+These test cases validate React component behavior, interaction flows, and conditional rendering using **Jest** and **React Testing Library**.
+
+| Test Case ID | Component / Page | Scenario | Expected Result |
+|--------------|------------------|----------|-----------------|
+| FE-UI-01 | `<LoginForm />` | User enters invalid credentials and clicks Submit | Error message is shown: "Invalid username or password." |
+| FE-UI-02 | `<RFQForm />` | Required fields left empty | Fields are highlighted, and errors are displayed next to each |
+| FE-UI-03 | `<Gallery />` | No gallery items in state or from API | UI displays "No projects available" message |
+| FE-UI-04 | `<Header />` | Logged-in user with JWT visits the app | Nav bar shows “Profile” and “Logout” |
+| FE-UI-05 | `<TaskCalendar />` | Tasks exist for selected date | Calendar renders with event markers; tooltip shows task name |
+| FE-UI-06 | `<ProjectManagerDropdown />` | User clicks dropdown to assign PM | List of managers is displayed, selection updates state |
+| FE-UI-07 | `<ProtectedRoute />` | User tries to access `/admin` without valid JWT | Redirect to login or show “Access Denied” |
+| FE-UI-08 | `<FileUploader />` | User uploads invalid file (wrong type) | File rejected and error: “Unsupported file type” appears |
+| FE-UI-09 | `<CommentSection />` | User posts a comment | New comment is added to thread with timestamp and username |
+| FE-UI-10 | `<ServicesPage />` | User applies renovation type filter | Only matching services are displayed |
+
+---
+
+## Backend Test Cases
+
+Backend test coverage for data validation, API behavior, and database interaction using EF Core and PostgreSQL.
+
+### Renovation Request (`POST /api/request`)
+
+| Test Case ID | Description | Input | Expected Output |
+|--------------|-------------|-------|-----------------|
+| BE-RR-01 | Valid request | All required fields | `201 Created`, Request object returned |
+| BE-RR-02 | Missing size | `room_size=`, ... | `400 Bad Request`, Error: "Room size required" |
+| BE-RR-03 | Oversized budget | `budget=99999999` | `400 Bad Request`, Error: "Budget exceeds maximum allowed" |
+| BE-RR-04 | Invalid file upload | `file=exe file` | `400 Bad Request`, Error: "Invalid file type" |
+
+### Gallery Filtering (`GET /api/gallery?type=kitchen&tags=modern,budget`)
+
+| Test Case ID | Description | Input | Expected Output |
+|--------------|-------------|-------|-----------------|
+| BE-GAL-01 | Filter by valid type and tags | `type=kitchen`, `tags=modern,budget` | `200 OK`, JSON array of matching images |
+| BE-GAL-02 | Filter by type only | `type=bathroom` | `200 OK`, all bathroom-type images |
+| BE-GAL-03 | Filter with unknown tag | `tags=unicorn-style` | `200 OK`, empty array |
+| BE-GAL-04 | Missing all parameters | none | `200 OK`, full gallery list |
+| BE-GAL-05 | Invalid query parameter | `type=123` | `400 Bad Request`, Error: "Invalid renovation type format" |
+
+### Assign Project Manager (`PUT /api/project/{id}/assign`)
+
+| Test Case ID | Description | Input | Expected Output |
+|--------------|-------------|-------|-----------------|
+| BE-PRJ-01 | Valid assignment | `project_id=5`, `assigned_employee_id=3` | `200 OK`, Project updated with manager info |
+| BE-PRJ-02 | Nonexistent project ID | `project_id=9999`, `assigned_employee_id=3` | `404 Not Found`, Error: "Project not found" |
+| BE-PRJ-03 | Invalid manager ID | `project_id=5`, `assigned_employee_id=xyz` | `400 Bad Request`, Error: "Invalid manager ID" |
+| BE-PRJ-04 | Unauthorized request | No valid JWT | `401 Unauthorized`, Error: "Authentication required" |
+| BE-PRJ-05 | Project already assigned | `project_id=5`, already has manager | `409 Conflict`, Error: "Project already assigned" |
+
+### Get Project Details (`GET /api/project/{id}`)
+
+| Test Case ID | Description | Input | Expected Output |
+|--------------|-------------|-------|-----------------|
+| BE-PRJ-06 | Valid project retrieval | `project_id=10` | `200 OK`, Project details JSON |
+| BE-PRJ-07 | Invalid project ID format | `project_id=abc` | `400 Bad Request`, Error: "Invalid project ID format" |
+| BE-PRJ-08 | Project not found | `project_id=4040` | `404 Not Found`, Error: "Project does not exist" |
+| BE-PRJ-09 | Unauthorized access | No JWT | `401 Unauthorized`, Error: "Authentication required" |
+| BE-PRJ-10 | Access denied for non-assigned user | JWT for a different user | `403 Forbidden`, Error: "Access denied" |
+
+---
+
+
+## Invalid Input & Unauthorized Access Scenarios Table
+
+The Table outlines negative test scenarios to verify that the system correctly handles invalid inputs, unauthorized actions, and other failure conditions without compromising stability and security.
+
+
+| Test Scenario                          | Invalid Input                  | Expected Result                                            |
+|-----------------------------------------|---------------------------------|------------------------------------------------------------|
+| Register with invalid email            | `user@invalid`                  | Error: "Invalid email address format."                    |
+| Register with weak password            | `password`                     | Error: "Password must include uppercase, number, and symbol." |
+| Submit RFQ with missing room size | Leave Room size blank    | Error: "Please enter valid room size."               |
+| Submit RFQ with negative budget         | `-1000`                         | Error: "Budget must be greater than 0."                    |
+| Upload file exceeding size limit        | Upload 12MB file                | Error: "File exceeds maximum allowed size of 10MB."        |
+| Upload unsupported file type            | Upload `.exe` file              | Error: "Unsupported file type."                            |
+| Access admin panel without permission   | Project manager tries to visit `/admin` | Shown "Access Denied" page or redirected |
+| Submit empty comment in communication log | Submit blank message field    | Error: "Message cannot be blank."                          |
+
+
+## Edge Case Test Scenarios Table
+
+The Edge Case Test Scenarios Table describes edge case scenarios to ensure the system behaves correctly when handling unusual, extreme, or boundary input values.
+
+
+| Test Scenario                                | Edge Input Example              | Expected Result                                                |
+|-----------------------------------------------|----------------------------------|----------------------------------------------------------------|
+| Register with maximum allowed first name length | 50-character first name         | Registration succeeds if within limit                         |
+| Submit RFQ with minimum budget                | Budget set to `0.01`             | RFQ submission succeeds if rules allow budget > 0              |
+| Upload maximum allowed file size              | Upload file exactly 10MB         | File accepted and uploaded successfully                       |
+| Submit RFQ with uncommon room size label          | Room size set to `extra spacious`     | RFQ accepted if it meets validation (2–30 alpha-only chars); otherwise validation error                                        |
+| Upload maximum number of files (if multiple allowed) | Attach 5 images if limit is 5 | Upload succeeds; system does not accept more than allowed      |
+| Submit very large notes/comments in RFQ        | 5000 characters in Notes field   | Submission succeeds if within database/text field limits       |
+| Browse gallery with no available photos        | Empty gallery page               | User sees "No projects available" message instead of error     |
+| Submit calendar task with due date today       | Assign task with today's date    | Task successfully created and shown in calendar view           |
+
+
 ## Success and Error Conditions
 
 ### Overall Success Criteria
 - at least 2 homeowners complete full test journey
-- At least one contractor submits a quote
-- at least 1 contractor user performs end-to-end quote process
+- At least one Project manager submits a quote
+- at least 1 Project manager user performs end-to-end quote process
 - Create and submit at least 1 RFQ
 - View filtered galleries
 - Upload relevant files
-
-### Database Constraints
-
-- Username: Unique
-- Error on duplicates
-
-### API Endpoints
-
-| Endpoint | Expected Results |
-|----------|------------------|
-| `POST /api/user/register` | 201 Created or 400 Validation Error |
-| `POST /api/user/authorize` | 200 JWT or 401 Unauthorized |
-| `GET /api/user?id={id}` | 200 OK or 400/401/403/404 errors |
-
-### Frontend Interactions
-
-#### `/login`
-- Form sends encoded Authorization header to `/api/user/authorize`
-- Errors shown per field or general message
-
-#### `/profile`
-- Sends `FormData` with JWT
-- Redirect or error based on status codes
 
 
 ## Testing Tools
 
 | Tool | Purpose |
 |------|---------|
-| **Docker** | Integration environment for services |
-| **Jest / React Testing Library** | Unit/component tests |
-| **xUnit / NUnit** | Backend (C#) unit tests |
-| **Playwright** | End-to-end UI testing |
+| **Docker** | Run isolated PostgreSQL containers for dev/test |
+| **Jest / React Testing Library** | Unit/component tests — frontend interacting with backend |
+| **xUnit / NUnit** | Test C# models, services, and data access logic |
+| **Playwright** | Test end-to-end data flow (e.g., form -> API -> database) |
 | **PostgreSQL** | Test database fixtures |
+
+
 
 ## 🗓️ Testing Timeline
 
@@ -346,9 +499,44 @@ Any significant schedule changes will be communicated promptly to all stakeholde
 | **Client Sign-off** | - Written approval from client confirming feature readiness and business fit |
 
 ---
+
+---
+
+## Appendix A: Entity Relationship Diagram (ERD)
+
+The diagram below illustrates the core data model relationships used in the Renovation Station platform.
+
+![Entity Relationship Diagram](ERD/ERD.svg)
+
+### Model Relationships Summary
+
+- **Homeowner → RequestForQuote (1:M)**  
+  A homeowner can submit multiple RFQs, each linked back to their user account.
+
+- **RequestForQuote → Project (1:1 or 1:M)**  
+  Each RFQ may result in a project. A project references the RFQ it was based on.
+
+- **Project → TaskCalendar (1:M)**  
+  A project contains one or more tasks, used for scheduling and management.
+
+- **Project → CommunicationLog (1:M)**  
+  Messages related to the project or RFQ are stored in the communication log.
+
+- **Project → ProjectManager (M:1)**  
+  Each project is assigned to a project manager (admin/staff user).
+
+- **Gallery → RenovationType (M:1)**  
+  Each gallery item (photo or video) is categorized by renovation type.
+
+- **RequestForQuote → RenovationType (M:1)**  
+  Each RFQ is tagged with a renovation type like Kitchen, Bathroom, etc.
+
+---
+
+
 ### Last Update
 
-2025-04-25
+2025-04-30
 
 ### Creation Date
 
