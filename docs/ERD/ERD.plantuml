@@ -46,6 +46,7 @@ package "Request For Quote" <<frame>> {
     +renovation_type : string <<FK>>
     +budget : decimal
     +project_address : string
+    +room_size : enum
     }
 
     entity "RFQ Image" as RFQImage {
@@ -60,16 +61,12 @@ package "Request For Quote" <<frame>> {
     }
 
     User ||--|{ RFQ
-    RenovationType ||--|| RFQ
+    RenovationType }|--|| RFQ
     RFQ ||--o{ RFQImage
     RFQStatus ||--|| RFQ
 } 
 
 package "Project" <<frame>> {
-    entity "Project Status" as ProjectStatus {
-    *status : string <<PK>>
-    }
-
     entity "Project" as Project {
     -- Metadata --
     *id : int <<PK>> 
@@ -78,26 +75,42 @@ package "Project" <<frame>> {
     -- Application Set --
     *client_Id : int <<FK>>
     *status : string <<FK>>
-    *is_Public : boolean
-
-
-
-
-
-
+    *is_public : boolean
+    *quote_price_override : decimal
+    *quote_schedule_start_override : datetime
+    *quote_schedule_end_override : datetime
     }
-    package "Services" <<frame>> {
-        entity "Service Type" as ServiceType {
+
+    entity "Client Invoice" as ClientInvoice {
+        *id : int <<PK>>
+        *created_timestamp : datetime
+        *project_id : int <<FK>>
+        *description : text
+        *payment_instructions : text
+        *amount : decimal
+        *paid : boolean
+    }
+
+    entity "Project Comment" as ProjectComment {
+        *id : int <<PK>>
+        *comment : text
+        *created_timestamp : datetime
+        *project_id : int <<FK>>
+        *created_by_employee : int <<FK>>
+    }
+    entity "Project Status" as ProjectStatus {
+        *status : string <<PK>>
+        +description : text
+    }
+    package "Project Services" <<frame>> {
+        entity "Project Service Type" as ProjectServiceType {
             +name : string <<PK>>
             +description : text
         }
-        entity "Service Status" as ServiceStatus {
-            +status : string <<PK>>
-        }
-        entity "Service" as Service {
+        entity "Project Service" as ProjectService {
             -- Metadata --
             +id : int <<PK>>
-            +status : string <<FK>>
+            +status : enum
             +project_id : int <<FK>>
             -- General --
             +name : string
@@ -117,14 +130,16 @@ package "Project" <<frame>> {
             -- Metadata --
             +id : int <<PK>>
             -- General --
-            +name_buisness : string
+            +service_type : string <<FK>>
+            +name_business : string
             +name_salesman : string
             +email : string
             +phone_number : string
             +address : string
+            
         }
 
-        entity "Service Invoice" as ServiceInvoice {
+        entity "Project Service Invoice" as ProjectServiceInvoice {
             +id : int <<PK>>
             +created_timestamp : datetime
             +service_id : int <<FK>>
@@ -132,27 +147,18 @@ package "Project" <<frame>> {
             +paid : boolean
         }
 
-        Service ||--o{ ServiceInvoice        
-        Service ||--|| ServiceType
-        Service ||--|| ServiceStatus
-        Service }o--|| Supplier
-        Supplier ||--|{ ServiceType
+        ProjectService ||--o{ ProjectServiceInvoice        
+        ProjectService ||--|| ProjectServiceType
+        ProjectService }o--|| Supplier
+        Supplier ||--|{ ProjectServiceType
 
-    }
-
-    entity "Project Image" as ProjectImage {
-        *id : int <<PK>>
-        *uploaded_timestamp : datetime
-        *image_uri : string
-        *project_id : int <<FK>>
     }
 
     entity "Project Task" as ProjectTask {
         *id : int <<PK>>
         *created_timestamp : datetime
         *project_id : int <<FK>>
-        +assigned_employee_id : int <<FK>>
-        +assigned_client_id : int <<FK>>
+        *assigned_user_id : int <<FK>>
         +title : string
         +description : text
         +status : string
@@ -161,6 +167,8 @@ package "Project" <<frame>> {
     entity "Project Communication" as ProjectCommunication {
         *id : int <<PK>>
         *created_timestamp : datetime
+        *communication_timestamp : datetime
+        *communication_method : string
         *project_id : int <<FK>>
         +from_userId : int <<FK>>
         +to_userId : int <<FK>>
@@ -168,24 +176,29 @@ package "Project" <<frame>> {
         +description : text
     }
 
-    entity "Project Document" as ProjectDocument {
+    entity "Project File" as ProjectFile {
         *id : int <<PK>>
         *uploaded_timestamp : datetime
-        *document_uri : string
+        *file_uri : string
+        *file_name : string
         *project_id : int <<FK>>
+        *type : enum
     }
 
     Project ||--o{ ProjectCommunication
     ProjectCommunication }o--o{ User
     Project ||--o{ ProjectTask
     ProjectTask |o--|| User
-    Project||--o{ ProjectDocument
-    Project||--o{ ProjectImage
-    ProjectStatus ||--|| Project
+    Project||--o{ ProjectFile
     User ||--o{ Project
     Project ||--|| RFQ
-    Service }o--|| Project
+    ProjectService }o--|| Project
     Project ||--o{ RenovationType
+    ProjectStatus ||--|| Project
+    ProjectComment }o--|| Project
+    ProjectComment }o--|| User
+    ClientInvoice }o--|| Project
+    
 }
 
 

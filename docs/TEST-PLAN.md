@@ -145,7 +145,6 @@ Each input is tested against specific constraints (such as required fields, char
 
 These rules serve as the basis for the positive, negative, and edge case test scenarios that follow.
 
-
 | Form Field               | Validation Rule                                                                 | Error Message                                       |
 |--------------------------|----------------------------------------------------------------------------------|-----------------------------------------------------|
 | First Name               | Required, 2–50 alphabetic characters only                                        | “Please enter a valid first name.”                  |
