@@ -1,6 +1,6 @@
 # Renovation Station
 
-Welcome to **Renovation Station**, a web platform built to streamline project acquisition, service browsing, and renovation management for homeowners and contractors.
+Welcome to **Renovation Station**, a web platform built to streamline project acquisition, service browsing, and renovation management for homeowners and contractors. Developed for **Bob & Susan Renovations** company.
 
 ## Project Overview
 
