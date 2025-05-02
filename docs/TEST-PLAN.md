@@ -31,19 +31,20 @@
 
 ## Executive Summary
 
-This test plan outlines the strategy, scenarios, and validation criteria used to ensure the Renovation Station platform delivers a reliable, secure, meets client requirements, and user-friendly experience for homeowners and contractors.
+This test plan outlines the strategy, scenarios, and validation criteria used to ensure the Renovation Station platform delivers a reliable, secure, and user-friendly experience for homeowners and Project managers.
 
 
 ## Overview
 
-This document covers the scope, components, success and error conditions for a React-based web platform with a back-end service for the ***Bob & Susan Renovations*** company.
+This document defines the scope, components, success and error conditions for a web platform with a back-end service designed to meet the requirements of the ***Bob & Susan Renovations*** company.
 
 
 ## Scope
 
-- **Frontend**: React-based UI for homeowners and contractors.
-- **Backend**: RESTful API using a modern backend framework (e.g., Node.js, ASP.NET MVC (C#), PostgreSQL).
-- **Authentication**: JWT-based login and registration.
+- **Frontend**: React-based UI for homeowners and Project managers.
+- **Backend**: RESTful API using a modern backend framework (e.g., Node.js, ASP.NET MVC (C#)).
+- **Database**: PostgreSQL.
+- **Authentication & Authorization**: Microsoft Entra ID (Azure Active Directory).
 
 ### Out of Scope:
 
@@ -88,7 +89,7 @@ This document covers the scope, components, success and error conditions for a R
 ### Models
 
 - **Homeowner**: First/Last Name, Address, Contact Info, Account Details
-- **Gallery**: Photos, Videos, Renovation Type, Tags
+- **Gallery**: Photos, Renovation Type, Tags
 - **RenovationType**: Name (e.g., Kitchen, Bathroom)
 - **RequestForQuote**: Room Dimensions, Materials, Budget, Notes, Requestor
 - **Project**: Linked RFQ, Status, Assigned Manager, Start Date, End Date
@@ -103,7 +104,7 @@ This document covers the scope, components, success and error conditions for a R
 - `/services`: Renovation services
 - `/gallery`: View past projects
 - `/submit-rfq`: RFQ submission
-- `/contractor`: Contractor dashboard
+- `/project-manager`: Project manager dashboard
 
 ### Controllers / Business Logic
 
@@ -119,7 +120,7 @@ This document covers the scope, components, success and error conditions for a R
 - [x] Responsive Layout Validation
 - [x] Gallery Viewing and Filtering
 - [x] RFQ Lifecycle (Submit, Comment, Quote)
-- [x] Contractor Dashboard Access
+- [x] Project manager Dashboard Access
 - [x] Project Management and Task Updates
 - [x] Quote Generation and Invoicing
 
@@ -144,14 +145,13 @@ Each input is tested against specific constraints (such as required fields, char
 
 These rules serve as the basis for the positive, negative, and edge case test scenarios that follow.
 
-
 | Form Field               | Validation Rule                                                                 | Error Message                                       |
 |--------------------------|----------------------------------------------------------------------------------|-----------------------------------------------------|
 | First Name               | Required, 2–50 alphabetic characters only                                        | “Please enter a valid first name.”                  |
 | Last Name                | Required, 2–50 alphabetic characters only                                        | “Please enter a valid last name.”                   |
 | Email                    | Required, valid email format                                                     | “Invalid email address format.”                     |
 | Phone Number             | Optional, numeric only, 10–15 digits                                             | “Please enter a valid phone number.”                |
-| Password (Registration)  | Required, min 8 chars, 1 uppercase, 1 number, 1 symbol                           | “Password must be at least 8 characters with…”      |
+| Preferred Materials  | Required, free-text string, 2–160 characters, alphanumeric only (letters and numbers, no symbols)                           | “Please enter a valid description of material using only letters and numbers.”      |
 | Room Size (RFQ)    | Required, free-text string, 2–30 characters, alphabetic only                         | “Please enter a valid room size description (e.g., 'large room').”               |
 | Budget (RFQ)             | Required, must be a positive number                                              | “Budget must be greater than 0.”                    |
 | File Upload              | Max 10MB, allowed types: jpg, png, pdf                                           | “File exceeds 10MB or unsupported type.”            |
@@ -180,16 +180,16 @@ Expected Result:
 ```
 
 ```
-Test Case #2: Role Access Restriction for Contractor
+Test Case #2: Role Access Restriction for Project manager
 
 Preconditions:
-- Contractor account is logged in
+- Project manager account is logged in
 
 Steps:
 1. Attempt to access `/admin` role
 
 Expected Result:
-- Contractor is redirected or shown “Access Denied”
+- Project manager is redirected or shown “Access Denied”
 - No data from admin panel is leaked
 ```
 
@@ -197,7 +197,7 @@ Expected Result:
 Test Case #3: File Upload Limit Exceeded
 
 Preconditions: 
-- User is logged in (homeowner or contractor)
+- User is logged in (homeowner or Project managers)
 - RFQ or Project File Upload form is available
 
 Steps:
@@ -235,7 +235,7 @@ Expected Result:
 Test Case #5: Log Communication on RFQ
 
 Preconditions:
-- Contractor is logged in
+- Project manager is logged in
 - A RFQ exists
 
 Steps:
@@ -254,7 +254,7 @@ Test Case #6: Assign Project Manager to RFQ
 
 Preconditions:
 - RFQ exists
-- contractor or admin logged in
+- Project manager or admin logged in
 
 Steps:
 1.	Open RFQ
@@ -299,6 +299,17 @@ Expected Result:
 - Task is visible on calendar at correct due date
 - Assigned user can view the task in their dashboard
 ```
+
+---
+
+## Authentication Test Scenarios - Microsoft Entra ID (Azure AD) Integration Tests
+
+| Test Case ID | Scenario                                  | Expected Outcome                                |
+|--------------|-------------------------------------------|-------------------------------------------------|
+| AUTH-001     | Sign in with valid Microsoft account      | User is successfully authenticated              |
+| AUTH-002     | Sign in with unregistered Microsoft account | Access is denied with appropriate error message |
+| AUTH-003     | Token expiration                          | User is prompted to re-authenticate             |
+| AUTH-004     | Role-based access (Admin vs User)         | Access is granted or denied based on role       |
 
 ---
 
@@ -348,19 +359,19 @@ Backend test coverage for data validation, API behavior, and database interactio
 
 | Test Case ID | Description | Input | Expected Output |
 |--------------|-------------|-------|-----------------|
-| BE-PRJ-01 | Valid assignment | `projectId=5`, `managerId=3` | `200 OK`, Project updated with manager info |
-| BE-PRJ-02 | Nonexistent project ID | `projectId=9999`, `managerId=3` | `404 Not Found`, Error: "Project not found" |
-| BE-PRJ-03 | Invalid manager ID | `projectId=5`, `managerId=xyz` | `400 Bad Request`, Error: "Invalid manager ID" |
+| BE-PRJ-01 | Valid assignment | `project_id=5`, `assigned_employee_id=3` | `200 OK`, Project updated with manager info |
+| BE-PRJ-02 | Nonexistent project ID | `project_id=9999`, `assigned_employee_id=3` | `404 Not Found`, Error: "Project not found" |
+| BE-PRJ-03 | Invalid manager ID | `project_id=5`, `assigned_employee_id=xyz` | `400 Bad Request`, Error: "Invalid manager ID" |
 | BE-PRJ-04 | Unauthorized request | No valid JWT | `401 Unauthorized`, Error: "Authentication required" |
-| BE-PRJ-05 | Project already assigned | `projectId=5`, already has manager | `409 Conflict`, Error: "Project already assigned" |
+| BE-PRJ-05 | Project already assigned | `project_id=5`, already has manager | `409 Conflict`, Error: "Project already assigned" |
 
 ### Get Project Details (`GET /api/project/{id}`)
 
 | Test Case ID | Description | Input | Expected Output |
 |--------------|-------------|-------|-----------------|
-| BE-PRJ-06 | Valid project retrieval | `projectId=10` | `200 OK`, Project details JSON |
-| BE-PRJ-07 | Invalid project ID format | `projectId=abc` | `400 Bad Request`, Error: "Invalid project ID format" |
-| BE-PRJ-08 | Project not found | `projectId=4040` | `404 Not Found`, Error: "Project does not exist" |
+| BE-PRJ-06 | Valid project retrieval | `project_id=10` | `200 OK`, Project details JSON |
+| BE-PRJ-07 | Invalid project ID format | `project_id=abc` | `400 Bad Request`, Error: "Invalid project ID format" |
+| BE-PRJ-08 | Project not found | `project_id=4040` | `404 Not Found`, Error: "Project does not exist" |
 | BE-PRJ-09 | Unauthorized access | No JWT | `401 Unauthorized`, Error: "Authentication required" |
 | BE-PRJ-10 | Access denied for non-assigned user | JWT for a different user | `403 Forbidden`, Error: "Access denied" |
 
@@ -380,7 +391,7 @@ The Table outlines negative test scenarios to verify that the system correctly h
 | Submit RFQ with negative budget         | `-1000`                         | Error: "Budget must be greater than 0."                    |
 | Upload file exceeding size limit        | Upload 12MB file                | Error: "File exceeds maximum allowed size of 10MB."        |
 | Upload unsupported file type            | Upload `.exe` file              | Error: "Unsupported file type."                            |
-| Access admin panel without permission   | Contractor tries to visit `/admin` | Shown "Access Denied" page or redirected |
+| Access admin panel without permission   | Project manager tries to visit `/admin` | Shown "Access Denied" page or redirected |
 | Submit empty comment in communication log | Submit blank message field    | Error: "Message cannot be blank."                          |
 
 
@@ -405,34 +416,11 @@ The Edge Case Test Scenarios Table describes edge case scenarios to ensure the s
 
 ### Overall Success Criteria
 - at least 2 homeowners complete full test journey
-- At least one contractor submits a quote
-- at least 1 contractor user performs end-to-end quote process
+- At least one Project manager submits a quote
+- at least 1 Project manager user performs end-to-end quote process
 - Create and submit at least 1 RFQ
 - View filtered galleries
 - Upload relevant files
-
-### Database Constraints
-
-- Username: Unique
-- Error on duplicates
-
-### API Endpoints
-
-| Endpoint | Expected Results |
-|----------|------------------|
-| `POST /api/user/register` | 201 Created or 400 Validation Error |
-| `POST /api/user/authorize` | 200 JWT or 401 Unauthorized |
-| `GET /api/user?id={id}` | 200 OK or 400/401/403/404 errors |
-
-### Frontend Interactions
-
-#### `/login`
-- Form sends encoded Authorization header to `/api/user/authorize`
-- Errors shown per field or general message
-
-#### `/profile`
-- Sends `FormData` with JWT
-- Redirect or error based on status codes
 
 
 ## Testing Tools
