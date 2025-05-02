@@ -1,13 +1,27 @@
 using Microsoft.EntityFrameworkCore;
+using RenovationApp.Server.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
-
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var host = builder.Configuration["POSTGRES_HOST"];
+var port = builder.Configuration["POSTGRES_PORT"];
+var database = builder.Configuration["POSTGRES_DATABASE"];
+var username = builder.Configuration["POSTGRES_USERNAME"];
+var password = builder.Configuration["POSTGRES_PASSWORD"];
+
+var connectionString = $"Host={host};Port={port};Database={database};Username={username};Password={password}";
+
+
 var config = builder.Configuration;
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(connectionString));
 
 // Add services to the container.
 
@@ -76,6 +90,8 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+
+app.Logger.LogInformation($"PostgreSQL Connection String: {connectionString}");
 
 app.UseDefaultFiles();
 app.UseStaticFiles();

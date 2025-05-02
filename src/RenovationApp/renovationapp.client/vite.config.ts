@@ -5,27 +5,33 @@ import plugin from '@vitejs/plugin-react';
 import fs from 'fs';
 import path from 'path';
 import child_process from 'child_process';
+import { homedir } from 'os';
 
 const env = loadEnv(
     'all',
     process.cwd()
 );
 
+//console.log(homedir());
 
+//console.log('env:', env); 
+
+/* not working on other machine
 const baseFolder =
     env.APPDATA !== undefined && env.APPDATA !== ''
         ? `${env.APPDATA}/ASP.NET/https`
         : `${env.HOME}/.aspnet/https`;
-
-const certificateName = "renovationapp.client";
+*/
+const baseFolder = path.join(homedir(), '.aspnet', 'https');
+const certificateName = "renovationapp-client";
 const certFilePath = path.join(baseFolder, `${certificateName}.pem`);
 const keyFilePath = path.join(baseFolder, `${certificateName}.key`);
 
-/* for debugging certificate builds
+ //for debugging certificate builds
 console.log('certFilePath:', certFilePath);
 console.log('exists:', fs.existsSync(certFilePath));
 console.log('keyFileExists: ', fs.existsSync(keyFilePath));
-*/
+
 
 if (!fs.existsSync(baseFolder)) {
     fs.mkdirSync(baseFolder, { recursive: true });

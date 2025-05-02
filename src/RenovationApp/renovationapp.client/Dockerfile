@@ -3,15 +3,15 @@ ARG VITE_BACKEND_URI
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 RUN mkdir -p /root/.aspnet/https
-RUN dotnet dev-certs https --trust --export-path /root/.aspnet/https/renovationapp.client.pem --format Pem -p certPassword
+RUN dotnet dev-certs https --trust --export-path /root/.aspnet/https/renovationapp-client.pem --format Pem -p certPassword
 RUN echo "certPassword" > /root/.aspnet/https/renovationapp.client.key
 RUN echo 'Made certs'
 
 
-FROM node:18-alpine AS buildstage2
+FROM node:22-alpine AS buildstage2
 ENV VITE_BACKEND_URI=$VITE_BACKEND_URI
-COPY --from=build /root/.aspnet/https/renovationapp.client.pem /root/.aspnet/https/
-COPY --from=build /root/.aspnet/https/renovationapp.client.key /root/.aspnet/https/
+COPY --from=build /root/.aspnet/https/renovationapp-client.pem /root/.aspnet/https/
+COPY --from=build /root/.aspnet/https/renovationapp-client.key /root/.aspnet/https/
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
