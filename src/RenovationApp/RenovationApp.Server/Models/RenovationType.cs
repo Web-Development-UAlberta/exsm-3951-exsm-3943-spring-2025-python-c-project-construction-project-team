@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace RenovationStation.Models
@@ -7,10 +6,10 @@ namespace RenovationStation.Models
     {
         [Key]
         [Required]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
-        public ICollection<RFQ> RFQs { get; set; }
+        public ICollection<RFQ> RFQs { get; set; } = new List<RFQ>();
     }
 }

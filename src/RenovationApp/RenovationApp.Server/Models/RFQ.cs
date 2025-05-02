@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -22,30 +20,30 @@ namespace RenovationStation.Models
 
         [ForeignKey("Client")]
         public int ClientId { get; set; }
-        public User Client { get; set; }
+        public User Client { get; set; } = null!;
 
         [ForeignKey("Status")]
-        public string Status { get; set; }
-        public RFQStatus RFQStatus { get; set; }
+        public string? Status { get; set; }
+        public RFQStatus RFQStatus { get; set; } = null!;
 
         [ForeignKey("AssignedEmployee")]
         public int? AssignedEmployeeId { get; set; }
-        public User AssignedEmployee { get; set; }
+        public User AssignedEmployee { get; set; } = null!;
 
-        public string PreferredMaterial { get; set; }
+        public string? PreferredMaterial { get; set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [ForeignKey("RenovationTypeNavigation")]
-        public string RenovationType { get; set; }
-        public RenovationType RenovationTypeNavigation { get; set; }
+        public string? RenovationType { get; set; }
+        public RenovationType RenovationTypeNavigation { get; set; } = null!;
 
         public decimal Budget { get; set; }
 
-        public string ProjectAddress { get; set; }
+        public string? ProjectAddress { get; set; }
 
         public RoomSize RoomSize { get; set; }
 
-        public ICollection<RFQImage> RFQImages { get; set; }
+        public ICollection<RFQImage> RFQImages { get; set; } = new List<RFQImage>();
     }
 }

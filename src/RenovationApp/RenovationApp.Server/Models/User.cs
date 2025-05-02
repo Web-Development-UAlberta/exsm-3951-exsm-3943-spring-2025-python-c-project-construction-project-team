@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -18,21 +16,21 @@ namespace RenovationStation.Models
         public DateTime CreatedTimestamp { get; set; }
 
         [Required]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [EmailAddress]
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         [Required]
         [ForeignKey(nameof(UserRole))]
-        public string Role { get; set; }
+        public string? Role { get; set; }
 
-        public string PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
 
-        public string Address { get; set; }
+        public string? Address { get; set; }
 
-        public UserRole UserRole { get; set; }
+        public UserRole UserRole { get; set; } = null!;
 
-        public ICollection<RFQ> RFQs { get; set; }
+        public ICollection<RFQ> RFQs { get; set; } = new List<RFQ>();
     }
 }
