@@ -21,5 +21,11 @@ namespace RenovationApp.Server.Models
 
         [Column("paid_at", TypeName = "timestamp without time zone")]
         public DateTime? Paid { get; set; }
+
+        // Navigation properties
+
+        [ForeignKey(nameof(ProjectServiceId))]
+        [InverseProperty(nameof(ProjectService.ProjectServiceInvoices))]
+        public virtual ProjectService? ProjectService { get; set; } = null!;
     }
 }

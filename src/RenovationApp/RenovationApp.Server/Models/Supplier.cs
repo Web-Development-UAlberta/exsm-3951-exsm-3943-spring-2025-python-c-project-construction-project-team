@@ -28,5 +28,12 @@ namespace RenovationApp.Server.Models
         [Required]
         [Column("address", TypeName = "varchar(255)")]
         public string Address { get; set; } = string.Empty;
+
+        // Navigation properties
+        [InverseProperty(nameof(ProjectService.Supplier))]
+        public virtual ICollection<ProjectService> ProjectServices { get; set; } = new List<ProjectService>();
+
+        [InverseProperty(nameof(SupplierServiceType.Supplier))]
+        public virtual ICollection<SupplierServiceType> SupplierServiceTypes { get; set; } = new List<SupplierServiceType>();
     }
 }

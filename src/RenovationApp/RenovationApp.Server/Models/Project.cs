@@ -53,5 +53,11 @@ namespace RenovationApp.Server.Models
 
         [InverseProperty("Project")]
         public virtual ICollection<ClientInvoice> ClientInvoices { get; set; } = new List<ClientInvoice>();
+
+        [InverseProperty(nameof(ProjectService.Project))]
+        public virtual ICollection<ProjectService> ProjectServices { get; set; } = new List<ProjectService>();
+
+        [InverseProperty(nameof(ProjectTask.Project))]
+        public virtual ICollection<ProjectTask> ProjectTasks { get; set; } = new List<ProjectTask>();
     }
 }

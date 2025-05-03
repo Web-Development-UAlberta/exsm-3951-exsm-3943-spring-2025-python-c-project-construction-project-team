@@ -14,7 +14,7 @@ namespace RenovationApp.Server.Models
         public ProjectServiceStatus Status { get; set; }
 
         [Column("project_id", TypeName = "int")]
-        public int ProjectId { get; set; }
+        public int? ProjectId { get; set; }
 
         [Required]
         [Column("name", TypeName = "varchar(255)")]
@@ -29,7 +29,7 @@ namespace RenovationApp.Server.Models
         public string ServiceType { get; set; } = string.Empty;
 
         [Column("supplier_id", TypeName = "int")]
-        public int SupplierId { get; set; }
+        public int? SupplierId { get; set; }
 
         [Column("price_quote", TypeName = "decimal(10,2)")]
         public decimal QuotePrice { get; set; }
@@ -48,6 +48,21 @@ namespace RenovationApp.Server.Models
 
         [Column("end_date_actual", TypeName = "datetime")]
         public DateTime ActualEndDate { get; set; }
+
+        // Navigation properties
+        [ForeignKey(nameof(ProjectId))]
+        [InverseProperty(nameof(Project.ProjectServices))]
+        public virtual Project? Project { get; set; }
+
+        [ForeignKey(nameof(ServiceType))]
+        public virtual ProjectServiceType ProjectServiceType { get; set; } = null!;
+
+        [ForeignKey(nameof(SupplierId))]
+        [InverseProperty(nameof(Supplier.ProjectServices))]
+        public virtual Supplier? Supplier { get; set; } = null!;
+
+        [InverseProperty(nameof(ProjectServiceInvoice.ProjectService))]
+        public virtual ICollection<ProjectServiceInvoice> ProjectServiceInvoices { get; set; } = new List<ProjectServiceInvoice>();
     }
     public enum ProjectServiceStatus
     {

@@ -19,6 +19,9 @@ namespace RenovationApp.Server.Models
         [InverseProperty("Client")]
         public virtual ICollection<Project> ProjectClient { get; set; } = new List<Project>();
 
+        [InverseProperty(nameof(ProjectTask.AssignedUser))]
+        public virtual ICollection<ProjectTask> ProjectTasks { get; set; } = new List<ProjectTask>();
+
 
     }
 }
