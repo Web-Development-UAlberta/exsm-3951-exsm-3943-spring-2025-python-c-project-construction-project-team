@@ -1,5 +1,14 @@
-@model RenovationApp.Models.RenovationType
-<h3>Are you sure you want to delete @Model.Name?</h3>
+@model RenovationApp.Server.Models.RenovationType
+
+<h2>Delete Renovation Type</h2>
+
+<div class="form-group">
+    <label>Name:</label>
+    <p>@Model.Name</p>
+    <label>Description:</label>
+    <p>@Model.Description</p>
+</div>
+
 <form asp-action="Delete" method="post">
     <input type="hidden" asp-for="Name" />
     <button type="submit" class="btn btn-danger">Delete</button>

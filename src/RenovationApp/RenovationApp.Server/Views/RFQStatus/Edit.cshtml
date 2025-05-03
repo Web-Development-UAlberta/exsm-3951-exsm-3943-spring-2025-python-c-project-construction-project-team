@@ -1,19 +1,15 @@
 @model RenovationApp.Server.Models.RFQStatus
 
-<h2>Create RFQ Status</h2>
+<h2>Edit RFQ Status</h2>
 
-<form asp-action="Create" method="post" autocomplete="off">
-    <div class="form-group">
-        <label asp-for="Status" class="control-label"></label>
-        <input asp-for="Status" class="form-control" />
-        <span asp-validation-for="Status" class="text-danger"></span>
-    </div>
+<form asp-action="Edit" method="post" autocomplete="off">
+    <input type="hidden" asp-for="Status" />
     <div class="form-group">
         <label asp-for="Description" class="control-label"></label>
         <textarea asp-for="Description" class="form-control"></textarea>
         <span asp-validation-for="Description" class="text-danger"></span>
     </div>
-    <button type="submit" class="btn btn-primary">Create</button>
+    <button type="submit" class="btn btn-primary">Update</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>
 

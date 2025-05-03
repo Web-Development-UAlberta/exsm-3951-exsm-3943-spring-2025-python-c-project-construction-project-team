@@ -71,7 +71,7 @@ builder.Services.AddSwaggerGen(c =>
                 Name = "oauth2",
                 In = ParameterLocation.Header
             },
-            new List <string> ()
+            new List<string> { $"{builder.Configuration["ApiScopeUrl"]}user_impersonation" }
         }
     });
     c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme

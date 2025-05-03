@@ -1,5 +1,14 @@
-@model RenovationApp.Models.RFQImage
-<h3>Are you sure you want to delete this image?</h3>
+@model RenovationApp.Server.Models.RFQImage
+
+<h2>Delete RFQ Image</h2>
+
+<div class="form-group">
+    <label>Image URL:</label>
+    <p>@Model.ImageUrl</p>
+    <label>Uploaded Timestamp:</label>
+    <p>@Model.UploadedTimestamp</p>
+</div>
+
 <form asp-action="Delete" method="post">
     <input type="hidden" asp-for="Id" />
     <button type="submit" class="btn btn-danger">Delete</button>

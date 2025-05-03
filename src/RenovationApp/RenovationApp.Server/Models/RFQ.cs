@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace RenovationApp.Models
+namespace RenovationApp.Server.Models
 {
     public enum RoomSize
     {
@@ -40,8 +40,8 @@ namespace RenovationApp.Models
         public string? RenovationType { get; set; }
         public RenovationType RenovationTypeNavigation { get; set; } = null!;
         
-[Range(0, 1000000.00, ErrorMessage = "Budget must be between 0 and 1,000,000.00.")]
-[Column(TypeName = "decimal(9, 2)")]
+        [Range(0, 1000000.00, ErrorMessage = "Budget must be between 0 and 1,000,000.00.")]
+        [Column(TypeName = "decimal(9, 2)")]
         public decimal Budget { get; set; }
 
         [StringLength(160, ErrorMessage = "Address cannot exceed 160 characters.")]

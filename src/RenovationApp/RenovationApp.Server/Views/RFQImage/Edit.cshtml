@@ -1,8 +1,9 @@
 @model RenovationApp.Server.Models.RFQImage
 
-<h2>Upload RFQ Image</h2>
+<h2>Edit RFQ Image</h2>
 
-<form asp-action="Create" method="post" autocomplete="off">
+<form asp-action="Edit" method="post" autocomplete="off">
+    <input type="hidden" asp-for="Id" />
     <div class="form-group">
         <label asp-for="RFQId" class="control-label"></label>
         <select asp-for="RFQId" asp-items="ViewBag.RFQId" class="form-control"></select>
@@ -13,7 +14,7 @@
         <input asp-for="ImageUrl" class="form-control" />
         <span asp-validation-for="ImageUrl" class="text-danger"></span>
     </div>
-    <button type="submit" class="btn btn-primary">Upload</button>
+    <button type="submit" class="btn btn-primary">Save</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>
 

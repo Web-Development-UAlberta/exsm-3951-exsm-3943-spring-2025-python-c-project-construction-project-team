@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace RenovationApp.Models
+namespace RenovationApp.Server.Models
 {
     public class RFQImage
     {

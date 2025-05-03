@@ -1,9 +1,36 @@
-@model IEnumerable<RenovationApp.Models.RFQImage>
+@model IEnumerable<RenovationApp.Server.Models.RFQImage>
+
 <h2>Request for Quote (RFQ) Images</h2>
-<ul>
-@foreach (var img in Model)
+
+@if (TempData["Success"] != null)
 {
-    <li>@img.ImageUri - <a asp-action="Delete" asp-route-id="@img.Id" class="btn btn-danger btn-sm">Delete</a></li>
+    <div class="alert alert-success">@TempData["Success"]</div>
 }
-</ul>
-<a asp-action="Create" class="btn btn-success">Add Image</a>
+
+<p><a class="btn btn-success" asp-action="Create">Add New Image</a></p>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Image URL</th>
+            <th>Uploaded</th>
+            <th>RFQ ID</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var image in Model)
+{
+        <tr>
+            <td>@image.ImageUrl</td>
+            <td>@image.UploadedTimestamp</td>
+            <td>@image.RFQId</td>
+            <td>
+                <a class="btn btn-info btn-sm" asp-action="Details" asp-route-id="@image.Id">Details</a>
+                <a class="btn btn-warning btn-sm" asp-action="Edit" asp-route-id="@image.Id">Edit</a>
+                <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@image.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

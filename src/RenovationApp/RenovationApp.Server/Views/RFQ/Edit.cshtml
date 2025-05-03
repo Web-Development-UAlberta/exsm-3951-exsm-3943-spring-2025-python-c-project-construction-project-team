@@ -1,13 +1,50 @@
-@model RenovationApp.Models.RFQ
-<form asp-action="Edit" method="post">
+@model RenovationApp.Server.Models.RFQ
+
+<h2>Edit RFQ</h2>
+
+<form asp-action="Edit" method="post" autocomplete="off">
     <input type="hidden" asp-for="Id" />
-    <div class="mb-3">
-        <label asp-for="Description" class="form-label"></label>
-        <input asp-for="Description" class="form-control" />
+    
+    <div class="form-group">
+        <label asp-for="Status"></label>
+        <select asp-for="Status" asp-items="ViewBag.Status" class="form-control"></select>
+        <span asp-validation-for="Status" class="text-danger"></span>
     </div>
-    <div class="mb-3">
-        <label asp-for="Budget" class="form-label"></label>
+
+    <div class="form-group">
+        <label asp-for="PreferredMaterial"></label>
+        <input asp-for="PreferredMaterial" class="form-control" />
+        <span asp-validation-for="PreferredMaterial" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ProjectAddress"></label>
+        <input asp-for="ProjectAddress" class="form-control" />
+        <span asp-validation-for="ProjectAddress" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="RoomSize"></label>
+        <input asp-for="RoomSize" class="form-control" />
+        <span asp-validation-for="RoomSize" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Budget"></label>
         <input asp-for="Budget" class="form-control" />
+        <span asp-validation-for="Budget" class="text-danger"></span>
     </div>
+
     <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

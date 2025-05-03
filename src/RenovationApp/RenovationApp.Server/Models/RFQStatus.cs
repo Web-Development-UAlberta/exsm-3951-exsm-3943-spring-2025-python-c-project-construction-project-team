@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace RenovationApp.Models
+namespace RenovationApp.Server.Models
 {
     public class RFQStatus
     {
