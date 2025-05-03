@@ -1,29 +1,24 @@
-using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RenovationApp.Server.Models
 {
-    public class User : IdentityUser<int>
+    public class User
     {
-        [Required]
-        [Column(TypeName = "uuid")]
-        public Guid AuthenticationOid { get; set; }
+        [Key]
+        [Column("id")]
+        public int Id { get; set; }
 
-        [Required]
-        public DateTime CreatedTimestamp { get; set; }
+        // Navigation collections with Project Model
+        [InverseProperty("Employee")]
+        public virtual ICollection<ProjectComment> Comments { get; set; } = new List<ProjectComment>();
 
-        [Required]
-        public string Name { get; set; } = null!;
+        [InverseProperty("Employee")]
+        public virtual ICollection<Project> ProjectEmployee { get; set; } = new List<Project>();
 
-        [Required]
-        [ForeignKey(nameof(UserRole))]
-        public string Role { get; set; } = null!;
-        public UserRole UserRole { get; set; } = null!;
-        
-        [StringLength(160, ErrorMessage = "Address cannot exceed 160 characters.")]
-        public string Address { get; set; } = string.Empty;
+        [InverseProperty("Client")]
+        public virtual ICollection<Project> ProjectClient { get; set; } = new List<Project>();
 
-        public ICollection<RFQ> RFQs { get; set; } = new List<RFQ>();
+
     }
 }
