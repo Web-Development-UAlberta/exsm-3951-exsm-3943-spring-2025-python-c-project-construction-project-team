@@ -6,10 +6,10 @@ namespace RenovationApp.Server.Models
     {
         [Key]
         [Required]
-        public string? Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [StringLength(100, ErrorMessage = "Description cannot exceed 100 characters.")]
-        public string? Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         public ICollection<User> Users { get; set; } = new List<User>();
     }

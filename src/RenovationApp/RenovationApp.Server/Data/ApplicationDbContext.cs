@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using RenovationApp.Server.Models;
 
-namespace  RenovationApp.Server.Data
+namespace RenovationApp.Server.Data
 {
     public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, int>
     {
@@ -26,7 +26,8 @@ namespace  RenovationApp.Server.Data
         {
             base.OnModelCreating(builder);
 
-            // Configure Vehicle entity
+            builder.EnforceLowerCaseSchema();
+
             builder.Entity<ProjectStatus>()
                 .HasKey(s => s.Status);
 
@@ -63,33 +64,6 @@ namespace  RenovationApp.Server.Data
                 .HasOne(r => r.RFQStatus)
                 .WithMany(s => s.RFQs)
                 .HasForeignKey(r => r.Status);
-
-                //builder.SeedRoles();
-
-            foreach (var entity in ModelBuilder.Model.GetEntityTypes())
-            {
-                entity.SetTableName(entity.GetTableName().ToLowerInvariant());
-
-                foreach (var property in entity.GetProperties())
-                {
-                    property.SetColumnName(property.Name.ToLowerInvariant());
-                }
-
-                foreach (var key in entity.GetKeys())
-                {
-                    key.SetName(key.GetName().ToLowerInvariant());
-                }
-
-                foreach (var fk in entity.GetForeignKeys())
-                {
-                    fk.SetConstraintName(fk.GetConstraintName().ToLowerInvariant());
-                }
-
-                foreach (var index in entity.GetIndexes())
-                {
-                    index.SetDatabaseName(index.GetDatabaseName().ToLowerInvariant());
-                }
-            }
         }
     }
 }

@@ -6,7 +6,7 @@ namespace RenovationApp.Server.Models
     {
         [Key]
         [StringLength(30, ErrorMessage = "Status cannot exceed 30 characters.")]
-        public string? Status { get; set; }
+        public string Status { get; set; } = string.Empty;
 
         public ICollection<RFQ> RFQs { get; set; } = new List<RFQ>();
     }

@@ -22,7 +22,7 @@ namespace RenovationApp.Server.Models
         public UserRole UserRole { get; set; } = null!;
         
         [StringLength(160, ErrorMessage = "Address cannot exceed 160 characters.")]
-        public string? Address { get; set; }
+        public string Address { get; set; } = string.Empty;
 
         public ICollection<RFQ> RFQs { get; set; } = new List<RFQ>();
     }

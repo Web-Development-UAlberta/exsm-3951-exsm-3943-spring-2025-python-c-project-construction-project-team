@@ -10,7 +10,7 @@ namespace RenovationApp.Server.Models
 
         public DateTime UploadedTimestamp { get; set; }
 
-        public string? ImageUri { get; set; }
+        public string ImageUri { get; set; } = string.Empty;
 
         [ForeignKey("RFQ")]
         public int RfqId { get; set; }

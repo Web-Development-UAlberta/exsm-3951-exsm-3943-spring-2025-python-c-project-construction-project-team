@@ -23,21 +23,21 @@ namespace RenovationApp.Server.Models
         public User Client { get; set; } = null!;
 
         [ForeignKey("Status")]
-        public string? Status { get; set; }
+        public string Status { get; set; } = string.Empty;
         public RFQStatus RFQStatus { get; set; } = null!;
 
         [ForeignKey("AssignedEmployee")]
-        public int? AssignedEmployeeId { get; set; }
+        public int AssignedEmployeeId { get; set; } = string.Empty;
         public User AssignedEmployee { get; set; } = null!;
 
         [StringLength(160, ErrorMessage = "Preferred Material cannot exceed 160 characters.")]
-        public string? PreferredMaterial { get; set; }
+        public string PreferredMaterial { get; set; } = string.Empty;
 
         [StringLength(1000, ErrorMessage = "Renovation Description cannot exceed 1,000 characters.")]
-        public string? Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         [ForeignKey("RenovationTypeNavigation")]
-        public string? RenovationType { get; set; }
+        public string RenovationType { get; set; } = string.Empty;
         public RenovationType RenovationTypeNavigation { get; set; } = null!;
         
         [Range(0, 1000000.00, ErrorMessage = "Budget must be between 0 and 1,000,000.00.")]
@@ -45,7 +45,7 @@ namespace RenovationApp.Server.Models
         public decimal Budget { get; set; }
 
         [StringLength(160, ErrorMessage = "Address cannot exceed 160 characters.")]
-        public string? ProjectAddress { get; set; }
+        public string ProjectAddress { get; set; } = string.Empty;
 
         public RoomSize RoomSize { get; set; }
 
