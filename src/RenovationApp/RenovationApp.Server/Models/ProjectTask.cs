@@ -11,7 +11,7 @@ namespace RenovationApp.Server.Models
         public int Id { get; set; }
 
         [Column("created_timestamp", TypeName = "timestamp without time zone")]
-        public DateTime CreatedTimeStamp { get; set; }
+        public DateTime CreatedTimestamp { get; set; }
 
         [Column("project_id", TypeName = "int")]
         public int? ProjectId { get; set; }

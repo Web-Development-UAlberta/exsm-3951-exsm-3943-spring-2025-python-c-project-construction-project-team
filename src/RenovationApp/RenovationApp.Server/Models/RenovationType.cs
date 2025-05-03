@@ -11,6 +11,6 @@ namespace RenovationApp.Server.Models
         [StringLength(100, ErrorMessage = "Description cannot exceed 100 characters.")]
         public string Description { get; set; } = string.Empty;
 
-        public ICollection<RFQ> RFQs { get; set; } = new List<RFQ>();
+        public virtual ICollection<RFQ> RFQs { get; set; } = new List<RFQ>();
     }
 }

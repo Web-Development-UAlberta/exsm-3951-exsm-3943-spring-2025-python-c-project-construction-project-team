@@ -2,14 +2,13 @@
 
 <h2>Edit RFQ Status</h2>
 
+<div class="alert alert-info">
+    <strong>Note:</strong> You cannot edit the status name once it's created.
+</div>
+
 <form asp-action="Edit" method="post" autocomplete="off">
     <input type="hidden" asp-for="Status" />
-    <div class="form-group">
-        <label asp-for="Description" class="control-label"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
-    <button type="submit" class="btn btn-primary">Update</button>
+    <button type="submit" class="btn btn-primary" disabled>Update</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>
 

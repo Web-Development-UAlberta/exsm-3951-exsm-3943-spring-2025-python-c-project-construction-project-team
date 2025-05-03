@@ -13,7 +13,7 @@ namespace RenovationApp.Server.Models
         public string ImageUri { get; set; } = string.Empty;
 
         [ForeignKey("RFQ")]
-        public int RfqId { get; set; }
+        public int RFQId { get; set; }
         public RFQ RFQ { get; set; } = null!;
     }
 }

@@ -24,8 +24,9 @@ namespace RenovationApp.Server.Models
         [InverseProperty("ProjectClient")]
         public virtual User? Client { get; set; }
 
+        [Required]
         [Column("status_id")]
-        public int StatusId { get; set; }
+        public string StatusId { get; set; } = string.Empty;
         [ForeignKey(nameof(StatusId))]
         public virtual ProjectStatus ProjectStatus { get; set; } = null!;
 

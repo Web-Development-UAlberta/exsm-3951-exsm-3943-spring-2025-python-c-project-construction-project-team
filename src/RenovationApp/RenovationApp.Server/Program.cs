@@ -21,9 +21,6 @@ var config = builder.Configuration;
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
-// Add DbContext using PostgreSQL
-builder.Services.AddDbContext<RenovationContext>(options =>
-    options.UseNpgsql(connectionString));
 // Add services to the container.
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddMicrosoftIdentityWebApi(builder.Configuration, "AzureAd");
 builder.Services.AddAuthorization(options =>

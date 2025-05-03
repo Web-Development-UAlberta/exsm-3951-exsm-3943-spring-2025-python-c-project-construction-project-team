@@ -37,16 +37,16 @@ namespace RenovationApp.Server.Models
         [Column("cost_quote", TypeName = "decimal(10,2)")]
         public decimal QuoteCost { get; set; }
 
-        [Column("start_date_quote", TypeName = "datetime")]
+        [Column("start_date_quote", TypeName = "timestamp without time zone")]
         public DateTime QuoteStartDate { get; set; }
 
-        [Column("end_date_quote", TypeName = "datetime")]
+        [Column("end_date_quote", TypeName = "timestamp without time zone")]
         public DateTime QuoteEndDate { get; set; }
 
-        [Column("start_date_actual", TypeName = "datetime")]
+        [Column("start_date_actual", TypeName = "timestamp without time zone")]
         public DateTime ActualStartDate { get; set; }
 
-        [Column("end_date_actual", TypeName = "datetime")]
+        [Column("end_date_actual", TypeName = "timestamp without time zone")]
         public DateTime ActualEndDate { get; set; }
 
         // Navigation properties

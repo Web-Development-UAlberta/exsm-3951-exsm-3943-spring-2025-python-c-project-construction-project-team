@@ -27,7 +27,7 @@ namespace RenovationApp.Server.Models
         public RFQStatus RFQStatus { get; set; } = null!;
 
         [ForeignKey("AssignedEmployee")]
-        public int AssignedEmployeeId { get; set; } = string.Empty;
+        public int AssignedEmployeeId { get; set; }
         public User AssignedEmployee { get; set; } = null!;
 
         [StringLength(160, ErrorMessage = "Preferred Material cannot exceed 160 characters.")]
@@ -39,7 +39,7 @@ namespace RenovationApp.Server.Models
         [ForeignKey("RenovationTypeNavigation")]
         public string RenovationType { get; set; } = string.Empty;
         public RenovationType RenovationTypeNavigation { get; set; } = null!;
-        
+
         [Range(0, 1000000.00, ErrorMessage = "Budget must be between 0 and 1,000,000.00.")]
         [Column(TypeName = "decimal(9, 2)")]
         public decimal Budget { get; set; }

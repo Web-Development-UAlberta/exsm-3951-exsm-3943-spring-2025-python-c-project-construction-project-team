@@ -13,7 +13,6 @@
     <thead>
         <tr>
             <th>Status</th>
-            <th>Description</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -22,10 +21,8 @@
 {
         <tr>
             <td>@item.Status</td>
-            <td>@item.Description</td>
             <td>
                 <a class="btn btn-info btn-sm" asp-action="Details" asp-route-id="@item.Status">Details</a>
-                <a class="btn btn-warning btn-sm" asp-action="Edit" asp-route-id="@item.Status">Edit</a>
                 <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@item.Status">Delete</a>
             </td>
         </tr>

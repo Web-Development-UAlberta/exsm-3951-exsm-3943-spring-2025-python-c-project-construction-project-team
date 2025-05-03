@@ -57,14 +57,12 @@ public class RFQStatusController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(string id, RFQStatus status)
+    public IActionResult Edit(string id, RFQStatus status)
     {
         if (id != status.Status) return NotFound();
 
         if (ModelState.IsValid)
         {
-            _context.Update(status);
-            await _context.SaveChangesAsync();
             TempData["Success"] = "Status updated successfully.";
             return RedirectToAction(nameof(Index));
         }
