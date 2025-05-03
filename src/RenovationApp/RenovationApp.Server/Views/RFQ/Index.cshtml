@@ -1,0 +1,19 @@
+@model IEnumerable<RenovationApp.Models.RFQ>
+<h2>Request for Quote (RFQ) List</h2>
+<table class="table table-bordered">
+    <thead><tr><th>Description</th><th>Budget</th><th>Actions</th></tr></thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Description</td>
+            <td>@item.Budget</td>
+            <td>
+                <a class="btn btn-sm btn-secondary" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+<a asp-action="Create" class="btn btn-success">Create New</a>

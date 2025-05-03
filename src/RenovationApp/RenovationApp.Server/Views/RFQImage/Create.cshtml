@@ -1,0 +1,9 @@
+@model RenovationApp.Models.RFQImage
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="ImageUri" class="form-label"></label>
+        <input asp-for="ImageUri" class="form-control" />
+    </div>
+    <select asp-for="RfqId" asp-items="ViewBag.RFQId" class="form-select"></select>
+    <button type="submit" class="btn btn-primary">Upload</button>
+</form>

@@ -1,0 +1,9 @@
+@model IEnumerable<RenovationApp.Models.RFQImage>
+<h2>Request for Quote (RFQ) Images</h2>
+<ul>
+@foreach (var img in Model)
+{
+    <li>@img.ImageUri - <a asp-action="Delete" asp-route-id="@img.Id" class="btn btn-danger btn-sm">Delete</a></li>
+}
+</ul>
+<a asp-action="Create" class="btn btn-success">Add Image</a>

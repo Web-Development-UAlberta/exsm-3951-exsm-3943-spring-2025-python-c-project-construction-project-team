@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace RenovationStation.Models
+namespace RenovationApp.Models
 {
     public class User
     {
@@ -27,6 +27,7 @@ namespace RenovationStation.Models
 
         public string? PhoneNumber { get; set; }
 
+        [StringLength(160, ErrorMessage = "Preferred Material cannot exceed 160 characters.")]
         public string? Address { get; set; }
 
         public UserRole UserRole { get; set; } = null!;

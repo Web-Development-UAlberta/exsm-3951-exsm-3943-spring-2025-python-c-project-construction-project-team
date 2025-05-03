@@ -1,0 +1,12 @@
+@model RenovationApp.Models.RFQ
+<form asp-action="Create" method="post" class="mt-3">
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <input asp-for="Description" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Budget" class="form-label"></label>
+        <input asp-for="Budget" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>

@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>@ViewData["Title"] - RenovationStation</title>
+    <title>@ViewData["Title"] - Bob & Susan Renovations</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body>
     <div class="container mt-4">
         <header class="mb-4">
-            <h1>Renovation Station</h1>
+            <h1>Renovation App</h1>
             <nav>
                 <a asp-controller="RenovationTypes" asp-action="Index" class="btn btn-outline-primary btn-sm">Renovation Types</a>
-                <a asp-controller="RFQ" asp-action="Index" class="btn btn-outline-primary btn-sm">RFQs</a>
+                <a asp-controller="RFQ" asp-action="Index" class="btn btn-outline-primary btn-sm">Requests for Quote (RFQs)</a>
                 <a asp-controller="RFQStatus" asp-action="Index" class="btn btn-outline-primary btn-sm">RFQ Status</a>
                 <a asp-controller="RFQImages" asp-action="Index" class="btn btn-outline-primary btn-sm">Images</a>
             </nav>
@@ -20,7 +20,7 @@
             @RenderBody()
         </main>
         <footer class="mt-5 border-top pt-3 text-muted small">
-            &copy; @DateTime.Now.Year - RenovationStation
+            &copy; @DateTime.Now.Year - RenovationApp
         </footer>
     </div>
 </body>

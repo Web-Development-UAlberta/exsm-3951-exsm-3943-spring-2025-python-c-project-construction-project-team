@@ -1,0 +1,9 @@
+@model IEnumerable<RenovationApp.Models.RFQStatus>
+<h2>Request for Quote (RFQ) Statuses</h2>
+<ul>
+@foreach (var s in Model)
+{
+    <li>@s.Status - <a asp-action="Delete" asp-route-id="@s.Status" class="btn btn-sm btn-danger">Delete</a></li>
+}
+</ul>
+<a asp-action="Create" class="btn btn-success">Add New</a>

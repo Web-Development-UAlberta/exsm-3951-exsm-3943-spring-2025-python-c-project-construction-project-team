@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace RenovationStation.Models
+namespace RenovationApp.Models
 {
     public class UserRole
     {
@@ -8,6 +8,7 @@ namespace RenovationStation.Models
         [Required]
         public string? Name { get; set; }
 
+        [StringLength(100, ErrorMessage = "Description cannot exceed 100 characters.")]
         public string? Description { get; set; }
 
         public ICollection<User> Users { get; set; } = new List<User>();
