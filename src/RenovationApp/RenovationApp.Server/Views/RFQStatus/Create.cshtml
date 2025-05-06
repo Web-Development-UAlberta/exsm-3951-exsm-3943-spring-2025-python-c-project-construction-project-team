@@ -1,0 +1,17 @@
+@model RenovationApp.Server.Models.RFQStatus
+
+<h2>Create RFQ Status</h2>
+
+<form asp-action="Create" method="post" autocomplete="off">
+    <div class="form-group">
+        <label asp-for="Status" class="control-label"></label>
+        <input asp-for="Status" class="form-control" />
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

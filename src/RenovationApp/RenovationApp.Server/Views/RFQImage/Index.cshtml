@@ -1,0 +1,36 @@
+@model IEnumerable<RenovationApp.Server.Models.RFQImage>
+
+<h2>Request for Quote (RFQ) Images</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<p><a class="btn btn-success" asp-action="Create">Add New Image</a></p>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Image URL</th>
+            <th>Uploaded</th>
+            <th>RFQ ID</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var image in Model)
+{
+        <tr>
+            <td>@image.ImageUri</td>
+            <td>@image.UploadedTimestamp</td>
+            <td>@image.RFQId</td>
+            <td>
+                <a class="btn btn-info btn-sm" asp-action="Details" asp-route-id="@image.Id">Details</a>
+                <a class="btn btn-warning btn-sm" asp-action="Edit" asp-route-id="@image.Id">Edit</a>
+                <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@image.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

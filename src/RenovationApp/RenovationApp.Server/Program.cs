@@ -17,14 +17,11 @@ var password = builder.Configuration["POSTGRES_PASSWORD"];
 
 var connectionString = $"Host={host};Port={port};Database={database};Username={username};Password={password}";
 
-
 var config = builder.Configuration;
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
-
 // Add services to the container.
-
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddMicrosoftIdentityWebApi(builder.Configuration, "AzureAd");
 builder.Services.AddAuthorization(options =>
 {
@@ -58,7 +55,7 @@ builder.Services.AddSwaggerGen(c =>
 
     // Enabled OAuth security in Swagger
     var scopes = new Dictionary<string, string>()
-    {};
+    { };
     scopes.Add($"{builder.Configuration["ApiScopeUrl"]}user_impersonation", "Access application on user behalf");
     c.AddSecurityRequirement(new OpenApiSecurityRequirement() {
         {
@@ -71,7 +68,7 @@ builder.Services.AddSwaggerGen(c =>
                 Name = "oauth2",
                 In = ParameterLocation.Header
             },
-            new List <string> ()
+            new List<string> { $"{builder.Configuration["ApiScopeUrl"]}user_impersonation" }
         }
     });
     c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme

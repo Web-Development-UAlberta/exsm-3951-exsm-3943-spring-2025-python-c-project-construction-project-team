@@ -1,0 +1,16 @@
+@model RenovationApp.Server.Models.RenovationType
+
+<h2>Delete Renovation Type</h2>
+
+<div class="form-group">
+    <label>Name:</label>
+    <p>@Model.Name</p>
+    <label>Description:</label>
+    <p>@Model.Description</p>
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Name" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

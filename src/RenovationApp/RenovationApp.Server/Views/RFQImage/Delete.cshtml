@@ -1,0 +1,16 @@
+@model RenovationApp.Server.Models.RFQImage
+
+<h2>Delete RFQ Image</h2>
+
+<div class="form-group">
+    <label>Image URL:</label>
+    <p>@Model.ImageUri</p>
+    <label>Uploaded Timestamp:</label>
+    <p>@Model.UploadedTimestamp</p>
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

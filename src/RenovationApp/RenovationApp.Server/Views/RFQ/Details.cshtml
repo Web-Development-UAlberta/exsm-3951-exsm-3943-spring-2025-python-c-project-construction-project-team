@@ -1,0 +1,35 @@
+@model RenovationApp.Server.Models.RFQ
+
+<h2>RFQ Details</h2>
+
+<div class="card">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Client</dt>
+            <dd class="col-sm-9">@Model.Client?.Name</dd>
+
+            <dt class="col-sm-3">Assigned Employee</dt>
+            <dd class="col-sm-9">@Model.AssignedEmployee?.Name</dd>
+
+            <dt class="col-sm-3">Status</dt>
+            <dd class="col-sm-9">@Model.Status</dd>
+
+            <dt class="col-sm-3">Renovation Type</dt>
+            <dd class="col-sm-9">@Model.RenovationType</dd>
+
+            <dt class="col-sm-3">Preferred Material</dt>
+            <dd class="col-sm-9">@Model.PreferredMaterial</dd>
+
+            <dt class="col-sm-3">Project Address</dt>
+            <dd class="col-sm-9">@Model.ProjectAddress</dd>
+
+            <dt class="col-sm-3">Room Size</dt>
+            <dd class="col-sm-9">@Model.RoomSize</dd>
+
+            <dt class="col-sm-3">Budget</dt>
+            <dd class="col-sm-9">@Model.Budget</dd>
+        </dl>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>

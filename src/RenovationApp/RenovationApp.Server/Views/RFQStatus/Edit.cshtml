@@ -1,0 +1,17 @@
+@model RenovationApp.Server.Models.RFQStatus
+
+<h2>Edit RFQ Status</h2>
+
+<div class="alert alert-info">
+    <strong>Note:</strong> You cannot edit the status name once it's created.
+</div>
+
+<form asp-action="Edit" method="post" autocomplete="off">
+    <input type="hidden" asp-for="Status" />
+    <button type="submit" class="btn btn-primary" disabled>Update</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
