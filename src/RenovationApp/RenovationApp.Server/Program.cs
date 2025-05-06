@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using Minio;
 using System.Reflection;
 using System;
+using RenovationApp.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,7 @@ var username = builder.Configuration["POSTGRES_USERNAME"];
 var password = builder.Configuration["POSTGRES_PASSWORD"];
 
 var connectionString = $"Host={host};Port={port};Database={database};Username={username};Password={password}";
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 
 var config = builder.Configuration;
@@ -36,6 +38,15 @@ builder.Services.AddAuthorization(options =>
     });
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("*").AllowAnyHeader()
+                                                  .AllowAnyMethod();
+                      });
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -91,11 +102,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 
-builder.Services.AddMinio(configureClient => configureClient
-            .WithEndpoint(builder.Configuration["MINIO_ENDPOINT"])
-            .WithCredentials(builder.Configuration["MINIO_ACCESSKEY"], builder.Configuration["MINIO_SECRET"])
-            .WithSSL()
-            .Build());
+builder.Services.AddScoped<IStorageService, MinioStorageService>();
 
 var app = builder.Build();
 
@@ -121,6 +128,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseCors(MyAllowSpecificOrigins);
 
 app.MapFallbackToFile("/index.html");
 

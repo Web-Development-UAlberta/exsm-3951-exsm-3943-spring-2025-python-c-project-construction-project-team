@@ -6,7 +6,7 @@ import { IdTokenData } from '../components/ClaimsDisplay/authDataDisplay';
 import './App.css';
 import reactLogo from '../assets/react.svg'
 import viteLogo from '../assets/vite.svg'
-
+import FileUploadComponent from '../components/FileUploadComponent';
 
 interface Forecast {
     date: string;
@@ -99,6 +99,9 @@ function App({ instance }: { instance: IPublicClientApplication }) {
                         )}
                     </div>
                 ) : null}
+
+                {/* Add the FileUploadComponent */}
+                <FileUploadComponent projectId="example-project-id" apiBaseUrl="http://localhost/api" />
             </AuthenticatedTemplate>
             <UnauthenticatedTemplate>
                 <button className="signInButton" onClick={handleRedirect}>

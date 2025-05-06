@@ -13,6 +13,7 @@ namespace  RenovationApp.Server.Data
         }
 
         public DbSet<ProjectStatus> ProjectStatuses { get; set; }
+        public DbSet<ProjectFile> ProjectFiles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
