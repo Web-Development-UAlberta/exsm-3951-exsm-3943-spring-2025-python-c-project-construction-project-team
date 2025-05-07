@@ -44,10 +44,10 @@ namespace RenovationApp.Server.Models
         public DateTime QuoteEndDate { get; set; }
 
         [Column("start_date_actual", TypeName = "timestamp without time zone")]
-        public DateTime ActualStartDate { get; set; }
+        public DateTime? ActualStartDate { get; set; }
 
         [Column("end_date_actual", TypeName = "timestamp without time zone")]
-        public DateTime ActualEndDate { get; set; }
+        public DateTime? ActualEndDate { get; set; }
 
         // Navigation properties
         [ForeignKey(nameof(ProjectId))]

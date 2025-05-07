@@ -13,6 +13,7 @@ namespace RenovationApp.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProjectServiceInvoiceController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -25,14 +26,27 @@ namespace RenovationApp.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProjectServiceInvoice>>> GetProjectServiceInvoices()
         {
-            return await _context.ProjectServiceInvoices.ToListAsync();
+            try
+            {
+                return await _context.ProjectServiceInvoices
+                    .Include(psi => psi.ProjectService)
+                    .ToListAsync();
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error retrieving data from the database.");
+            }
         }
 
-        // GET api/ProjectServiceInvoice/5
+        // GET: api/ProjectServiceInvoice/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ProjectServiceInvoice>> GetProjectServiceInvoice(int id)
         {
-            var projectServiceInvoice = await _context.ProjectServiceInvoices.FindAsync(id);
+            var projectServiceInvoice = await _context.ProjectServiceInvoices
+                .Include(psi => psi.ProjectService)
+                .ThenInclude(ps => ps.Project)
+                .FirstOrDefaultAsync(psi => psi.Id == id);
+
             if (projectServiceInvoice == null)
             {
                 return NotFound();
@@ -40,14 +54,23 @@ namespace RenovationApp.Server.Controllers
             return projectServiceInvoice;
         }
 
-        // POST api/ProjectServiceInvoice
+        // POST: api/ProjectServiceInvoice
         [HttpPost]
-        public async Task<ActionResult<ProjectServiceInvoice>> PostProjectServiceInvoice(ProjectServiceInvoice projectServiceInvoice)
+        [Authorize(Roles = "Admin,ProjectManager")]
+        public async Task<ActionResult<ProjectServiceInvoice>> CreateProjectServiceInvoice(ProjectServiceInvoice projectServiceInvoice)
         {
-            _context.ProjectServiceInvoices.Add(projectServiceInvoice);
             try
             {
+                projectServiceInvoice.CreatedTimeStamp = DateTime.UtcNow;
+
+                _context.ProjectServiceInvoices.Add(projectServiceInvoice);
                 await _context.SaveChangesAsync();
+
+                await _context.Entry(projectServiceInvoice)
+                    .Reference(psi => psi.ProjectService)
+                    .LoadAsync();
+
+                return CreatedAtAction(nameof(GetProjectServiceInvoice), new { id = projectServiceInvoice.Id }, projectServiceInvoice);
             }
             catch (DbUpdateException)
             {
@@ -60,29 +83,33 @@ namespace RenovationApp.Server.Controllers
                     throw;
                 }
             }
-            return CreatedAtAction(nameof(GetProjectServiceInvoice), new { id = projectServiceInvoice.Id }, projectServiceInvoice);
         }
 
-        // PUT api/ProjectServiceInvoice/5
+        // PUT: api/ProjectServiceInvoice/5
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin,ProjectManager")]
         public async Task<IActionResult> PutProjectServiceInvoice(int id, ProjectServiceInvoice updatedInvoice)
         {
-            if (id != updatedInvoice.Id)
-            {
-                return BadRequest("Invoice ID mismatch.");
-            }
-
-            var existingInvoice = await _context.ProjectServiceInvoices.FindAsync(id);
-            if (existingInvoice == null)
-            {
-                return NotFound();
-            }
-            existingInvoice.Amount = updatedInvoice.Amount;
-            existingInvoice.Paid = updatedInvoice.Paid;
-
             try
             {
+                if (id != updatedInvoice.Id)
+                {
+                    return BadRequest("Invoice ID mismatch.");
+                }
+
+                var existingInvoice = await _context.ProjectServiceInvoices.FindAsync(id);
+                if (existingInvoice == null)
+                {
+                    return NotFound();
+                }
+
+                existingInvoice.Amount = updatedInvoice.Amount;
+                existingInvoice.Paid = updatedInvoice.Paid;
+
+                _context.Entry(existingInvoice).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
+
+                return NoContent();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -95,7 +122,59 @@ namespace RenovationApp.Server.Controllers
                     throw;
                 }
             }
-            return NoContent();
+        }
+
+        // DELETE: api/ProjectServiceInvoice/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProjectServiceInvoice(int id)
+        {
+            try
+            {
+                var projectServiceInvoice = await _context.ProjectServiceInvoices.FindAsync(id);
+                if (projectServiceInvoice == null)
+                {
+                    return NotFound();
+                }
+
+                var projectService = await _context.ProjectServices
+                    .Include(ps => ps.ProjectServiceInvoices)
+                    .FirstOrDefaultAsync(ps => ps.Id == projectServiceInvoice.ProjectServiceId);
+
+                if (projectService == null)
+                {
+                    return NotFound("Associated Project Service not found.");
+                }
+
+                _context.ProjectServiceInvoices.Remove(projectServiceInvoice);
+                await _context.SaveChangesAsync();
+
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error deleting invoice from the database.");
+            }
+        }
+
+        // GET: api/ProjectServiceInvoice/Service/5
+        [HttpGet("ProjectService/{id}")]
+        public async Task<ActionResult<IEnumerable<ProjectServiceInvoice>>> GetInvoicesByProjectServiceId(int id)
+        {
+            var projectService = await _context.ProjectServices.FindAsync(id);
+            if (projectService == null)
+            {
+                return NotFound("Project service not found.");
+            }
+
+            var invoices = await _context.ProjectServiceInvoices
+                .Include(psi => psi.ProjectService)
+                .Where(psi => psi.ProjectServiceId == id)
+                .ToListAsync();
+            if (invoices == null || !invoices.Any())
+            {
+                return NotFound("No invoices found for this project service.");
+            }
+            return invoices;
         }
 
         private bool ProjectServiceInvoiceExists(int id)

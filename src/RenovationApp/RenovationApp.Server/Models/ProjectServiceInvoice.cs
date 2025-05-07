@@ -25,7 +25,6 @@ namespace RenovationApp.Server.Models
         // Navigation properties
 
         [ForeignKey(nameof(ProjectServiceId))]
-        [InverseProperty(nameof(ProjectService.ProjectServiceInvoices))]
         public virtual ProjectService? ProjectService { get; set; } = null!;
     }
 }
