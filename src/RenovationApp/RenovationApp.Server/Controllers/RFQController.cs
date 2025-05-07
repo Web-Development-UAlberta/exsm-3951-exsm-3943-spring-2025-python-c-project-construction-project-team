@@ -16,11 +16,11 @@ namespace RenovationApp.Server.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = "Admin,ProjectManager")]
-    public class RFQController : ControllerBase
+    public class RFQsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
-        public RFQController(ApplicationDbContext context)
+        public RFQsController(ApplicationDbContext context)
         {
             _context = context;
         }
