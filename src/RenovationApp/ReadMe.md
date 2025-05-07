@@ -57,6 +57,7 @@ This command will:
 
 * Frontend: [http://localhost](http://localhost)
 * Backend API: [http://localhost/api](http://localhost/api)
+* Swagger: [https://localhost:60848/swagger/index.html](https://localhost:60848/swagger/index.html)
 
 ### Stopping the Services
 
