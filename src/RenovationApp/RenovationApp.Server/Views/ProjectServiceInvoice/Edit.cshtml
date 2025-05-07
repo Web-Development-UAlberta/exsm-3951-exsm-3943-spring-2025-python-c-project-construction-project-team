@@ -1,0 +1,47 @@
+﻿@model RenovationApp.Server.Models.ProjectServiceInvoice
+
+@{
+    ViewData["Title"] = "Edit Project Service Invoice";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h4>ProjectServiceInvoice</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="CreatedTimeStamp" class="control-label"></label>
+                <input asp-for="CreatedTimeStamp" class="form-control" />
+                <span asp-validation-for="CreatedTimeStamp" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProjectServiceId" class="control-label"></label>
+                <select asp-for="ProjectServiceId" class="form-control" asp-items="ViewBag.ProjectServiceId"></select>
+                <span asp-validation-for="ProjectServiceId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Amount" class="control-label"></label>
+                <input asp-for="Amount" class="form-control" />
+                <span asp-validation-for="Amount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Paid" class="control-label"></label>
+                <input asp-for="Paid" class="form-control" />
+                <span asp-validation-for="Paid" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
