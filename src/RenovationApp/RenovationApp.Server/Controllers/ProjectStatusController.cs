@@ -13,7 +13,7 @@ namespace RenovationApp.Server.Controllers
 {
     [ApiController]
     [Route("/[controller]")]
-    //[Authorize]
+    [Authorize(Roles = "Admin,ProjectManager")]
     public class ProjectStatusController : ControllerBase
     {
         private readonly ApplicationDbContext _context;

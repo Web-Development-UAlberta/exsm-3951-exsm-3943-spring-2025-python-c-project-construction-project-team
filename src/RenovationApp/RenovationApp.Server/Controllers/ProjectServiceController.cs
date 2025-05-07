@@ -13,7 +13,7 @@ namespace RenovationApp.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Admin,ProjectManager")]
     public class ProjectServiceController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -68,7 +68,6 @@ namespace RenovationApp.Server.Controllers
         // POST: api/ProjectService
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [Authorize(Roles = "Admin,ProjectManager")]
         public async Task<ActionResult<ProjectService>> CreateProjectService(ProjectService projectService)
         {
             try
@@ -77,11 +76,6 @@ namespace RenovationApp.Server.Controllers
                 if (project == null)
                 {
                     return NotFound("Project not found.");
-                }
-
-                if (!User.IsInRole("ProjectManager") && !User.IsInRole("Admin"))
-                {
-                    return Forbid();
                 }
 
                 if (projectService.ActualStartDate == default)
@@ -128,7 +122,6 @@ namespace RenovationApp.Server.Controllers
         // PUT: api/ProjectService/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin,ProjectManager")]
         public async Task<IActionResult> PutProjectService(int id, ProjectService projectService)
         {
             if (id != projectService.Id)
@@ -142,10 +135,6 @@ namespace RenovationApp.Server.Controllers
                 if (existingProjectService == null)
                 {
                     return NotFound();
-                }
-                if (!User.IsInRole("ProjectManager") && !User.IsInRole("Admin"))
-                {
-                    return Forbid();
                 }
 
                 int? projectId = existingProjectService.ProjectId;
@@ -194,7 +183,6 @@ namespace RenovationApp.Server.Controllers
 
         // DELETE: api/ProjectService/5
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin,ProjectManager")]
         public async Task<IActionResult> DeleteProjectService(int id)
         {
             try
@@ -206,11 +194,6 @@ namespace RenovationApp.Server.Controllers
                 if (projectService == null)
                 {
                     return NotFound();
-                }
-
-                if (!User.IsInRole("ProjectManager") && !User.IsInRole("Admin"))
-                {
-                    return Forbid();
                 }
 
                 if (projectService.ProjectServiceInvoices.Any())
@@ -230,7 +213,6 @@ namespace RenovationApp.Server.Controllers
 
         // GET: api/ProjectService/Project/5
         [HttpGet("Project/{projectId}")]
-        [Authorize(Roles = "Admin,ProjectManager")]
         public async Task<ActionResult<IEnumerable<ProjectService>>> GetProjectServicesByProject(int projectId)
         {
             try
@@ -239,10 +221,6 @@ namespace RenovationApp.Server.Controllers
                 if (project == null)
                 {
                     return NotFound();
-                }
-                if (!User.IsInRole("ProjectManager") && !User.IsInRole("Admin"))
-                {
-                    return Forbid();
                 }
                 return await _context.ProjectServices
                     .Include(ps => ps.Supplier)

@@ -19,7 +19,7 @@ namespace RenovationApp.Server.Models
         public string PaymentInstructions { get; set; } = null!;
 
         [Column("paid", TypeName = "timestamp without time zone")]
-        public DateTime Paid { get; set; }
+        public DateTime? Paid { get; set; }
 
         [Column("amount", TypeName = "decimal")]
         public decimal Amount { get; set; }

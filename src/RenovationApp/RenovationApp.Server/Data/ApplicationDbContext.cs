@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using RenovationApp.Server.Data.Configurations;
@@ -239,5 +239,6 @@ namespace RenovationApp.Server.Data
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
         }
+        public DbSet<RenovationApp.Server.Models.ClientInvoice> ClientInvoice { get; set; } = default!;
     }
 }

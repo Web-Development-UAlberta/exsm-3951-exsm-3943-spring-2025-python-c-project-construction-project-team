@@ -13,7 +13,7 @@ namespace RenovationApp.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Admin,ProjectManager")]
     public class SupplierController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -25,7 +25,7 @@ namespace RenovationApp.Server.Controllers
 
         // GET: api/Supplier
         [HttpGet]
-        public async Task<ActionResult<ICollection<Supplier>>> GetSuppliers()
+        public async Task<ActionResult<IEnumerable<Supplier>>> GetSuppliers()
         {
             return await _context.Suppliers
                 .Include(s => s.SupplierServiceTypes)
@@ -52,7 +52,6 @@ namespace RenovationApp.Server.Controllers
         // PUT: api/Supplier/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin,ProjectManager")]
         public async Task<IActionResult> PutSupplier(int id, Supplier supplier)
         {
             if (id != supplier.Id)
@@ -66,11 +65,6 @@ namespace RenovationApp.Server.Controllers
                 if (existingSupplier == null)
                 {
                     return NotFound();
-                }
-
-                if (!User.IsInRole("ProjectManager") && !User.IsInRole("Admin"))
-                {
-                    return Forbid();
                 }
 
                 existingSupplier.BusinessName = supplier.BusinessName;
@@ -100,7 +94,6 @@ namespace RenovationApp.Server.Controllers
         // POST: api/Supplier
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [Authorize(Roles = "Admin,ProjectManager")]
         public async Task<ActionResult<Supplier>> CreateSupplier(Supplier supplier)
         {
             try
@@ -131,7 +124,6 @@ namespace RenovationApp.Server.Controllers
 
         // DELETE: api/Supplier/5
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin,ProjectManager")]
         public async Task<IActionResult> DeleteSupplier(int id)
         {
             var supplier = await _context.Suppliers
@@ -155,8 +147,7 @@ namespace RenovationApp.Server.Controllers
 
         // Updated method to return Task<ActionResult<ICollection<ProjectService>>>
         [HttpGet("{id}/ProjectServices")]
-        [Authorize(Roles = "Admin,ProjectManager")]
-        public async Task<ActionResult<ICollection<ProjectService>>> GetSupplierProjectServices(int id)
+        public async Task<ActionResult<IEnumerable<ProjectService>>> GetSupplierProjectServices(int id)
         {
             var supplier = await _context.Suppliers
                 .Include(s => s.ProjectServices)
@@ -169,8 +160,7 @@ namespace RenovationApp.Server.Controllers
         }
 
         [HttpGet("{id}/SupplierServiceTypes")]
-        [Authorize(Roles = "Admin,ProjectManager")]
-        public async Task<ActionResult<ICollection<SupplierServiceType>>> GetSupplierServiceTypes(int id)
+        public async Task<ActionResult<IEnumerable<SupplierServiceType>>> GetSupplierServiceTypes(int id)
         {
             var supplier = await _context.Suppliers
                 .Include(s => s.SupplierServiceTypes)

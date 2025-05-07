@@ -4,7 +4,7 @@ using RenovationApp.Server.Data;
 using RenovationApp.Server.Models;
 using Microsoft.AspNetCore.Authorization;
 
-[Authorize]
+[Authorize(Roles = "Admin,ProjectManager")]
 public class RenovationTypesController : Controller
 {
     private readonly ApplicationDbContext _context;

@@ -72,16 +72,9 @@ namespace RenovationApp.Server.Controllers
 
                 return CreatedAtAction(nameof(GetProjectServiceInvoice), new { id = projectServiceInvoice.Id }, projectServiceInvoice);
             }
-            catch (DbUpdateException)
+            catch (Exception)
             {
-                if (ProjectServiceInvoiceExists(projectServiceInvoice.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error creating new invoice record.");
             }
         }
 
@@ -122,10 +115,15 @@ namespace RenovationApp.Server.Controllers
                     throw;
                 }
             }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error updating invoice record.");
+            }
         }
 
         // DELETE: api/ProjectServiceInvoice/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin,ProjectManager")]
         public async Task<IActionResult> DeleteProjectServiceInvoice(int id)
         {
             try

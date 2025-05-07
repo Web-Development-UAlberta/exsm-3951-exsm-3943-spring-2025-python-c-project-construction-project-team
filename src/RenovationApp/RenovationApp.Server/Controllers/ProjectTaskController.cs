@@ -13,7 +13,7 @@ namespace RenovationApp.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Admin,ProjectManager")]
     public class ProjectTaskController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -66,11 +66,6 @@ namespace RenovationApp.Server.Controllers
                     return NotFound();
                 }
 
-                if (!User.IsInRole("ProjectManager") && !User.IsInRole("Admin"))
-                {
-                    return Forbid();
-                }
-
                 if (projectTask.ProjectId.HasValue)
                 {
                     var project = await _context.Projects.FindAsync(projectTask.ProjectId.Value);
@@ -113,7 +108,6 @@ namespace RenovationApp.Server.Controllers
         // POST: api/ProjectTask
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [Authorize(Roles = "Admin,ProjectManager")]
         public async Task<ActionResult<ProjectTask>> CreateProjectTask(ProjectTask projectTask)
         {
             projectTask.CreatedTimestamp = DateTime.UtcNow;
@@ -132,7 +126,6 @@ namespace RenovationApp.Server.Controllers
 
         // DELETE: api/ProjectTask/5
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin,ProjectManager")]
         public async Task<IActionResult> DeleteProjectTask(int id)
         {
             var projectTask = await _context.ProjectTasks.FindAsync(id);
