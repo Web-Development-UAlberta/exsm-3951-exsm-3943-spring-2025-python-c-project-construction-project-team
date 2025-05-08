@@ -27,14 +27,10 @@ namespace RenovationApp.Server.Models
         [Column("description", TypeName = "text")]
         public string? Description { get; set; } = string.Empty;
 
-        [Required]
         [Column("project_service_type_id", TypeName = "int")]
-        public int ProjectServiceTypeId { get; set; }
+        public int? ProjectServiceTypeId { get; set; } 
         [ForeignKey(nameof(ProjectServiceTypeId))]
-        public ProjectServiceType ProjectServiceType { get; set; } = null!;
-
-        [Column("supplier_id", TypeName = "int")]
-        public int? SupplierId { get; set; }
+        public ProjectServiceType? ProjectServiceType { get; set; } 
 
         [Column("price_quote", TypeName = "decimal(10,2)")]
         public decimal? QuotePrice { get; set; }
@@ -55,7 +51,6 @@ namespace RenovationApp.Server.Models
         public DateTime? ActualEndDate { get; set; }
 
         // Navigation Properties
-        public Supplier Supplier { get; set; } = null!;
   
         [InverseProperty(nameof(ProjectServiceInvoice.ProjectService))]
         public virtual ICollection<ProjectServiceInvoice> ProjectServiceInvoices { get; set; } = new List<ProjectServiceInvoice>();

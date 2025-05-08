@@ -9,16 +9,18 @@ namespace RenovationApp.Server.Models
         [Column("id", TypeName = "int")]
         public int Id { get; set; }
 
+        [Required]
         [Column("comment", TypeName = "text")]
         public string Comment { get; set; } = null!;
 
         [Column("created_timestamp", TypeName = "timestamp without time zone")]
-        public DateTime CreatedTimestamp { get; set; }
+        public DateTime CreatedTimestamp { get; set; } = DateTime.UtcNow; // Default value
 
         [Column("created_by_employee")]
-        public int CreatedByEmployee { get; set; }
+        public int? CreatedByEmployee { get; set; }
+
         [ForeignKey(nameof(CreatedByEmployee))]
-        public virtual User Employee { get; set; } = null!;
+        public virtual User? Employee { get; set; }
 
         [Column("project_id")]
         public int ProjectId { get; set; }

@@ -5,6 +5,26 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RenovationApp.Server.Models
 {
+    public enum ProjectStatus
+    {
+        [Display(Name = "Created")]
+        Created,
+
+        [Display(Name = "In Progress")]
+        InProgress,
+
+        [Display(Name = "On Hold")]
+        OnHold,
+
+        [Display(Name = "Pending")]
+        Pending,
+
+        [Display(Name = "Completed")]
+        Completed,
+
+        [Display(Name = "Cancelled")]
+        Cancelled
+    }
     public class Project
     {
         [Key]
@@ -13,28 +33,31 @@ namespace RenovationApp.Server.Models
         public int Id { get; set; }
 
         [Column("created_timestamp", TypeName = "timestamp without time zone")]
-        public DateTime CreatedTimestamp { get; set; }
+        public DateTime CreatedTimestamp { get; set; } = DateTime.UtcNow; // Default value
 
-        [Required]
         [Column("created_by_employee")]
-        public int CreatedByEmployee { get; set; }
+        public int? CreatedByEmployee { get; set; }
 
         [ForeignKey(nameof(CreatedByEmployee))]
         [InverseProperty("ProjectEmployee")]
-        public virtual User Employee { get; set; } = null!;
+        public virtual User? Employee { get; set; }
 
         [Required]
         [Column("client_id")]
         public int ClientId { get; set; }
-
         [ForeignKey(nameof(ClientId))]
         [InverseProperty("ProjectClient")]
         public virtual User Client { get; set; } = null!;
 
+        [Column("rfq_id", TypeName = "int")]
+        public int? RFQId { get; set; }
+
+        [ForeignKey(nameof(RFQId))]
+        public RFQ? RFQ { get; set; }
+
         [Column("status")]
         public ProjectStatus? Status { get; set; }
 
-        [Required]
         [Column("is_public")]
         public bool IsPublic { get; set; }
 
@@ -49,36 +72,21 @@ namespace RenovationApp.Server.Models
 
         // Navigation collections
         [InverseProperty("Project")]
-        public virtual ICollection<ProjectComment> Comments { get; set; }
+        public virtual ICollection<ProjectComment>? Comments { get; set; } = new List<ProjectComment>();
 
         [InverseProperty("Project")]
-        public virtual ICollection<ProjectFile> Files { get; set; }
+        public virtual ICollection<ProjectFile>? Files { get; set; } = new List<ProjectFile>();
 
         [InverseProperty("Project")]
-        public virtual ICollection<ProjectCommunication> Communications { get; set; }
+        public virtual ICollection<ProjectCommunication>? Communications { get; set; } = new List<ProjectCommunication>();
 
         [InverseProperty("Project")]
-        public virtual ICollection<ClientInvoice> ClientInvoices { get; set; }
-        
+        public virtual ICollection<ClientInvoice>? ClientInvoices { get; set; } = new List<ClientInvoice>();
+
         [InverseProperty("Project")]
-        public ICollection<ProjectService> ProjectServices { get; set; } = new List<ProjectService>();
+        public ICollection<ProjectService>? ProjectServices { get; set; } = new List<ProjectService>();
 
         [InverseProperty(nameof(ProjectTask.Project))]
-        public virtual ICollection<ProjectTask> ProjectTasks { get; set; }
-
-        // Constructor with default values
-        public Project()
-        {
-            CreatedTimestamp = DateTime.UtcNow;
-            IsPublic = false;
-
-            // Initialize collections
-            Comments = new List<ProjectComment>();
-            Files = new List<ProjectFile>();
-            Communications = new List<ProjectCommunication>();
-            ClientInvoices = new List<ClientInvoice>();
-            ProjectServices = new List<ProjectService>();
-            ProjectTasks = new List<ProjectTask>();
-        }
+        public virtual ICollection<ProjectTask>? ProjectTasks { get; set; } = new List<ProjectTask>();
     }
 }

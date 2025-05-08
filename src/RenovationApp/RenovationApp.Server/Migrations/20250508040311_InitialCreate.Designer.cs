@@ -12,8 +12,8 @@ using RenovationApp.Server.Data;
 namespace RenovationApp.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250503100647_CreateProjectSupportingTables")]
-    partial class CreateProjectSupportingTables
+    [Migration("20250508040311_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -157,6 +157,46 @@ namespace RenovationApp.Server.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("RenovationApp.Server.Models.ClientInvoice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal?>("Amount")
+                        .HasColumnType("decimal")
+                        .HasColumnName("amount");
+
+                    b.Property<DateTime>("CreatedTimestamp")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("created_timestamp");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<DateTime?>("Paid")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("paid");
+
+                    b.Property<string>("PaymentInstructions")
+                        .HasColumnType("text")
+                        .HasColumnName("payment_instructions");
+
+                    b.Property<int?>("ProjectId")
+                        .HasColumnType("int")
+                        .HasColumnName("project_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("ClientInvoices");
+                });
+
             modelBuilder.Entity("RenovationApp.Server.Models.Project", b =>
                 {
                     b.Property<int>("Id")
@@ -170,22 +210,20 @@ namespace RenovationApp.Server.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("client_id");
 
-                    b.Property<int>("CreatedByEmployee")
+                    b.Property<int?>("CreatedByEmployee")
                         .HasColumnType("integer")
                         .HasColumnName("created_by_employee");
 
                     b.Property<DateTime>("CreatedTimestamp")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasColumnName("created_timestamp")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .HasColumnName("created_timestamp");
 
                     b.Property<bool>("IsPublic")
                         .HasColumnType("boolean")
                         .HasColumnName("is_public");
 
                     b.Property<decimal?>("QuotePriceOverride")
-                        .HasColumnType("numeric")
+                        .HasColumnType("decimal(10,2)")
                         .HasColumnName("quote_price_override");
 
                     b.Property<DateTime?>("QuoteScheduleEndOverride")
@@ -196,10 +234,13 @@ namespace RenovationApp.Server.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("quote_schedule_start_override");
 
-                    b.Property<string>("StatusId")
-                        .IsRequired()
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("status_id");
+                    b.Property<int?>("RFQId")
+                        .HasColumnType("int")
+                        .HasColumnName("rfq_id");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("text")
+                        .HasColumnName("status");
 
                     b.HasKey("Id");
 
@@ -207,9 +248,10 @@ namespace RenovationApp.Server.Migrations
 
                     b.HasIndex("CreatedByEmployee");
 
-                    b.HasIndex("StatusId");
+                    b.HasIndex("RFQId")
+                        .IsUnique();
 
-                    b.ToTable("projects", (string)null);
+                    b.ToTable("Projects", (string)null);
                 });
 
             modelBuilder.Entity("RenovationApp.Server.Models.ProjectComment", b =>
@@ -226,15 +268,13 @@ namespace RenovationApp.Server.Migrations
                         .HasColumnType("text")
                         .HasColumnName("comment");
 
-                    b.Property<int>("CreatedByEmployee")
+                    b.Property<int?>("CreatedByEmployee")
                         .HasColumnType("integer")
                         .HasColumnName("created_by_employee");
 
                     b.Property<DateTime>("CreatedTimestamp")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasColumnName("created_timestamp")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .HasColumnName("created_timestamp");
 
                     b.Property<int>("ProjectId")
                         .HasColumnType("int")
@@ -246,7 +286,7 @@ namespace RenovationApp.Server.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("project_comments", (string)null);
+                    b.ToTable("ProjectComments");
                 });
 
             modelBuilder.Entity("RenovationApp.Server.Models.ProjectCommunication", b =>
@@ -258,20 +298,14 @@ namespace RenovationApp.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CommunicationMethod")
+                    b.Property<DateTime>("CreatedTimestamp")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("created_timestamp");
+
+                    b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("communication_method");
-
-                    b.Property<DateTime?>("CommunicationTimestamp")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("communication_timestamp");
-
-                    b.Property<DateTime>("CreatedTimestamp")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("created_timestamp")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .HasColumnName("message");
 
                     b.Property<int>("ProjectId")
                         .HasColumnType("int")
@@ -281,7 +315,7 @@ namespace RenovationApp.Server.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("project_communications", (string)null);
+                    b.ToTable("ProjectCommunications");
                 });
 
             modelBuilder.Entity("RenovationApp.Server.Models.ProjectFile", b =>
@@ -313,34 +347,132 @@ namespace RenovationApp.Server.Migrations
                         .HasColumnName("type");
 
                     b.Property<DateTime>("UploadedTimestamp")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasColumnName("uploaded_timestamp")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .HasColumnName("uploaded_timestamp");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("project_files", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_ProjectFile_Type", "type IN ('PNG', 'JPG', 'JPEG', 'SVG', 'DOC', 'PDF')");
-                        });
+                    b.ToTable("ProjectFiles");
                 });
 
-            modelBuilder.Entity("RenovationApp.Server.Models.ProjectStatus", b =>
+            modelBuilder.Entity("RenovationApp.Server.Models.ProjectService", b =>
                 {
-                    b.Property<string>("Status")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("ActualEndDate")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("end_date_actual");
+
+                    b.Property<DateTime?>("ActualStartDate")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("start_date_actual");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("description");
 
-                    b.HasKey("Status");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("name");
 
-                    b.ToTable("project_statuses", (string)null);
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int")
+                        .HasColumnName("project_id");
+
+                    b.Property<int?>("ProjectServiceTypeId")
+                        .HasColumnType("int")
+                        .HasColumnName("project_service_type_id");
+
+                    b.Property<decimal?>("QuoteCost")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("cost_quote");
+
+                    b.Property<DateTime>("QuoteEndDate")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("end_date_quote");
+
+                    b.Property<decimal?>("QuotePrice")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("price_quote");
+
+                    b.Property<DateTime>("QuoteStartDate")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("start_date_quote");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("text")
+                        .HasColumnName("status");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("ProjectServiceTypeId");
+
+                    b.ToTable("ProjectServices", (string)null);
+                });
+
+            modelBuilder.Entity("RenovationApp.Server.Models.ProjectServiceInvoice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("amount");
+
+                    b.Property<DateTime>("CreatedTimeStamp")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("created_timestamp");
+
+                    b.Property<DateTime?>("Paid")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("paid_at");
+
+                    b.Property<int>("ProjectServiceId")
+                        .HasColumnType("int")
+                        .HasColumnName("service_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectServiceId");
+
+                    b.ToTable("ProjectServiceInvoices");
+                });
+
+            modelBuilder.Entity("RenovationApp.Server.Models.ProjectServiceType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProjectServiceTypes");
                 });
 
             modelBuilder.Entity("RenovationApp.Server.Models.ProjectTask", b =>
@@ -352,16 +484,11 @@ namespace RenovationApp.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AssignedUserId")
-                        .HasColumnType("int")
-                        .HasColumnName("assigned_user_id");
-
-                    b.Property<DateTime>("CreatedTimeStamp")
+                    b.Property<DateTime>("CreatedTimestamp")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("created_timestamp");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("description");
 
@@ -370,71 +497,75 @@ namespace RenovationApp.Server.Migrations
                         .HasColumnName("project_id");
 
                     b.Property<string>("Status")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("text")
                         .HasColumnName("status");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("text")
                         .HasColumnName("title");
 
-                    b.HasKey("Id");
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnName("user_id");
 
-                    b.HasIndex("AssignedUserId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("ProjectTask");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ProjectTasks");
                 });
 
             modelBuilder.Entity("RenovationApp.Server.Models.RFQ", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AssignedEmployeeId")
-                        .HasColumnType("integer");
+                    b.Property<int?>("AssignedEmployeeId")
+                        .HasColumnType("int")
+                        .HasColumnName("assigned_employee_id");
 
-                    b.Property<decimal>("Budget")
-                        .HasColumnType("decimal(9, 2)");
+                    b.Property<decimal?>("Budget")
+                        .HasColumnType("decimal(9, 2)")
+                        .HasColumnName("budget");
 
                     b.Property<int>("ClientId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int")
+                        .HasColumnName("client_id");
 
                     b.Property<DateTime>("CreatedTimestamp")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("created_timestamp");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
                     b.Property<string>("PreferredMaterial")
-                        .IsRequired()
                         .HasMaxLength(160)
                         .HasColumnType("character varying(160)");
 
                     b.Property<string>("ProjectAddress")
-                        .IsRequired()
                         .HasMaxLength(160)
                         .HasColumnType("character varying(160)");
 
                     b.Property<string>("RenovationType")
-                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("renovation_type");
+
+                    b.Property<string>("RoomSize")
                         .HasColumnType("text");
 
-                    b.Property<int>("RoomSize")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("character varying(30)");
+                        .HasColumnType("text")
+                        .HasColumnName("status");
 
                     b.HasKey("Id");
 
@@ -442,11 +573,7 @@ namespace RenovationApp.Server.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.HasIndex("RenovationType");
-
-                    b.HasIndex("Status");
-
-                    b.ToTable("RFQs");
+                    b.ToTable("RFQs", (string)null);
                 });
 
             modelBuilder.Entity("RenovationApp.Server.Models.RFQImage", b =>
@@ -462,7 +589,7 @@ namespace RenovationApp.Server.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("RFQId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UploadedTimestamp")
                         .HasColumnType("timestamp with time zone");
@@ -472,32 +599,6 @@ namespace RenovationApp.Server.Migrations
                     b.HasIndex("RFQId");
 
                     b.ToTable("RFQImages");
-                });
-
-            modelBuilder.Entity("RenovationApp.Server.Models.RFQStatus", b =>
-                {
-                    b.Property<string>("Status")
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
-
-                    b.HasKey("Status");
-
-                    b.ToTable("RFQStatuses");
-                });
-
-            modelBuilder.Entity("RenovationApp.Server.Models.RenovationType", b =>
-                {
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.HasKey("Name");
-
-                    b.ToTable("RenovationTypes");
                 });
 
             modelBuilder.Entity("RenovationApp.Server.Models.User", b =>
@@ -586,24 +687,7 @@ namespace RenovationApp.Server.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.HasIndex("Role");
-
-                    b.ToTable("users", (string)null);
-                });
-
-            modelBuilder.Entity("RenovationApp.Server.Models.UserRole", b =>
-                {
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.HasKey("Name");
-
-                    b.ToTable("UserRoles");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -657,31 +741,39 @@ namespace RenovationApp.Server.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("RenovationApp.Server.Models.ClientInvoice", b =>
+                {
+                    b.HasOne("RenovationApp.Server.Models.Project", "Project")
+                        .WithMany("ClientInvoices")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Project");
+                });
+
             modelBuilder.Entity("RenovationApp.Server.Models.Project", b =>
                 {
                     b.HasOne("RenovationApp.Server.Models.User", "Client")
                         .WithMany("ProjectClient")
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("RenovationApp.Server.Models.User", "Employee")
                         .WithMany("ProjectEmployee")
                         .HasForeignKey("CreatedByEmployee")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("RenovationApp.Server.Models.ProjectStatus", "ProjectStatus")
-                        .WithMany("Projects")
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                    b.HasOne("RenovationApp.Server.Models.RFQ", "RFQ")
+                        .WithOne("Project")
+                        .HasForeignKey("RenovationApp.Server.Models.Project", "RFQId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Client");
 
                     b.Navigation("Employee");
 
-                    b.Navigation("ProjectStatus");
+                    b.Navigation("RFQ");
                 });
 
             modelBuilder.Entity("RenovationApp.Server.Models.ProjectComment", b =>
@@ -689,8 +781,7 @@ namespace RenovationApp.Server.Migrations
                     b.HasOne("RenovationApp.Server.Models.User", "Employee")
                         .WithMany("Comments")
                         .HasForeignKey("CreatedByEmployee")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("RenovationApp.Server.Models.Project", "Project")
                         .WithMany("Comments")
@@ -725,18 +816,46 @@ namespace RenovationApp.Server.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("RenovationApp.Server.Models.ProjectTask", b =>
+            modelBuilder.Entity("RenovationApp.Server.Models.ProjectService", b =>
                 {
-                    b.HasOne("RenovationApp.Server.Models.User", "AssignedUser")
-                        .WithMany("ProjectTasks")
-                        .HasForeignKey("AssignedUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("RenovationApp.Server.Models.Project", "Project")
+                        .WithMany("ProjectServices")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("RenovationApp.Server.Models.ProjectServiceType", "ProjectServiceType")
+                        .WithMany("ProjectServices")
+                        .HasForeignKey("ProjectServiceTypeId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Project");
+
+                    b.Navigation("ProjectServiceType");
+                });
+
+            modelBuilder.Entity("RenovationApp.Server.Models.ProjectServiceInvoice", b =>
+                {
+                    b.HasOne("RenovationApp.Server.Models.ProjectService", "ProjectService")
+                        .WithMany("ProjectServiceInvoices")
+                        .HasForeignKey("ProjectServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProjectService");
+                });
+
+            modelBuilder.Entity("RenovationApp.Server.Models.ProjectTask", b =>
+                {
                     b.HasOne("RenovationApp.Server.Models.Project", "Project")
                         .WithMany("ProjectTasks")
                         .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("RenovationApp.Server.Models.User", "AssignedUser")
+                        .WithMany("ProjectTasks")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("AssignedUser");
 
@@ -748,34 +867,17 @@ namespace RenovationApp.Server.Migrations
                     b.HasOne("RenovationApp.Server.Models.User", "AssignedEmployee")
                         .WithMany()
                         .HasForeignKey("AssignedEmployeeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("RenovationApp.Server.Models.User", "Client")
                         .WithMany("RFQs")
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("RenovationApp.Server.Models.RenovationType", "RenovationTypeNavigation")
-                        .WithMany("RFQs")
-                        .HasForeignKey("RenovationType")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RenovationApp.Server.Models.RFQStatus", "RFQStatus")
-                        .WithMany("RFQs")
-                        .HasForeignKey("Status")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("AssignedEmployee");
 
                     b.Navigation("Client");
-
-                    b.Navigation("RFQStatus");
-
-                    b.Navigation("RenovationTypeNavigation");
                 });
 
             modelBuilder.Entity("RenovationApp.Server.Models.RFQImage", b =>
@@ -789,46 +891,36 @@ namespace RenovationApp.Server.Migrations
                     b.Navigation("RFQ");
                 });
 
-            modelBuilder.Entity("RenovationApp.Server.Models.User", b =>
-                {
-                    b.HasOne("RenovationApp.Server.Models.UserRole", "UserRole")
-                        .WithMany("Users")
-                        .HasForeignKey("Role")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("UserRole");
-                });
-
             modelBuilder.Entity("RenovationApp.Server.Models.Project", b =>
                 {
+                    b.Navigation("ClientInvoices");
+
                     b.Navigation("Comments");
 
                     b.Navigation("Communications");
 
                     b.Navigation("Files");
 
+                    b.Navigation("ProjectServices");
+
                     b.Navigation("ProjectTasks");
                 });
 
-            modelBuilder.Entity("RenovationApp.Server.Models.ProjectStatus", b =>
+            modelBuilder.Entity("RenovationApp.Server.Models.ProjectService", b =>
                 {
-                    b.Navigation("Projects");
+                    b.Navigation("ProjectServiceInvoices");
+                });
+
+            modelBuilder.Entity("RenovationApp.Server.Models.ProjectServiceType", b =>
+                {
+                    b.Navigation("ProjectServices");
                 });
 
             modelBuilder.Entity("RenovationApp.Server.Models.RFQ", b =>
                 {
+                    b.Navigation("Project");
+
                     b.Navigation("RFQImages");
-                });
-
-            modelBuilder.Entity("RenovationApp.Server.Models.RFQStatus", b =>
-                {
-                    b.Navigation("RFQs");
-                });
-
-            modelBuilder.Entity("RenovationApp.Server.Models.RenovationType", b =>
-                {
-                    b.Navigation("RFQs");
                 });
 
             modelBuilder.Entity("RenovationApp.Server.Models.User", b =>
@@ -842,11 +934,6 @@ namespace RenovationApp.Server.Migrations
                     b.Navigation("ProjectTasks");
 
                     b.Navigation("RFQs");
-                });
-
-            modelBuilder.Entity("RenovationApp.Server.Models.UserRole", b =>
-                {
-                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

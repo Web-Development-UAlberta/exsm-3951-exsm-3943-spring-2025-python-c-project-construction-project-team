@@ -3,6 +3,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RenovationApp.Server.Models
 {
+    public enum FileType
+    {
+        PNG,
+        JPG,
+        JPEG,
+        SVG,
+        DOC,
+        PDF
+    }
     public class ProjectFile
     {
         [Key]
