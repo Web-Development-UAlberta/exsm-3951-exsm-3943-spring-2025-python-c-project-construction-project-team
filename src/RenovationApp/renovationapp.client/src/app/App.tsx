@@ -101,7 +101,7 @@ function App({ instance }: { instance: IPublicClientApplication }) {
                 ) : null}
 
                 {/* Add the FileUploadComponent */}
-                <FileUploadComponent projectId="example-project-id" apiBaseUrl="http://localhost/api" backendRootUrl="http://localhost:9000" />
+                <FileUploadComponent projectId="1" apiBaseUrl="http://localhost/api" backendRootUrl="http://localhost:9000" />
             </AuthenticatedTemplate>
             <UnauthenticatedTemplate>
                 <button className="signInButton" onClick={handleRedirect}>

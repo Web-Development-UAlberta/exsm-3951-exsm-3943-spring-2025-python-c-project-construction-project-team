@@ -11,7 +11,7 @@ const FileUploadComponent: React.FC<FileUploadComponentProps> = ({ projectId, ap
     const [fileName, setFileName] = useState('');
     const [description, setDescription] = useState('');
     const [uploadStatus, setUploadStatus] = useState<string | null>(null);
-    const [fileType, setFileType] = useState<'image' | 'file'>('image');
+    const [fileType, setFileType] = useState<'image' | 'document'>('image');
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files.length > 0) {
@@ -27,7 +27,7 @@ const FileUploadComponent: React.FC<FileUploadComponentProps> = ({ projectId, ap
 
         try {
             // Step 1: Get the presigned upload URL
-            const response = await fetch(`${apiBaseUrl}/Files/upload-url`, {
+            const response = await fetch(`${apiBaseUrl}/ProjectFiles/upload-url`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'accept': '*/*' },
                 body: JSON.stringify({
@@ -123,9 +123,9 @@ const FileUploadComponent: React.FC<FileUploadComponentProps> = ({ projectId, ap
                     <label style={{ marginLeft: '10px' }}>
                         <input
                             type="radio"
-                            value="file"
-                            checked={fileType === 'file'}
-                            onChange={() => setFileType('file')}
+                            value="document"
+                            checked={fileType === 'document'}
+                            onChange={() => setFileType('document')}
                         />
                         File
                     </label>
