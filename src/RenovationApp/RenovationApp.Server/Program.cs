@@ -1,12 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using RenovationApp.Server.Data;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
-using Minio;
-using System.Reflection;
-using System;
 using RenovationApp.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);

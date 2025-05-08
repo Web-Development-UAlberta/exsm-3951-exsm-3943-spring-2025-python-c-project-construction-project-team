@@ -21,7 +21,7 @@ namespace RenovationApp.Server.Services
             string accessKey = config["MINIO_ACCESSKEY"] ?? throw new ArgumentNullException("MINIO_ACCESSKEY");
             string secretKey = config["MINIO_SECRET"] ?? throw new ArgumentNullException("MINIO_SECRET");
 
-            bool useSsl = bool.TryParse(config["MINIO_USE_SSL"], out var ssl) ? ssl : true;
+            bool useSsl = false;
 
             var minioClient = new MinioClient()
                 .WithEndpoint(endpoint)
