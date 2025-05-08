@@ -1,20 +1,20 @@
-name: .NET Build and Test
+name: .NET Backend Tests
 
 on:
   push:
-    branches: [ "**" ]
+    branches: [ "main", "dev", "feature/**" ]
   pull_request:
-    branches: [ "**" ]
+    branches: [ "main", "dev" ]
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Setup .NET SDK
+    - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '8.0.0'
@@ -30,7 +30,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
 
-    - name: Build the solution
+    - name: Build project
       run: dotnet build --configuration Release --no-restore
 
     - name: Run tests

@@ -16,6 +16,7 @@
 - [Functional End-to-End Test Scenarios](#-functional-end-to-end-test-scenarios)
 - [Frontend UI Test Cases](#️-frontend-ui-test-cases)
 - [Backend Test Cases](#-backend-test-cases)
+  - [Positive Test Scenarios](#-positive-test-scenarios)
 - [Negative Test Scenarios (Invalid Input & Unauthorized Access)](#️-negative-test-scenarios-invalid-input--unauthorized-access)
 - [Edge Case Test Scenarios](#️-edge-case-test-scenarios)
 - [Success and Error Conditions](#️-success-and-error-conditions)
@@ -152,7 +153,7 @@ These rules serve as the basis for the positive, negative, and edge case test sc
 | Email                    | Required, valid email format                                                     | “Invalid email address format.”                     |
 | Phone Number             | Optional, numeric only, 10–15 digits                                             | “Please enter a valid phone number.”                |
 | Preferred Materials  | Required, free-text string, 2–160 characters, alphanumeric only (letters and numbers, no symbols)                           | “Please enter a valid description of material using only letters and numbers.”      |
-| Room Size (RFQ)    | Required, free-text string, 2–30 characters, alphabetic only                         | “Please enter a valid room size description (e.g., 'large room').”               |
+| Room Size (RFQ)    | Required. 2–30 characters. Only alphabetic characters and spaces allowed. No numbers or punctuation. Descriptive, not generic                        | “Please enter a valid room size (e.g., 'Master Bedroom', 'Spacious Kitchen')”               |
 | Budget (RFQ)             | Required, must be a positive number                                              | “Budget must be greater than 0.”                    |
 | File Upload              | Max 10MB, allowed types: jpg, png, pdf                                           | “File exceeds 10MB or unsupported type.”            |
 | Design Style (RFQ)       | Optional, must be selected from dropdown                                         | “Invalid design style selected.”                    |
@@ -335,6 +336,16 @@ These test cases validate React component behavior, interaction flows, and condi
 ## Backend Test Cases
 
 Backend test coverage for data validation, API behavior, and database interaction using EF Core and PostgreSQL.
+
+### Positive Test Scenarios
+
+| Test Case ID | Endpoint                      | Input                                | Expected Result                          |
+|--------------|-------------------------------|--------------------------------------|------------------------------------------|
+| BE-COM-01    | POST `/api/communication`     | Valid RFQ ID and message body        | 201 Created, comment saved and returned  |
+| BE-TASK-01   | POST `/api/tasks`             | Valid task for project and due date  | 201 Created, task linked to project      |
+| BE-GAL-06    | GET `/api/gallery`            | Valid renovation type and tag filter | 200 OK, filtered images                  |
+| BE-CAL-01    | GET `/api/calendar`           | Valid JWT and assigned user ID       | 200 OK, user’s scheduled tasks           |
+
 
 ### Renovation Request (`POST /api/request`)
 
