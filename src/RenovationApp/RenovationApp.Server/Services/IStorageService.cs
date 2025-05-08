@@ -1,10 +1,10 @@
-﻿using RenovationApp.Server.Dtos;
+﻿using RenovationApp.Server.Services.Fileservice.Dtos;
 
 namespace RenovationApp.Server.Services
 {
     public interface IStorageService
     {
-        Task<PresignedUploadResult> GeneratePresignedUploadUrlAsync(string fileType, string projectId, string fileName, TimeSpan expiry);
-        Task<string> GeneratePresignedDownloadUrlAsync(string objectKey); // Updated to return a single URL
+        Task<PresignedUploadResult> GeneratePresignedUploadUrlAsync(string bucketName, string fileType, int projectId, string fileName, TimeSpan expiry);
+        Task<string> GeneratePresignedDownloadUrlAsync(string bucketName, string objectKey);
     }
 }

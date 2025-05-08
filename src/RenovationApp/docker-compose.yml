@@ -32,6 +32,8 @@ services:
       MINIO_ACCESSKEY: ${MINIO_ROOT_USER}
       MINIO_SECRET: ${MINIO_ROOT_PASSWORD}
       MINIO_ENDPOINT: localhost:9000
+      MINIO_RFQ_BUCKET: rfq-files
+      MINIO_PROJECT_BUCKET: project-files
       SERVICE_PORT: 80
 
     networks:
