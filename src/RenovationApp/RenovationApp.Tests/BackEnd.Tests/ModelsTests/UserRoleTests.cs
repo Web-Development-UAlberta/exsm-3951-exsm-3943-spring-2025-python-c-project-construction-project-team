@@ -3,11 +3,11 @@ using RenovationApp.Server.Models;
 
 namespace RenovationApp.Tests
 {
-    public class ModelUserRoleTests
+    public class UserRoleTests
     {
         private readonly DbContextOptions<ApplicationDbContext> _options;
 
-        public ModelUserRoleTests()
+        public UserRoleTests()
         {
             _options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase("Test_UserRoleModel")

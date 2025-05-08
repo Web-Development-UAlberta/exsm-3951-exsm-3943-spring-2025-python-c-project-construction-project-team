@@ -3,11 +3,11 @@ using RenovationApp.Server.Models;
 
 namespace RenovationApp.Tests
 {
-    public class ModelRFQImageTests
+    public class RFQImageTests
     {
         private readonly DbContextOptions<ApplicationDbContext> _options;
 
-        public ModelRFQImageTests()
+        public RFQImageTests()
         {
             _options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase("Test_RFQImageModel")
