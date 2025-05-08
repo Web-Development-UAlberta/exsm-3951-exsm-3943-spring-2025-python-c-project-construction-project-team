@@ -56,10 +56,10 @@ jobs:
         done
 
     - name: Restore .NET dependencies
-      run: dotnet restore RenovationApp.Server/RenovationApp.Server.csproj
+      run: dotnet restore src/RenovationApp.Server/RenovationApp.Server.csproj
 
     - name: Build the server project
-      run: dotnet build RenovationApp.Server/RenovationApp.Server.csproj --configuration Release --no-restore
+      run: dotnet build src/RenovationApp.Server/RenovationApp.Server.csproj --configuration Release --no-restore
 
     - name: Restore EF Core CLI tools
       run: dotnet tool install --global dotnet-ef
@@ -68,7 +68,7 @@ jobs:
       run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
     - name: Apply EF Core migrations
-      run: dotnet ef database update --project RenovationApp.Server/RenovationApp.Server.csproj
+      run: dotnet ef database update --project src/RenovationApp.Server/RenovationApp.Server.csproj
 
     - name: Run backend integration tests
-      run: dotnet test RenovationApp.Tests/BackEnd.Tests/RenovationApp.BackEnd.Tests.csproj --no-build --configuration Release --filter Category=Integration
+      run: dotnet test src/RenovationApp.Tests/BackEnd.Tests/RenovationApp.BackEnd.Tests.csproj --no-build --configuration Release --filter Category=Integration
