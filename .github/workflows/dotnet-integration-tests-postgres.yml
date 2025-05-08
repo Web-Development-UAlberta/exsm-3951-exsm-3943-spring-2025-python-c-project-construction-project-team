@@ -71,4 +71,4 @@ jobs:
       run: dotnet ef database update --project RenovationApp.Server/RenovationApp.Server.csproj
 
     - name: Run backend integration tests
-      run: dotnet test RenovationApp.Tests/BackEnd.Tests/BackEnd.Tests.csproj --no-build --configuration Release --filter Category=Integration
+      run: dotnet test RenovationApp.Tests/BackEnd.Tests/RenovationApp.BackEnd.Tests.csproj --no-build --configuration Release --filter Category=Integration
