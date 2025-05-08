@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
 
-interface FileUploadComponentProps {
-    projectId: string;
+interface RFQImageUploadComponentProps {
+    rfqId: string;
     apiBaseUrl: string;
     backendRootUrl: string; // New prop for the backend root URL
 }
 
-const FileUploadComponent: React.FC<FileUploadComponentProps> = ({ projectId, apiBaseUrl, backendRootUrl }) => {
+const RFQImageUploadComponent: React.FC<RFQImageUploadComponentProps> = ({ rfqId, apiBaseUrl, backendRootUrl }) => {
     const [file, setFile] = useState<File | null>(null);
     const [fileName, setFileName] = useState('');
-    const [description, setDescription] = useState('');
     const [uploadStatus, setUploadStatus] = useState<string | null>(null);
-    const [fileType, setFileType] = useState<'image' | 'document'>('image');
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files.length > 0) {
@@ -31,10 +29,8 @@ const FileUploadComponent: React.FC<FileUploadComponentProps> = ({ projectId, ap
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'accept': '*/*' },
                 body: JSON.stringify({
-                    projectId,
-                    fileType, // Use the selected file type from radio buttons
-                    fileName,
-                    description,
+                    rfqId,
+                    fileName
                 }),
             });
 
@@ -70,8 +66,6 @@ const FileUploadComponent: React.FC<FileUploadComponentProps> = ({ projectId, ap
                 // Clear form after successful upload
                 setFile(null);
                 setFileName('');
-                setDescription('');
-                setFileType('image');
                 
                 // Also clear the file input element
                 const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
@@ -91,7 +85,7 @@ const FileUploadComponent: React.FC<FileUploadComponentProps> = ({ projectId, ap
 
     return (
         <div>
-            <h2>Upload a File</h2>
+            <h2>Upload a File - RFQ</h2>
             <div>
                 <label>
                     File:
@@ -108,42 +102,10 @@ const FileUploadComponent: React.FC<FileUploadComponentProps> = ({ projectId, ap
                     />
                 </label>
             </div>
-            <div>
-                <label>File Type:</label>
-                <div>
-                    <label>
-                        <input
-                            type="radio"
-                            value="image"
-                            checked={fileType === 'image'}
-                            onChange={() => setFileType('image')}
-                        />
-                        Image
-                    </label>
-                    <label style={{ marginLeft: '10px' }}>
-                        <input
-                            type="radio"
-                            value="document"
-                            checked={fileType === 'document'}
-                            onChange={() => setFileType('document')}
-                        />
-                        File
-                    </label>
-                </div>
-            </div>
-            <div>
-                <label>
-                    Description:
-                    <textarea
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                    />
-                </label>
-            </div>
             <button onClick={handleUpload}>Upload</button>
             {uploadStatus && <p>{uploadStatus}</p>}
         </div>
     );
 };
 
-export default FileUploadComponent;
+export default RFQImageUploadComponent;

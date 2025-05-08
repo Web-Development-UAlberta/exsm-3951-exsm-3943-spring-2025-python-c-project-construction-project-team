@@ -7,6 +7,7 @@ import './App.css';
 import reactLogo from '../assets/react.svg'
 import viteLogo from '../assets/vite.svg'
 import FileUploadComponent from '../components/FileUploadComponent';
+import RFQImageUploadComponent from '../components/RFQImgUploadComponent';
 
 interface Forecast {
     date: string;
@@ -86,6 +87,8 @@ function App({ instance }: { instance: IPublicClientApplication }) {
           </p>
           <div className="App">
             <AuthenticatedTemplate>
+                <FileUploadComponent projectId="1" apiBaseUrl="http://localhost/api" backendRootUrl="http://localhost:9000" />
+                <RFQImageUploadComponent rfqId="1" apiBaseUrl="http://localhost/api" backendRootUrl="http://localhost:9000" />
                 <button className="signInButton" onClick={handleLogout}>
                     Log out
                 </button>                
@@ -100,8 +103,6 @@ function App({ instance }: { instance: IPublicClientApplication }) {
                     </div>
                 ) : null}
 
-                {/* Add the FileUploadComponent */}
-                <FileUploadComponent projectId="1" apiBaseUrl="http://localhost/api" backendRootUrl="http://localhost:9000" />
             </AuthenticatedTemplate>
             <UnauthenticatedTemplate>
                 <button className="signInButton" onClick={handleRedirect}>

@@ -25,7 +25,7 @@ namespace RenovationApp.Server.Controllers
         }
 
         [HttpPost("upload-url")]
-        public async Task<IActionResult> GetUploadUrl([FromBody] UploadFileRequestDto dto)
+        public async Task<IActionResult> GetUploadUrl([FromBody] UploadProjectFileRequestDto dto)
         {
             // Check if the project exists
             var project = await _db.Projects.FindAsync(dto.ProjectId);
