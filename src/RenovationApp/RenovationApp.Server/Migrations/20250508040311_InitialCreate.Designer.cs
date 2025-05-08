@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RenovationApp.Server.Data;
@@ -11,9 +12,11 @@ using RenovationApp.Server.Data;
 namespace RenovationApp.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250508040311_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -525,21 +528,20 @@ namespace RenovationApp.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AssignedEmployeeId")
-                        .HasColumnType("varchar(255)")
+                    b.Property<int?>("AssignedEmployeeId")
+                        .HasColumnType("int")
                         .HasColumnName("assigned_employee_id");
 
                     b.Property<decimal?>("Budget")
                         .HasColumnType("decimal(9, 2)")
                         .HasColumnName("budget");
 
-                    b.Property<string>("ClientId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)")
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int")
                         .HasColumnName("client_id");
 
                     b.Property<DateTime>("CreatedTimestamp")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("timestamp without time zone")
                         .HasColumnName("created_timestamp");
 
                     b.Property<string>("Description")
@@ -566,6 +568,10 @@ namespace RenovationApp.Server.Migrations
                         .HasColumnName("status");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AssignedEmployeeId");
+
+                    b.HasIndex("ClientId");
 
                     b.ToTable("RFQs", (string)null);
                 });
@@ -856,6 +862,24 @@ namespace RenovationApp.Server.Migrations
                     b.Navigation("Project");
                 });
 
+            modelBuilder.Entity("RenovationApp.Server.Models.RFQ", b =>
+                {
+                    b.HasOne("RenovationApp.Server.Models.User", "AssignedEmployee")
+                        .WithMany()
+                        .HasForeignKey("AssignedEmployeeId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("RenovationApp.Server.Models.User", "Client")
+                        .WithMany("RFQs")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AssignedEmployee");
+
+                    b.Navigation("Client");
+                });
+
             modelBuilder.Entity("RenovationApp.Server.Models.RFQImage", b =>
                 {
                     b.HasOne("RenovationApp.Server.Models.RFQ", "RFQ")
@@ -908,6 +932,8 @@ namespace RenovationApp.Server.Migrations
                     b.Navigation("ProjectEmployee");
 
                     b.Navigation("ProjectTasks");
+
+                    b.Navigation("RFQs");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,138 +1,127 @@
-# Renovation Station
+# Renovation Project
 
-Welcome to **Renovation Station**, a web platform built to streamline project acquisition, service browsing, and renovation management for homeowners and contractors.
+A full-stack web application developed for **Bob & Susan Renovations**, designed to streamline communication and project management for both homeowners and contractors. Built with a modern tech stack, the app supports secure authentication, service browsing, project tracking, and more.
 
-## Project Overview
+---
 
-Renovation Station connects homeowners seeking renovation services with a professional renovation team.  
+## 🔧 Tech Stack
 
-It provides a smooth experience for:
-- Browsing services
-- Submitting renovation requests
-- Managing projects and customer communications
+* **Backend:** .NET Core API
+* **Frontend:** React
+* **Database:** PostgreSQL
+* **Containerization:** Docker
+* **Reverse Proxy:** NGINX
 
+---
 
-## Features
+## 📁 Project Structure
 
-### Homeowner Portal
-- Account registration and login with email verification
-- Browse available renovation services:
-  - Kitchen remodels
-  - Bathroom renovations
-  - Basement finishing
-  - Home additions
-- Submit detailed renovation requests:
-  - Room dimensions
-  - Preferred materials
-  - Budget
-  - Design styles
-  - Upload reference images
-- View a project gallery with filtering and search
+```
+project-root/
+├── RenovationApp.Server/     # Backend API (.NET Core)
+├── renovationapp.client/     # Frontend (React)
+├── docker-compose.yml        # Docker configuration
+├── nginx.conf                # NGINX configuration
+└── certs/                    # SSL certificates
+```
 
-### Contractor Portal
-- View and manage incoming renovation requests
-- Assign Project Managers (PMs)
-- Generate custom quotes for clients
-- Communicate with homeowners
-- Track project statuses and timelines
-- Access task calendars and Customer relationship management (CRM) dashboard
+---
 
-
-## Tech Stack
-
-| Frontend | Backend | Database |
-|:--------:|:-------:|:--------:|
-| React.js | ASP.NET Core MVC | PostgresSQL |
-
-- **Authentication**: JSON Web Tokens (JWT)
-- **API**: RESTful API endpoints
-- **Styling**: Tailwind CSS
-
-
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
-- [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-- [Node.js + npm](https://nodejs.org/)
-- [PostgreSQL](https://www.postgresql.org/)
 
-### Installation Steps
+Ensure you have the following installed:
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/Web-Development-UAlberta/exsm-3951-exsm-3943-spring-2025-python-c-project-construction-project-team.git
-   ```
+* [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+* [Node.js + npm](https://nodejs.org/)
+* [PostgreSQL](https://www.postgresql.org/)
+* Docker & Docker Compose
 
-2. **Backend Setup:**
-   ```bash
-   cd backend
-   dotnet restore
-   dotnet ef database update
-   dotnet run
-   ```
+Also, configure your environment variables as described below.
 
-3. **Frontend Setup:**
-   ```bash
-   cd frontend
-   npm install
-   npm run dev
-   ```
+### Environment Variables
 
-4. **Access the Application:**
-   - Frontend: `http://localhost:3000`
-   - Backend API: `http://localhost:5000`
+Create a `.env` file in the project root and include:
 
----
+```env
+POSTGRES_USER=your_db_user
+POSTGRES_PASSWORD=your_db_password
+POSTGRES_DB=your_db_name
+```
 
-## Testing
+### Running the Application
 
-- Backend tests: `dotnet test`
-- Frontend tests: `npm run test`
+1. **Clone the repository**
 
+2. **Start Docker Desktop**
 
-## Roles & Permissions
+3. **Launch the project**
 
-| Role          | Capabilities |
-|---------------|--------------|
-| Homeowner     | Browse, Submit Requests, View Gallery |
-| Project Manager | Manage Requests, Assign Projects, Communicate, Generate Quotes |
-| Admin         | Full access to user management, service management, and system configurations |
+   * Open `RenovationApp.sln` in Visual Studio.
+   * Select `docker-compose` as the startup item and run.
 
+This will:
 
+* Set up the PostgreSQL database
+* Build and run the backend and frontend
+* Start the NGINX reverse proxy
 
-## Future Enhancements
+4. **Access the App**
 
-- 3D Room Planner Integration
-- Payment gateway integration
-- SMS notification system
-- Advanced project analytics dashboard
-
-
-## Contributing
-
-Please open an issue first to discuss changes you would like to make.
-
-### Contribution Steps
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/your-feature`)
-3. Commit your changes (`git commit -m 'Add your feature'`)
-4. Push to the branch (`git push origin feature/your-feature`)
-5. Open a pull request
-
-
-## Authors
-
-- Clarisse Buniel
-- David Rochefort
-- Evan Gamble
-- Xiaojing Shi
+   * Frontend: [http://localhost](http://localhost)
+   * Backend API: [http://localhost/api](http://localhost/api)
+   * Swagger Docs: [https://localhost:60848/swagger/index.html](https://localhost:60848/swagger/index.html)
 
 ---
 
-### Last Update
+## 🧰 Features
 
-2025-04-25
+### 🏠 Homeowner Portal
 
-### Creation Date
+* Account registration with email verification
+* Browse renovation services
+* Submit detailed renovation requests
+* View a searchable, filterable project gallery
 
-2025-04-25
+### 🧰 Contractor Portal
+
+* Manage renovation requests
+* Assign project managers
+* Create and send custom quotes
+* Chat with homeowners
+* Track project timelines and status
+* Use built-in CRM tools and calendars
+
+---
+
+## 👥 Roles & Permissions
+
+| Role            | Capabilities                                                   |
+| --------------- | -------------------------------------------------------------- |
+| Homeowner       | Browse services, submit requests, view gallery                 |
+| Project Manager | Manage requests, assign projects, communicate, generate quotes |
+| Admin           | Full access to users, services, and system settings            |
+
+---
+
+## 🔮 Future Enhancements
+
+* 3D Room Planner integration
+* Payment gateway support
+* SMS notifications
+* Advanced analytics dashboard
+
+---
+
+## 👨‍💻 Authors
+
+* Clarisse Buniel
+* David Rochefort
+* Evan Gamble
+* Xiaojing Shi
+
+---
+
+**Created:** 2025-04-25
+**Last Updated:** 2025-05-07
