@@ -16,8 +16,8 @@ namespace RenovationApp.Server.Models
         [Column("project_id", TypeName = "int")]
         public int? ProjectId { get; set; }
 
-        [Column("assigned_user_id", TypeName = "int")]
-        public int AssignedUserId { get; set; }
+        [Column("user_id", TypeName = "int")]
+        public int UserId { get; set; }
 
         [Required]
         [Column("title", TypeName = "text")]
@@ -36,10 +36,10 @@ namespace RenovationApp.Server.Models
         // Navigation properties
         [ForeignKey(nameof(ProjectId))]
         [InverseProperty(nameof(Project.ProjectTasks))]
-        public virtual Project? Project { get; set; } = null!;
+        public virtual Project? Project { get; set; }
 
-        [ForeignKey(nameof(AssignedUserId))]
+        [ForeignKey(nameof(UserId))]
         [InverseProperty(nameof(User.ProjectTasks))]
-        public virtual User AssignedUser { get; set; } = null!;
+        public virtual User? AssignedUser { get; set; }
     }
 }

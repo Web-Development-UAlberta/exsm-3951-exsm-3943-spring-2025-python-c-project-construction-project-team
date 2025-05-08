@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using RenovationApp.Server.Data.Configurations;
 using RenovationApp.Server.Models;
-using System.Reflection.Emit;
 
 namespace RenovationApp.Server.Data
 {
@@ -14,230 +13,197 @@ namespace RenovationApp.Server.Data
         {
         }
 
-        public new DbSet<User> Users { get; set; }
-        public new DbSet<UserRole> UserRoles { get; set; }
-        public DbSet<RFQ> RFQs { get; set; }
-        public DbSet<RFQStatus> RFQStatuses { get; set; }
-        public DbSet<RFQImage> RFQImages { get; set; }
-        public DbSet<RenovationType> RenovationTypes { get; set; }
-
         public DbSet<Project> Projects { get; set; } = null!;
-        public DbSet<ProjectStatus> ProjectStatuses { get; set; }
         public DbSet<ProjectComment> ProjectComments { get; set; } = null!;
         public DbSet<ProjectFile> ProjectFiles { get; set; } = null!;
         public DbSet<ProjectCommunication> ProjectCommunications { get; set; } = null!;
-        public DbSet<ProjectTask> ProjectTasks { get; set; } = null!;
+        public DbSet<ClientInvoice> ClientInvoices { get; set; } = null!;
         public DbSet<ProjectService> ProjectServices { get; set; } = null!;
         public DbSet<ProjectServiceType> ProjectServiceTypes { get; set; } = null!;
+        public DbSet<ProjectTask> ProjectTasks { get; set; } = null!;
         public DbSet<Supplier> Suppliers { get; set; } = null!;
         public DbSet<SupplierServiceType> SupplierServiceTypes { get; set; } = null!;
+        public DbSet<RFQ> RFQs { get; set; } = null!;
+        public DbSet<RFQImage> RFQImages { get; set; } = null!;
         public DbSet<ProjectServiceInvoice> ProjectServiceInvoices { get; set; } = null!;
 
-        protected override void OnModelCreating(ModelBuilder builder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(builder);
+            base.OnModelCreating(modelBuilder);
 
-            // Apply configurations
-            builder.ApplyConfiguration(new ProjectFileConfiguration());
-            builder.EnforceLowerCaseSchema();
+            // Apply all configurations
+            modelBuilder.ApplyConfiguration(new ProjectFileConfiguration());
+            
+            // Configure enums to be stored as strings
+            modelBuilder.Entity<Project>()
+                .Property(e => e.Status)
+                .HasConversion<string>();
 
-            // Configuration User Relationships
-            builder.Entity<User>()
-                .HasOne(u => u.UserRole)
-                .WithMany(r => r.Users)
-                .HasForeignKey(u => u.Role)
-                .HasPrincipalKey(r => r.Name)
-                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<ProjectService>()
+                .Property(e => e.Status)
+                .HasConversion<string>();
 
-            builder.Entity<User>()
-                .HasMany(u => u.ProjectEmployee)
-                .WithOne(p => p.Employee)
+            modelBuilder.Entity<RFQ>()
+                .Property(e => e.Status)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<RFQ>()
+                .Property(e => e.RenovationType)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<RFQ>()
+                .Property(e => e.RoomSize)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<User>()
+                .Property(e => e.Role)
+                .HasConversion<string>();
+
+            // Configure relationships
+
+            // User and Project relationship
+            modelBuilder.Entity<Project>()
+                .HasOne(p => p.Employee)
+                .WithMany(u => u.ProjectEmployee)
                 .HasForeignKey(p => p.CreatedByEmployee)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<User>()
-                .HasMany(u => u.ProjectClient)
-                .WithOne(p => p.Client)
+            modelBuilder.Entity<Project>()
+                .HasOne(p => p.Client)
+                .WithMany(u => u.ProjectClient)
                 .HasForeignKey(p => p.ClientId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<User>()
-                .HasMany(u => u.Comments)
-                .WithOne(c => c.Employee)
-                .HasForeignKey(c => c.CreatedByEmployee)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // Configuration RFQ Relationships
-            builder.Entity<RFQ>()
+            // RFQ relationships
+            modelBuilder.Entity<RFQ>()
                 .HasOne(r => r.Client)
                 .WithMany(u => u.RFQs)
                 .HasForeignKey(r => r.ClientId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<RFQ>()
+            modelBuilder.Entity<RFQ>()
                 .HasOne(r => r.AssignedEmployee)
                 .WithMany()
                 .HasForeignKey(r => r.AssignedEmployeeId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<RFQ>()
-                .HasOne(r => r.RenovationTypeNavigation)
-                .WithMany(rt => rt.RFQs)
-                .HasForeignKey(r => r.RenovationType);
-
-            builder.Entity<RFQ>()
-                .HasOne(r => r.RFQStatus)
-                .WithMany(s => s.RFQs)
-                .HasForeignKey(r => r.Status);
-
-            builder.Entity<RFQStatus>()
-                .HasKey(s => s.Status);
-            builder.Entity<RFQStatus>()
-                .Property(s => s.Status)
-                .IsRequired()
-                .HasMaxLength(30);
-
-            // Configure Project relationships
-            builder.Entity<Project>()
-                .HasMany(p => p.Comments)
-                .WithOne(c => c.Project)
-                .HasForeignKey(c => c.ProjectId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.Entity<Project>()
-                .HasMany(p => p.Files)
-                .WithOne(f => f.Project)
-                .HasForeignKey(f => f.ProjectId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.Entity<Project>()
-                .HasMany(p => p.Communications)
-                .WithOne(c => c.Project)
-                .HasForeignKey(c => c.ProjectId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.Entity<Project>()
-                .HasMany(p => p.ClientInvoices)
-                .WithOne(i => i.Project)
-                .HasForeignKey(i => i.ProjectId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.Entity<Project>()
-                .HasOne(p => p.ProjectStatus)
-                .WithMany(s => s.Projects)
-                .HasForeignKey(p => p.StatusId)
+            // ProjectComment relationship
+            modelBuilder.Entity<ProjectComment>()
+                .HasOne(pc => pc.Employee)
+                .WithMany(u => u.Comments)
+                .HasForeignKey(pc => pc.CreatedByEmployee)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<ProjectStatus>()
-                .HasKey(s => s.Status);
-
-            builder.Entity<ProjectStatus>()
-                .Property(s => s.Status)
-                .IsRequired()
-                .HasMaxLength(50);
-
-            builder.Entity<ProjectTask>()
-                .HasOne(pt => pt.Project)
-                .WithMany(p => p.ProjectTasks)
-                .HasForeignKey(pt => pt.ProjectId)
+            modelBuilder.Entity<ProjectComment>()
+                .HasOne(pc => pc.Project)
+                .WithMany(p => p.Comments)
+                .HasForeignKey(pc => pc.ProjectId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<ProjectTask>()
-                .HasOne(pt => pt.AssignedUser)
-                .WithMany(u => u.ProjectTasks)
-                .HasForeignKey(pt => pt.AssignedUserId)
-                .OnDelete(DeleteBehavior.Restrict);
+            // ProjectFile relationship
+            modelBuilder.Entity<ProjectFile>()
+                .HasOne(pf => pf.Project)
+                .WithMany(p => p.Files)
+                .HasForeignKey(pf => pf.ProjectId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // Configure Project Service relationships
-            builder.Entity<ProjectService>()
+            // ProjectCommunication relationship
+            modelBuilder.Entity<ProjectCommunication>()
+                .HasOne(pc => pc.Project)
+                .WithMany(p => p.Communications)
+                .HasForeignKey(pc => pc.ProjectId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // ClientInvoice relationship
+            modelBuilder.Entity<ClientInvoice>()
+                .HasOne(ci => ci.Project)
+                .WithMany(p => p.ClientInvoices)
+                .HasForeignKey(ci => ci.ProjectId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // ProjectService relationships
+            modelBuilder.Entity<ProjectService>()
+                .HasOne(ps => ps.Project)
+                .WithMany(p => p.ProjectServices)
+                .HasForeignKey(ps => ps.ProjectId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ProjectService>()
                 .HasOne(ps => ps.ProjectServiceType)
-                .WithOne(pst => pst.ProjectService)
-                .HasForeignKey<ProjectService>(ps => ps.ServiceType)
-                .OnDelete(DeleteBehavior.Cascade);
+                .WithMany(pst => pst.ProjectServices)
+                .HasForeignKey(ps => ps.ProjectServiceTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<ProjectService>()
+            modelBuilder.Entity<ProjectService>()
                 .HasOne(ps => ps.Supplier)
                 .WithMany(s => s.ProjectServices)
                 .HasForeignKey(ps => ps.SupplierId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+                .OnDelete(DeleteBehavior.SetNull);
 
-            builder.Entity<ProjectServiceInvoice>()
+            // ProjectServiceInvoice relationship
+            modelBuilder.Entity<ProjectServiceInvoice>()
                 .HasOne(psi => psi.ProjectService)
                 .WithMany(ps => ps.ProjectServiceInvoices)
                 .HasForeignKey(psi => psi.ProjectServiceId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<ProjectService>()
-                .HasOne(ps => ps.Project)
-                .WithMany(p => p.ProjectServices)
-                .HasForeignKey(ps => ps.ProjectId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
-            // Configure Supplier relationships
-            builder.Entity<SupplierServiceType>()
+            // SupplierServiceType relationships
+            modelBuilder.Entity<SupplierServiceType>()
                 .HasOne(sst => sst.Supplier)
                 .WithMany(s => s.SupplierServiceTypes)
                 .HasForeignKey(sst => sst.SupplierId)
                 .OnDelete(DeleteBehavior.Cascade);
-            builder.Entity<SupplierServiceType>()
+
+            modelBuilder.Entity<SupplierServiceType>()
                 .HasOne(sst => sst.ProjectServiceType)
                 .WithMany(pst => pst.SupplierServiceTypes)
-                .HasForeignKey(sst => sst.ServiceType)
+                .HasForeignKey(sst => sst.ProjectServiceTypeId)
                 .OnDelete(DeleteBehavior.Cascade);
-            builder.Entity<SupplierServiceType>()
-                .HasIndex(sst => new { sst.SupplierId, sst.ServiceType })
-                .IsUnique();
 
-            // Configure table names to follow PostgreSQL conventions
-            builder.Entity<User>().ToTable("users");
-            builder.Entity<Project>().ToTable("projects");
-            builder.Entity<ProjectStatus>().ToTable("project_statuses");
-            builder.Entity<ProjectComment>().ToTable("project_comments");
-            builder.Entity<ProjectFile>().ToTable("project_files");
-            builder.Entity<ProjectCommunication>().ToTable("project_communications");
-            builder.Entity<ClientInvoice>().ToTable("client_invoices");
+            // ProjectTask relationships
+            modelBuilder.Entity<ProjectTask>()
+                .HasOne(pt => pt.Project)
+                .WithMany(p => p.ProjectTasks)
+                .HasForeignKey(pt => pt.ProjectId)
+                .OnDelete(DeleteBehavior.SetNull);
 
-            // Set up default values for CreatedTimestamp columns
-            builder.Entity<Project>()
-                .Property(p => p.CreatedTimestamp)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            modelBuilder.Entity<ProjectTask>()
+                .HasOne(pt => pt.AssignedUser)
+                .WithMany(u => u.ProjectTasks)
+                .HasForeignKey(pt => pt.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<ProjectComment>()
-                .Property(c => c.CreatedTimestamp)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            // RFQImage relationship
+            modelBuilder.Entity<RFQImage>()
+                .HasOne(ri => ri.RFQ)
+                .WithMany(r => r.RFQImages)
+                .HasForeignKey(ri => ri.RFQId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<ProjectFile>()
-                .Property(f => f.UploadedTimestamp)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            // Configure decimal precision for all decimal properties
+            modelBuilder.Entity<RFQ>()
+                .Property(r => r.Budget)
+                .HasPrecision(9, 2);
 
-            builder.Entity<ProjectCommunication>()
-                .Property(c => c.CreatedTimestamp)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            modelBuilder.Entity<ProjectService>()
+                .Property(ps => ps.QuotePrice)
+                .HasPrecision(10, 2);
 
-            builder.Entity<ClientInvoice>()
-                .Property(i => i.CreatedTimestamp)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            modelBuilder.Entity<ProjectService>()
+                .Property(ps => ps.QuoteCost)
+                .HasPrecision(10, 2);
 
-            builder.Entity<ProjectService>()
-                .Property(ps => ps.QuoteStartDate)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            modelBuilder.Entity<ProjectServiceInvoice>()
+                .Property(psi => psi.Amount)
+                .HasPrecision(10, 2);
 
-            builder.Entity<ProjectService>()
-                .Property(ps => ps.QuoteEndDate)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            modelBuilder.Entity<Project>()
+                .Property(p => p.QuotePriceOverride)
+                .HasPrecision(10, 2);
 
-            builder.Entity<ProjectService>()
-                .Property(ps => ps.ActualStartDate)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-            builder.Entity<ProjectService>()
-                .Property(ps => ps.ActualEndDate)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-            builder.Entity<ProjectTask>()
-                .Property(pt => pt.CreatedTimestamp)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
+            modelBuilder.Entity<ClientInvoice>()
+                .Property(ci => ci.Amount)
+                .HasPrecision(10, 2);
         }
     }
 }

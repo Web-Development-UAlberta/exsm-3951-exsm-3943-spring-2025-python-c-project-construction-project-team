@@ -18,7 +18,7 @@ namespace RenovationApp.Server.Models
         [Column("created_by_employee")]
         public int CreatedByEmployee { get; set; }
         [ForeignKey(nameof(CreatedByEmployee))]
-        public User? Employee { get; set; }
+        public virtual User Employee { get; set; } = null!;
 
         [Column("project_id")]
         public int ProjectId { get; set; }

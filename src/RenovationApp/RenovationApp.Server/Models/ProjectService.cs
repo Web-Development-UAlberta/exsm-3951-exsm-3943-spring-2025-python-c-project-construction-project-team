@@ -10,11 +10,14 @@ namespace RenovationApp.Server.Models
         [Column("id", TypeName = "int")]
         public int Id { get; set; }
 
-        [Column("status", TypeName = "int")]
-        public ProjectServiceStatus Status { get; set; }
+        [Column("status", TypeName = "text")]
+        public ProjectStatus? Status { get; set; }
 
+        [Required]
         [Column("project_id", TypeName = "int")]
-        public int? ProjectId { get; set; }
+        public int ProjectId { get; set; }
+        [ForeignKey(nameof(ProjectId))]
+        public Project Project { get; set; } = null!;
 
         [Required]
         [Column("name", TypeName = "varchar(255)")]
@@ -22,20 +25,22 @@ namespace RenovationApp.Server.Models
 
         [Required]
         [Column("description", TypeName = "text")]
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; } = string.Empty;
 
         [Required]
-        [Column("service_type", TypeName = "varchar(100)")]
-        public string ServiceType { get; set; } = string.Empty;
+        [Column("project_service_type_id", TypeName = "int")]
+        public int ProjectServiceTypeId { get; set; }
+        [ForeignKey(nameof(ProjectServiceTypeId))]
+        public ProjectServiceType ProjectServiceType { get; set; } = null!;
 
         [Column("supplier_id", TypeName = "int")]
         public int? SupplierId { get; set; }
 
         [Column("price_quote", TypeName = "decimal(10,2)")]
-        public decimal QuotePrice { get; set; }
+        public decimal? QuotePrice { get; set; }
 
         [Column("cost_quote", TypeName = "decimal(10,2)")]
-        public decimal QuoteCost { get; set; }
+        public decimal? QuoteCost { get; set; }
 
         [Column("start_date_quote", TypeName = "timestamp without time zone")]
         public DateTime QuoteStartDate { get; set; }
@@ -44,32 +49,16 @@ namespace RenovationApp.Server.Models
         public DateTime QuoteEndDate { get; set; }
 
         [Column("start_date_actual", TypeName = "timestamp without time zone")]
-        public DateTime ActualStartDate { get; set; }
+        public DateTime? ActualStartDate { get; set; }
 
         [Column("end_date_actual", TypeName = "timestamp without time zone")]
-        public DateTime ActualEndDate { get; set; }
+        public DateTime? ActualEndDate { get; set; }
 
-        // Navigation properties
-        [ForeignKey(nameof(ProjectId))]
-        [InverseProperty(nameof(Project.ProjectServices))]
-        public virtual Project? Project { get; set; }
-
-        [ForeignKey(nameof(ServiceType))]
-        public virtual ProjectServiceType ProjectServiceType { get; set; } = null!;
-
-        [ForeignKey(nameof(SupplierId))]
-        [InverseProperty(nameof(Supplier.ProjectServices))]
-        public virtual Supplier? Supplier { get; set; } = null!;
-
+        // Navigation Properties
+        public Supplier Supplier { get; set; } = null!;
+  
         [InverseProperty(nameof(ProjectServiceInvoice.ProjectService))]
         public virtual ICollection<ProjectServiceInvoice> ProjectServiceInvoices { get; set; } = new List<ProjectServiceInvoice>();
     }
-    public enum ProjectServiceStatus
-    {
-        Pending,
-        InProgress,
-        OnHold,
-        Completed,
-        Cancelled
-    }
+
 }

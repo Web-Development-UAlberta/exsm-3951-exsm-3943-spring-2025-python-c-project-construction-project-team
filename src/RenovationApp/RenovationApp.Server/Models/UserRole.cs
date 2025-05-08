@@ -2,15 +2,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RenovationApp.Server.Models
 {
-    public class UserRole
+    public enum UserRole
     {
-        [Key]
-        [Required]
-        public string Name { get; set; } = string.Empty;
+        [Display(Name = "Home Owner")]
+        HomeOwner,
 
-        [StringLength(100, ErrorMessage = "Description cannot exceed 100 characters.")]
-        public string Description { get; set; } = string.Empty;
+        [Display(Name = "Project Manager")]
+        ProjectManager,
 
-        public ICollection<User> Users { get; set; } = new List<User>();
+        [Display(Name = "Administrator")]
+        Admin
     }
 }

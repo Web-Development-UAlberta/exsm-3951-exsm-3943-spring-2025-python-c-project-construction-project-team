@@ -2,15 +2,18 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RenovationApp.Server.Models
 {
-    public class RenovationType
+    public enum RenovationType
     {
-        [Key]
-        [Required]
-        public string Name { get; set; } = string.Empty;
+        [Display(Name = "Kitchen Remodels")]
+        KitchenRemodels,
 
-        [StringLength(100, ErrorMessage = "Description cannot exceed 100 characters.")]
-        public string Description { get; set; } = string.Empty;
+        [Display(Name = "Bathroom Renovations")]
+        BathroomRenovations,
 
-        public virtual ICollection<RFQ> RFQs { get; set; } = new List<RFQ>();
+        [Display(Name = "Basement Finishing")]
+        BasementFinishing,
+
+        [Display(Name = "Home Additions")]
+        HomeAdditions
     }
 }

@@ -12,16 +12,18 @@ namespace RenovationApp.Server.Models
         [Column("created_timestamp", TypeName = "timestamp without time zone")]
         public DateTime CreatedTimestamp { get; set; }
 
-        [Column("communication_timestamp", TypeName = "timestamp without time zone")]
-        public DateTime? CommunicationTimestamp { get; set; }
-
-        [Column("communication_method", TypeName = "text")]
-        public string CommunicationMethod { get; set; } = null!; // Changed from DateTime? to string
+        [Column("message", TypeName = "text")]
+        public string Message { get; set; } = null!;
 
         [Column("project_id")]
         public int ProjectId { get; set; }
         [ForeignKey(nameof(ProjectId))]
         [InverseProperty("Communications")]
         public virtual Project Project { get; set; } = null!;
+
+        public ProjectCommunication()
+        {
+            CreatedTimestamp = DateTime.UtcNow;
+        }
     }
 }

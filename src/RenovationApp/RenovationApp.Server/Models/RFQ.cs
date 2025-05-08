@@ -14,19 +14,24 @@ namespace RenovationApp.Server.Models
     public class RFQ
     {
         [Key]
+        [Column("id", TypeName = "int")]
         public int Id { get; set; }
 
+        [Column("created_timestamp", TypeName = "timestamp without time zone")]
         public DateTime CreatedTimestamp { get; set; }
 
-        [ForeignKey("Client")]
+        [Required]
+        [Column("client_id", TypeName = "int")]
         public int ClientId { get; set; }
-        public User Client { get; set; } = null!;
+        [ForeignKey(nameof(ClientId))]
+        [InverseProperty("ProjectClient")]
+        public virtual User Client { get; set; } = null!;
 
-        [ForeignKey("Status")]
-        public string Status { get; set; } = string.Empty;
-        public RFQStatus RFQStatus { get; set; } = null!;
+        [Column("status", TypeName = "text")]
+        public RFQStatus? Status { get; set; }
 
-        [ForeignKey("AssignedEmployee")]
+        [Column("assigned_employee_id", TypeName = "int")]
+        [ForeignKey(nameof(AssignedEmployeeId))]
         public int AssignedEmployeeId { get; set; }
         public User AssignedEmployee { get; set; } = null!;
 
@@ -35,20 +40,15 @@ namespace RenovationApp.Server.Models
 
         [StringLength(1000, ErrorMessage = "Renovation Description cannot exceed 1,000 characters.")]
         public string Description { get; set; } = string.Empty;
+        [Column("renovation_type")]
+        public RenovationType? RenovationType { get; set; }
 
-        [ForeignKey("RenovationTypeNavigation")]
-        public string RenovationType { get; set; } = string.Empty;
-        public RenovationType RenovationTypeNavigation { get; set; } = null!;
-
-        [Range(0, 1000000.00, ErrorMessage = "Budget must be between 0 and 1,000,000.00.")]
-        [Column(TypeName = "decimal(9, 2)")]
+        [Column("budget", TypeName = "decimal(9, 2)")]
         public decimal Budget { get; set; }
 
-        [StringLength(160, ErrorMessage = "Address cannot exceed 160 characters.")]
+        [StringLength(160)]
         public string ProjectAddress { get; set; } = string.Empty;
-
         public RoomSize RoomSize { get; set; }
-
         public ICollection<RFQImage> RFQImages { get; set; } = new List<RFQImage>();
     }
 }

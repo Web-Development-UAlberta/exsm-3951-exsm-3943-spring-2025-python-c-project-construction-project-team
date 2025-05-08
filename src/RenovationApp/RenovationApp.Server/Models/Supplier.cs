@@ -13,6 +13,7 @@ namespace RenovationApp.Server.Models
         [Required]
         [Column("name_business", TypeName = "varchar(255)")]
         public string BusinessName { get; set; } = string.Empty;
+
         [Required]
         [Column("name_salesman", TypeName = "varchar(255)")]
         public string SalesmanName { get; set; } = string.Empty;
@@ -29,11 +30,8 @@ namespace RenovationApp.Server.Models
         [Column("address", TypeName = "varchar(255)")]
         public string Address { get; set; } = string.Empty;
 
-        // Navigation properties
-        [InverseProperty(nameof(ProjectService.Supplier))]
-        public virtual ICollection<ProjectService> ProjectServices { get; set; } = new List<ProjectService>();
-
-        [InverseProperty(nameof(SupplierServiceType.Supplier))]
-        public virtual ICollection<SupplierServiceType> SupplierServiceTypes { get; set; } = new List<SupplierServiceType>();
+        // Navigation Properties
+        public ICollection<ProjectService> ProjectServices { get; set; } = new List<ProjectService>();
+        public ICollection<SupplierServiceType> SupplierServiceTypes { get; set; } = new List<SupplierServiceType>();
     }
 }

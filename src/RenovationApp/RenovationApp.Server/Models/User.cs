@@ -19,10 +19,9 @@ namespace RenovationApp.Server.Models
         public string Address { get; set; } = string.Empty;
         [Required]
         [Column("role", TypeName = "varchar(50)")]
-        public string Role { get; set; } = string.Empty;
+        public UserRole Role { get; set; }
 
         // Navigation collections with Project Model
-        public virtual UserRole UserRole { get; set; } = null!;
         public virtual ICollection<RFQ> RFQs { get; set; } = new List<RFQ>();
 
         [InverseProperty("Employee")]

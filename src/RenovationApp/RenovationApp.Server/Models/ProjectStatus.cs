@@ -1,20 +1,28 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace RenovationApp.Server.Models
 {
-    public class ProjectStatus
+    public enum ProjectStatus
     {
-        [Key]
-        [Required]
-        [MaxLength(50)]
-        public string Status { get; set; } = string.Empty;
+        [Display(Name = "Created")]
+        Created,
 
-        [Column(TypeName = "text")]
-        public string Description { get; set; } = string.Empty;
+        [Display(Name = "In Progress")]
+        InProgress,
 
-        // Fixed navigation property - this should reference Projects using this status
-        [InverseProperty("ProjectStatus")]
-        public virtual ICollection<Project> Projects { get; set; } = new List<Project>();
+        [Display(Name = "On Hold")]
+        OnHold,
+
+        [Display(Name = "Pending")]
+        Pending,
+
+        [Display(Name = "Completed")]
+        Completed,
+
+        [Display(Name = "Cancelled")]
+        Cancelled
+
     }
 }

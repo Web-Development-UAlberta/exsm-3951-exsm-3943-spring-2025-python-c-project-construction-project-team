@@ -23,9 +23,8 @@ namespace RenovationApp.Server.Models
         public DateTime? Paid { get; set; }
 
         // Navigation properties
-
         [ForeignKey(nameof(ProjectServiceId))]
         [InverseProperty(nameof(ProjectService.ProjectServiceInvoices))]
-        public virtual ProjectService? ProjectService { get; set; } = null!;
+        public virtual ProjectService? ProjectService { get; set; }
     }
 }
