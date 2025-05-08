@@ -556,3 +556,5 @@ FodyWeavers.xsd
 **.key
 **.pem
 **.pw
+/src/RenovationApp/minio-data/.minio.sys/buckets/.bloomcycle.bin
+/src/RenovationApp/minio-data/.minio.sys
