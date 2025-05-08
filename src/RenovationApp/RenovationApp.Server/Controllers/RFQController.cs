@@ -16,11 +16,11 @@ namespace RenovationApp.Server.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = "Admin,ProjectManager")]
-    public class RFQsController : ControllerBase
+    public class RFQController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
-        public RFQsController(ApplicationDbContext context)
+        public RFQController(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -29,12 +29,7 @@ namespace RenovationApp.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<RFQ>>> GetRFQs()
         {
-            return await _context.RFQs
-                .Include(r => r.Client)
-                .Include(r => r.AssignedEmployee)
-                .Include(r => r.RFQStatus)
-                .Include(r => r.RenovationType)
-                .ToListAsync();
+            return await _context.RFQs.ToListAsync();
         }
 
         // GET: api/RFQ/5
@@ -102,12 +97,7 @@ namespace RenovationApp.Server.Controllers
             _context.RFQs.Add(rfq);
             await _context.SaveChangesAsync();
 
-            var createdRfq = await _context.RFQs
-                .Include(r => r.Client)
-                .Include(r => r.AssignedEmployee)
-                .Include(r => r.RFQStatus)
-                .Include(r => r.RenovationType)
-                .FirstOrDefaultAsync(r => r.Id == rfq.Id);
+            var createdRfq = await _context.RFQs.FirstOrDefaultAsync(r => r.Id == rfq.Id);
 
             return CreatedAtAction(nameof(GetRFQ), new { id = rfq.Id }, createdRfq);
         }
@@ -134,9 +124,6 @@ namespace RenovationApp.Server.Controllers
         {
             var rfqs = await _context.RFQs
                 .Where(r => r.ClientId == clientId)
-                .Include(r => r.RFQStatus)
-                .Include(r => r.AssignedEmployee)
-                .Include(r => r.RenovationType)
                 .ToListAsync();
             if (rfqs == null || !rfqs.Any())
             {
@@ -151,20 +138,6 @@ namespace RenovationApp.Server.Controllers
         {
             var rfqs = await _context.RFQs
                 .Where(r => r.Status == status)
-                .ToListAsync();
-            if (rfqs == null || !rfqs.Any())
-            {
-                return NotFound();
-            }
-            return rfqs;
-        }
-
-        // GET: api/RFQ/RenovationType/5
-        [HttpGet("RenovationType/{renovationTypeId}")]
-        public async Task<ActionResult<IEnumerable<RFQ>>> GetRFQsByRenovationType(string renovationTypeId)
-        {
-            var rfqs = await _context.RFQs
-                .Where(r => r.RenovationType == renovationTypeId)
                 .ToListAsync();
             if (rfqs == null || !rfqs.Any())
             {

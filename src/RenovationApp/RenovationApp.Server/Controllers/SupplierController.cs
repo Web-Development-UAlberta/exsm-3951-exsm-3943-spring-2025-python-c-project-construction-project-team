@@ -14,11 +14,11 @@ namespace RenovationApp.Server.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = "Admin,ProjectManager")]
-    public class SuppliersController : ControllerBase
+    public class SupplierController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
-        public SuppliersController(ApplicationDbContext context)
+        public SupplierController(ApplicationDbContext context)
         {
             _context = context;
         }

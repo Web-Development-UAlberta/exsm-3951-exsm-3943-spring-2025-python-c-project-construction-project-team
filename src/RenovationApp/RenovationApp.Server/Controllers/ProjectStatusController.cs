@@ -30,51 +30,6 @@ namespace RenovationApp.Server.Controllers
             return await _context.ProjectStatuses.ToListAsync();
         }
 
-        // GET: api/ProjectStatus/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ProjectStatus>> GetProjectStatus(string id)
-        {
-            var projectStatus = await _context.ProjectStatuses.FindAsync(id);
-
-            if (projectStatus == null)
-            {
-                return NotFound();
-            }
-
-            return projectStatus;
-        }
-
-        // PUT: api/ProjectStatus/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProjectStatus(string id, ProjectStatus projectStatus)
-        {
-            if (id != projectStatus.Status)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(projectStatus).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProjectStatusExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/ProjectStatus
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]

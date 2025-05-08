@@ -5,11 +5,11 @@ using RenovationApp.Server.Models;
 using Microsoft.AspNetCore.Authorization;
 
 [Authorize(Roles = "Admin,ProjectManager")]
-public class RenovationTypesController : Controller
+public class RenovationTypeController : Controller
 {
     private readonly ApplicationDbContext _context;
 
-    public RenovationTypesController(ApplicationDbContext context)
+    public RenovationTypeController(ApplicationDbContext context)
     {
         _context = context;
     }

@@ -12,11 +12,11 @@ namespace RenovationApp.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProjectCommentsController : ControllerBase
+    public class ProjectCommentController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
-        public ProjectCommentsController(ApplicationDbContext context)
+        public ProjectCommentController(ApplicationDbContext context)
         {
             _context = context;
         }

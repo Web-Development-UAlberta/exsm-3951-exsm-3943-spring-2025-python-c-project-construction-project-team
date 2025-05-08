@@ -84,22 +84,6 @@ namespace RenovationApp.Server.Controllers
             return CreatedAtAction("GetProjectCommunication", new { id = projectCommunication.Id }, projectCommunication);
         }
 
-        // DELETE: api/ProjectCommunication/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProjectCommunication(int id)
-        {
-            var projectCommunication = await _context.ProjectCommunications.FindAsync(id);
-            if (projectCommunication == null)
-            {
-                return NotFound();
-            }
-
-            _context.ProjectCommunications.Remove(projectCommunication);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
         private bool ProjectCommunicationExists(int id)
         {
             return _context.ProjectCommunications.Any(e => e.Id == id);

@@ -5,11 +5,11 @@ using RenovationApp.Server.Models;
 using Microsoft.AspNetCore.Authorization;
 
 [Authorize]
-public class UserRolesController : Controller
+public class UserRoleController : Controller
 {
     private readonly ApplicationDbContext _context;
 
-    public UserRolesController(ApplicationDbContext context)
+    public UserRoleController(ApplicationDbContext context)
     {
         _context = context;
     }

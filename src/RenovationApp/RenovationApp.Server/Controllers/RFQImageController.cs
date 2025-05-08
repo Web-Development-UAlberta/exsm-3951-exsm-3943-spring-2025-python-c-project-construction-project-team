@@ -49,47 +49,6 @@ namespace RenovationApp.Server.Controllers
             return rfqImage;
         }
 
-        // PUT: api/RFQImage/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        [Authorize(Roles = "Admin,ProjectManager")]
-        public async Task<IActionResult> PutRFQImage(int id, RFQImage rfqImage)
-        {
-            if (id != rfqImage.Id)
-            {
-                return BadRequest();
-            }
-
-            var existingImage = await _context.RFQImages.FindAsync(id);
-            if (existingImage == null)
-            {
-                return NotFound();
-            }
-
-            try
-            {
-                existingImage.ImageUri = rfqImage.ImageUri;
-                await _context.SaveChangesAsync();
-
-                return NoContent();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!RFQImageExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error updating data in the database.");
-            }
-        }
-
         // POST: api/RFQImage
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
