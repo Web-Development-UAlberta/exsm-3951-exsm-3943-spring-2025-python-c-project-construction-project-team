@@ -2,7 +2,7 @@ name: .NET Integration Tests with PostgreSQL
 
 on:
   push:
-    branches: [ "main", "dev", "feature/**" ]
+    branches: [ "main", "dev" ]
   pull_request:
     branches: [ "main", "dev" ]
 
