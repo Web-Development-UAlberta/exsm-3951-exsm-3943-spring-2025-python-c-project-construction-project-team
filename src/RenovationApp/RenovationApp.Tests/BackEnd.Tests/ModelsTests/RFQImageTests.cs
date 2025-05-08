@@ -1,90 +1,105 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using RenovationApp.Server.Data;
 using RenovationApp.Server.Models;
+using Xunit;
 
-namespace RenovationApp.Tests
+namespace RenovationApp.Tests.Models
 {
-    public class RFQImageTests
+    public class RFQImageTests : IDisposable
     {
-        private readonly DbContextOptions<ApplicationDbContext> _options;
+        private readonly ApplicationDbContext _context;
 
         public RFQImageTests()
         {
-            _options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase("Test_RFQImageModel")
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase("Test_RFQImage_DB")
                 .Options;
-        }
 
-        [Fact]
-        public async Task SaveRFQImage_ValidData_SuccessfullyPersists()
-        {
-            using var context = new ApplicationDbContext(_options);
+            _context = new ApplicationDbContext(options);
 
-            context.RFQs.Add(new RFQ
+            _context.Users.AddRange(
+                new User { Id = 1, Name = "Client A", Email = "client@example.com" },
+                new User { Id = 2, Name = "Employee A", Email = "employee@example.com" }
+            );
+
+            _context.RFQs.Add(new RFQ
             {
                 Id = 1,
                 CreatedTimestamp = DateTime.UtcNow,
                 ClientId = 1,
-                Status = "Submitted",
                 AssignedEmployeeId = 2,
-                PreferredMaterial = "Wood",
-                Description = "Test RFQ",
-                RenovationType = "Kitchen",
-                Budget = 5000,
-                ProjectAddress = "789 Birch Street",
-                RoomSize = RoomSize.Small
+                Status = RFQStatus.Submitted,
+                PreferredMaterial = "Brick",
+                Description = "New RFQ request",
+                RenovationType = RenovationType.KitchenRemodels,
+                Budget = 7500,
+                ProjectAddress = "101 Main St",
+                RoomSize = RoomSize.Medium
             });
-            await context.SaveChangesAsync();
 
+            _context.SaveChanges();
+        }
+
+        public void Dispose() => _context.Dispose();
+
+        [Fact]
+        public void Validate_RFQImage_ValidData_Succeeds()
+        {
             var image = new RFQImage
             {
-                UploadedTimestamp = DateTime.UtcNow,
-                ImageUri = "https://cdn.example.com/image1.jpg",
-                RFQId = 1
+                RFQId = 1,
+                FileName = "image.jpg",
+                FilePath = "/images/image.jpg",
+                UploadedAt = DateTime.UtcNow
             };
 
-            context.RFQImages.Add(image);
-            await context.SaveChangesAsync();
+            var context = new ValidationContext(image);
+            var results = new List<ValidationResult>();
+            var isValid = Validator.TryValidateObject(image, context, results, true);
 
-            var saved = await context.RFQImages.FirstOrDefaultAsync();
-            Assert.NotNull(saved);
-            Assert.Equal(1, saved!.RFQId);
-            Assert.StartsWith("https://", saved.ImageUri);
+            Assert.True(isValid);
         }
 
         [Fact]
-        public async Task SaveRFQImage_MissingUri_StoresDefault()
+        public void Validate_RFQImage_MissingFileName_Fails()
         {
-            using var context = new ApplicationDbContext(_options);
-
-            context.RFQs.Add(new RFQ
-            {
-                Id = 2,
-                CreatedTimestamp = DateTime.UtcNow,
-                ClientId = 2,
-                Status = "Submitted",
-                AssignedEmployeeId = 2,
-                PreferredMaterial = "Glass",
-                Description = "Another test",
-                RenovationType = "Bathroom",
-                Budget = 10000,
-                ProjectAddress = "321 Elm St",
-                RoomSize = RoomSize.Medium
-            });
-            await context.SaveChangesAsync();
-
             var image = new RFQImage
             {
-                UploadedTimestamp = DateTime.UtcNow,
-                RFQId = 2
-                // ImageUri will use default empty string
+                RFQId = 1,
+                FilePath = "/images/image.jpg",
+                UploadedAt = DateTime.UtcNow,
+                FileName = null!
             };
 
-            context.RFQImages.Add(image);
-            await context.SaveChangesAsync();
+            var context = new ValidationContext(image);
+            var results = new List<ValidationResult>();
+            var isValid = Validator.TryValidateObject(image, context, results, true);
 
-            var saved = await context.RFQImages.FirstOrDefaultAsync(i => i.RFQId == 2);
+            Assert.False(isValid);
+        }
+
+        [Fact]
+        public async Task SaveRFQImage_WithValidData_PersistsCorrectly()
+        {
+            var image = new RFQImage
+            {
+                RFQId = 1,
+                FileName = "rfq_photo.jpg",
+                FilePath = "/uploads/rfq_photo.jpg",
+                UploadedAt = DateTime.UtcNow
+            };
+
+            _context.RFQImages.Add(image);
+            await _context.SaveChangesAsync();
+
+            var saved = await _context.RFQImages.FirstOrDefaultAsync(i => i.RFQId == 1);
             Assert.NotNull(saved);
-            Assert.Equal(string.Empty, saved!.ImageUri);
+            Assert.Equal("rfq_photo.jpg", saved!.FileName);
+            Assert.StartsWith("/uploads", saved.FilePath);
         }
     }
 }
