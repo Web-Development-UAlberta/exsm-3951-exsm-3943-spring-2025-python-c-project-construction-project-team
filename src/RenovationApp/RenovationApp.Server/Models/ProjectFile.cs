@@ -5,12 +5,8 @@ namespace RenovationApp.Server.Models
 {
     public enum FileType
     {
-        PNG,
-        JPG,
-        JPEG,
-        SVG,
-        DOC,
-        PDF
+        image,
+        document
     }
     public class ProjectFile
     {
@@ -18,7 +14,7 @@ namespace RenovationApp.Server.Models
         [Column("id", TypeName = "int")]
         public int Id { get; set; }
 
-        [Column("uploaded_timestamp", TypeName = "timestamp without time zone")]
+        [Column("uploaded_timestamp", TypeName = "timestamp with time zone")]
         public DateTime UploadedTimestamp { get; set; }
 
         [Column("file_uri", TypeName = "text")]
