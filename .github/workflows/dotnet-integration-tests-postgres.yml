@@ -55,20 +55,20 @@ jobs:
           sleep 2
         done
 
-    - name: Restore dependencies
-      run: dotnet restore
+    - name: Restore .NET dependencies
+      run: dotnet restore RenovationApp.Server/RenovationApp.Server.csproj
 
-    - name: Build project
-      run: dotnet build --configuration Release --no-restore
+    - name: Build the server project
+      run: dotnet build RenovationApp.Server/RenovationApp.Server.csproj --configuration Release --no-restore
 
-    - name: Install EF Core CLI
+    - name: Restore EF Core CLI tools
       run: dotnet tool install --global dotnet-ef
 
-    - name: Add EF tools to PATH
+    - name: Add dotnet tools to PATH
       run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
-    - name: Apply EF Core Migrations
+    - name: Apply EF Core migrations
       run: dotnet ef database update --project RenovationApp.Server/RenovationApp.Server.csproj
 
-    - name: Run integration tests
-      run: dotnet test --no-build --configuration Release --filter Category=Integration
+    - name: Run backend integration tests
+      run: dotnet test RenovationApp.Tests/BackEnd.Tests/BackEnd.Tests.csproj --no-build --configuration Release --filter Category=Integration
