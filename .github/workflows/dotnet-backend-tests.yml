@@ -28,10 +28,10 @@ jobs:
           nuget-${{ runner.os }}-
 
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore RenovationApp.Tests/BackEnd.Tests/BackEnd.Tests.csproj
 
     - name: Build project
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build RenovationApp.Tests/BackEnd.Tests/BackEnd.Tests.csproj --configuration Release --no-restore
 
     - name: Run tests
-      run: dotnet test --no-build --configuration Release --verbosity normal
+      run: dotnet test RenovationApp.Tests/BackEnd.Tests/BackEnd.Tests.csproj --no-build --configuration Release --verbosity normal
