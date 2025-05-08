@@ -33,8 +33,6 @@ namespace RenovationApp.Server.Models
         public UserRole Role { get; set; }
 
         // Navigation collections with Project Model
-        [InverseProperty("Client")]
-        public virtual ICollection<RFQ>? RFQs { get; set; } = new List<RFQ>();
 
         [InverseProperty("Employee")]
         public virtual ICollection<ProjectComment>? Comments { get; set; } = new List<ProjectComment>();

@@ -44,12 +44,6 @@ namespace RenovationApp.Server.Data
                     .HasForeignKey(p => p.ClientId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                // Configure relationships with RFQ
-                entity.HasMany(u => u.RFQs)
-                    .WithOne(r => r.Client)
-                    .HasForeignKey(r => r.ClientId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
                 // Configure relationships with ProjectComment
                 entity.HasMany(u => u.Comments)
                     .WithOne(pc => pc.Employee)
@@ -115,12 +109,6 @@ namespace RenovationApp.Server.Data
             modelBuilder.Entity<RFQ>(entity =>
             {
                 entity.ToTable("RFQs");
-
-                // Configure relationship with assigned employee
-                entity.HasOne(r => r.AssignedEmployee)
-                    .WithMany()
-                    .HasForeignKey(r => r.AssignedEmployeeId)
-                    .OnDelete(DeleteBehavior.SetNull);
 
                 // Configure relationship with RFQImage
                 entity.HasMany(r => r.RFQImages)

@@ -39,24 +39,20 @@ namespace RenovationApp.Server.Models
         [Column("id", TypeName = "int")]
         public int Id { get; set; }
 
-        [Column("created_timestamp", TypeName = "timestamp without time zone")]
+        [Column("created_timestamp", TypeName = "timestamp with time zone")]
         public DateTime CreatedTimestamp { get; set; } = DateTime.UtcNow; // Default value
 
         [Required]
-        [Column("client_id", TypeName = "int")]
-        public int ClientId { get; set; }
+        [Column("client_id", TypeName = "varchar(255)")]
+        public required string ClientId { get; set; }
         
-        [ForeignKey(nameof(ClientId))]
-        public virtual User Client { get; set; } = null!;
 
         [Column("status", TypeName = "text")]
         public RFQStatus? Status { get; set; }
 
-        [Column("assigned_employee_id", TypeName = "int")]
-        public int? AssignedEmployeeId { get; set; }
+        [Column("assigned_employee_id", TypeName = "varchar(255)")]
+        public string? AssignedEmployeeId { get; set; }
 
-        [ForeignKey(nameof(AssignedEmployeeId))]
-        public User? AssignedEmployee { get; set; }
 
         [StringLength(160, ErrorMessage = "Preferred Material cannot exceed 160 characters.")]
         public string? PreferredMaterial { get; set; }
