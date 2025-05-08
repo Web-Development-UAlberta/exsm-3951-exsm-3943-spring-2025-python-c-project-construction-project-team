@@ -11,35 +11,31 @@ namespace RenovationApp.Server.Models
         public int Id { get; set; }
 
         [Column("created_timestamp", TypeName = "timestamp without time zone")]
-        public DateTime CreatedTimestamp { get; set; }
+        public DateTime CreatedTimestamp { get; set; } = DateTime.UtcNow; // Default value
 
         [Column("project_id", TypeName = "int")]
         public int? ProjectId { get; set; }
 
-        [Column("assigned_user_id", TypeName = "int")]
-        public int AssignedUserId { get; set; }
+        [Column("user_id", TypeName = "int")]
+        public int? UserId { get; set; }
 
-        [Required]
         [Column("title", TypeName = "text")]
         [StringLength(100)]
-        public string Title { get; set; } = string.Empty;
+        public string? Title { get; set; }
 
-        [Required]
         [Column("description", TypeName = "text")]
-        public string Description { get; set; } = string.Empty;
-
-        [Required]
+        public string? Description { get; set; }
         [Column("status", TypeName = "text")]
         [StringLength(100)]
-        public string Status { get; set; } = string.Empty;
+        public string? Status { get; set; }
 
         // Navigation properties
         [ForeignKey(nameof(ProjectId))]
         [InverseProperty(nameof(Project.ProjectTasks))]
-        public virtual Project? Project { get; set; } = null!;
+        public virtual Project? Project { get; set; }
 
-        [ForeignKey(nameof(AssignedUserId))]
+        [ForeignKey(nameof(UserId))]
         [InverseProperty(nameof(User.ProjectTasks))]
-        public virtual User AssignedUser { get; set; } = null!;
+        public virtual User? AssignedUser { get; set; }
     }
 }

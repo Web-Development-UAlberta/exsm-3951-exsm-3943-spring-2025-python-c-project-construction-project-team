@@ -10,45 +10,74 @@ namespace RenovationApp.Server.Models
         Large,
         ExtraSpacious
     }
+    public enum RFQStatus
+    {
+        Created,
+        Quoted,
+        Approved,
+        Declined
+    }
+
+    public enum RenovationType
+    {
+        [Display(Name = "Kitchen Remodels")]
+        KitchenRemodels,
+
+        [Display(Name = "Bathroom Renovations")]
+        BathroomRenovations,
+
+        [Display(Name = "Basement Finishing")]
+        BasementFinishing,
+
+        [Display(Name = "Home Additions")]
+        HomeAdditions
+    }
 
     public class RFQ
     {
         [Key]
+        [Column("id", TypeName = "int")]
         public int Id { get; set; }
 
-        public DateTime CreatedTimestamp { get; set; }
+        [Column("created_timestamp", TypeName = "timestamp without time zone")]
+        public DateTime CreatedTimestamp { get; set; } = DateTime.UtcNow; // Default value
 
-        [ForeignKey("Client")]
+        [Required]
+        [Column("client_id", TypeName = "int")]
         public int ClientId { get; set; }
-        public User Client { get; set; } = null!;
+        
+        [ForeignKey(nameof(ClientId))]
+        public virtual User Client { get; set; } = null!;
 
-        [ForeignKey("Status")]
-        public string Status { get; set; } = string.Empty;
-        public RFQStatus RFQStatus { get; set; } = null!;
+        [Column("status", TypeName = "text")]
+        public RFQStatus? Status { get; set; }
 
-        [ForeignKey("AssignedEmployee")]
-        public int AssignedEmployeeId { get; set; }
-        public User AssignedEmployee { get; set; } = null!;
+        [Column("assigned_employee_id", TypeName = "int")]
+        public int? AssignedEmployeeId { get; set; }
+
+        [ForeignKey(nameof(AssignedEmployeeId))]
+        public User? AssignedEmployee { get; set; }
 
         [StringLength(160, ErrorMessage = "Preferred Material cannot exceed 160 characters.")]
-        public string PreferredMaterial { get; set; } = string.Empty;
+        public string? PreferredMaterial { get; set; }
 
         [StringLength(1000, ErrorMessage = "Renovation Description cannot exceed 1,000 characters.")]
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
 
-        [ForeignKey("RenovationTypeNavigation")]
-        public string RenovationType { get; set; } = string.Empty;
-        public RenovationType RenovationTypeNavigation { get; set; } = null!;
+        [Column("renovation_type")]
+        public RenovationType? RenovationType { get; set; }
 
-        [Range(0, 1000000.00, ErrorMessage = "Budget must be between 0 and 1,000,000.00.")]
-        [Column(TypeName = "decimal(9, 2)")]
-        public decimal Budget { get; set; }
+        [Column("budget", TypeName = "decimal(9, 2)")]
+        public decimal? Budget { get; set; }
 
-        [StringLength(160, ErrorMessage = "Address cannot exceed 160 characters.")]
-        public string ProjectAddress { get; set; } = string.Empty;
+        [StringLength(160)]
+        public string? ProjectAddress { get; set; }
 
-        public RoomSize RoomSize { get; set; }
+        public RoomSize? RoomSize { get; set; }
 
-        public ICollection<RFQImage> RFQImages { get; set; } = new List<RFQImage>();
+        public ICollection<RFQImage>? RFQImages { get; set; } = new List<RFQImage>();
+
+        // Navigation to Project (optional cause it doesn't always has one)
+        public Project? Project { get; set; }
     }
 }

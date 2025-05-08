@@ -6,18 +6,17 @@ namespace RenovationApp.Server.Models
     public class ProjectServiceType
     {
         [Key]
+        [Column("id", TypeName = "int")]
+        public int Id { get; set; }
+
         [Column("name", TypeName = "varchar(100)")]
-        public string Name { get; set; } = string.Empty;
+        public string? Name { get; set; }
 
-        [Required]
         [Column("description", TypeName = "text")]
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
 
-        // Navigation properties
-        [InverseProperty(nameof(ProjectService.ProjectServiceType))]
-        public virtual ProjectService ProjectService { get; set; } = null!;
+        // Navigation Properties
+        public ICollection<ProjectService>? ProjectServices { get; set; } = new List<ProjectService>();
 
-        [InverseProperty(nameof(SupplierServiceType.ProjectServiceType))]
-        public virtual ICollection<SupplierServiceType> SupplierServiceTypes { get; set; } = new List<SupplierServiceType>();
     }
 }

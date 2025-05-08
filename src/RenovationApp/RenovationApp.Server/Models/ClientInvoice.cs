@@ -10,24 +10,24 @@ namespace RenovationApp.Server.Models
         public int Id { get; set; }
 
         [Column("created_timestamp", TypeName = "timestamp without time zone")]
-        public DateTime CreatedTimestamp { get; set; }
+        public DateTime CreatedTimestamp { get; set; } = DateTime.UtcNow; // Default value
 
         [Column("description", TypeName = "text")]
-        public string Description { get; set; } = null!;
+        public string? Description { get; set; } 
 
         [Column("payment_instructions", TypeName = "text")]
-        public string PaymentInstructions { get; set; } = null!;
+        public string? PaymentInstructions { get; set; } 
 
         [Column("paid", TypeName = "timestamp without time zone")]
-        public DateTime Paid { get; set; }
+        public DateTime? Paid { get; set; } 
 
         [Column("amount", TypeName = "decimal")]
-        public decimal Amount { get; set; }
+        public decimal? Amount { get; set; } 
 
         [Column("project_id")]
-        public int ProjectId { get; set; }
+        public int? ProjectId { get; set; } 
         [ForeignKey(nameof(ProjectId))]
         [InverseProperty("ClientInvoices")]
-        public virtual Project Project { get; set; } = null!;
+        public virtual Project? Project { get; set; } 
     }
 }

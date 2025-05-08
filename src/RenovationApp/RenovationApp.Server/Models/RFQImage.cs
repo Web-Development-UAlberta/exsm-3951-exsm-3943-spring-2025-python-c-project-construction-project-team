@@ -8,7 +8,7 @@ namespace RenovationApp.Server.Models
         [Key]
         public int Id { get; set; }
 
-        public DateTime UploadedTimestamp { get; set; }
+        public DateTime UploadedTimestamp { get; set; } = DateTime.UtcNow; // Default value
 
         public string ImageUri { get; set; } = string.Empty;
 
