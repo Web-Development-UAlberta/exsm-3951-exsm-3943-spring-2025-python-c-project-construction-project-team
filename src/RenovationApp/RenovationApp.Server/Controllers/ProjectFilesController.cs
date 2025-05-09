@@ -6,11 +6,13 @@ using RenovationApp.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using static RenovationApp.Server.Models.RFQDTOs;
 using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RenovationApp.Server.Controllers
 {
     [ApiController]
     [Route("/[controller]")]
+    [Authorize]
     public class ProjectFilesController : ControllerBase
     {
         private readonly IStorageService _storageService;
@@ -95,35 +97,10 @@ namespace RenovationApp.Server.Controllers
 
             if (User.IsInRole("projectmanager"))
             {
-                // Allow access to all files for project managers
-            }
-            else if (User.IsInRole("client"))
-            {
                 // Allow access only if the user is the client of the project
                 if (project.ClientId.ToString() != userId)
                 {
-                    if (!project.IsPublic)
-                    {
-                        return Unauthorized("You are not authorized to access files for this project.");
-                    }
-
-                    if (fileType != "Image")
-                    {
-                        return Unauthorized("Only images can be accessed by users without a role.");
-                    }
-                }
-            }
-            else
-            {
-                // Allow access only to images if the project is public
-                if (!project.IsPublic)
-                {
                     return Unauthorized("You are not authorized to access files for this project.");
-                }
-
-                if (fileType != "Image")
-                {
-                    return Unauthorized("Only images can be accessed by users without a role.");
                 }
             }
 
