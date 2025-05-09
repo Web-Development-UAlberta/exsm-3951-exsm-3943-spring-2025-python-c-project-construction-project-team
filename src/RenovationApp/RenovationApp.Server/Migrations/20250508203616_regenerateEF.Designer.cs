@@ -12,8 +12,8 @@ using RenovationApp.Server.Data;
 namespace RenovationApp.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250508164232_RFQ-RemoveUserRefs")]
-    partial class RFQRemoveUserRefs
+    [Migration("20250508203616_regenerateEF")]
+    partial class regenerateEF
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -347,7 +347,7 @@ namespace RenovationApp.Server.Migrations
                         .HasColumnName("type");
 
                     b.Property<DateTime>("UploadedTimestamp")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("uploaded_timestamp");
 
                     b.HasKey("Id");

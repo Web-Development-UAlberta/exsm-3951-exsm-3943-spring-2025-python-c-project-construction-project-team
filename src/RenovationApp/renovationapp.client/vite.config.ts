@@ -27,7 +27,7 @@ const certificateName = "renovationapp-client";
 const certFilePath = path.join(baseFolder, `${certificateName}.pem`);
 const keyFilePath = path.join(baseFolder, `${certificateName}.key`);
 
- //for debugging certificate builds
+//for debugging certificate builds
 console.log('certFilePath:', certFilePath);
 console.log('exists:', fs.existsSync(certFilePath));
 console.log('keyFileExists: ', fs.existsSync(keyFilePath));
@@ -47,7 +47,7 @@ if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
         'Pem',
         '--no-password',
     ], { stdio: 'inherit', }).status) {
-        console.log("Certificate generation failed. Please run the following command to generate a certificate: dotnet dev-certs https --trust"); 
+        console.log("Certificate generation failed. Please run the following command to generate a certificate: dotnet dev-certs https --trust");
         throw new Error("Could not create certificate.");
     }
 }
@@ -63,7 +63,8 @@ export default defineConfig({
     plugins: [plugin()],
     resolve: {
         alias: {
-            '@': fileURLToPath(new URL('./src', import.meta.url))
+            '@': fileURLToPath(new URL('./src', import.meta.url)),
+            '@popperjs/core': '@popperjs/core/dist/umd/popper.js'
         }
     },
     server: {

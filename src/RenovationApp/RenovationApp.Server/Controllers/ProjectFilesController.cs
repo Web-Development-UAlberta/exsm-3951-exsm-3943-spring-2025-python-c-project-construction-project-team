@@ -1,0 +1,156 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using RenovationApp.Server.Models;
+using RenovationApp.Server.Services;
+using RenovationApp.Server.Services.Fileservice.Dtos;
+using RenovationApp.Server.Data;
+using Microsoft.EntityFrameworkCore;
+using static RenovationApp.Server.Models.RFQDTOs;
+using Humanizer;
+
+namespace RenovationApp.Server.Controllers
+{
+    [ApiController]
+    [Route("/[controller]")]
+    public class ProjectFilesController : ControllerBase
+    {
+        private readonly IStorageService _storageService;
+        private readonly ApplicationDbContext _db;
+        private readonly string _projectBucket;
+
+        public ProjectFilesController(IStorageService storageService, ApplicationDbContext db, IConfiguration config)
+        {
+            _storageService = storageService;
+            _db = db;
+            _projectBucket = config["MINIO_PROJECT_BUCKET"] ?? throw new ArgumentNullException("MINIO_PROJECT_BUCKET");
+        }
+
+        [HttpPost("upload-url")]
+        public async Task<IActionResult> GetUploadUrl([FromBody] UploadProjectFileRequestDto dto)
+        {
+            // Check if the project exists
+            var project = await _db.Projects.FindAsync(dto.ProjectId);
+            if (project == null)
+            {
+                return NotFound("Project not found.");
+            }
+
+            // Get the user's role and ID
+            var userId = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("User ID is required.");
+            }
+
+            if (!User.IsInRole("projectManager"))
+            {
+                // Check if the user is the client of the project
+                if (project.ClientId.ToString() != userId)
+                {
+                    return Unauthorized("You are not authorized to upload files to this project.");
+                }
+            }
+
+            var expiry = TimeSpan.FromMinutes(10);
+
+            var result = await _storageService.GeneratePresignedUploadUrlAsync(_projectBucket, dto.FileType, dto.ProjectId, dto.FileName, expiry);
+
+            if (!Enum.TryParse<FileType>(dto.FileType, out var fileType))
+            {
+                return BadRequest("Invalid file type specified.");
+            }
+
+            var file = new ProjectFile
+            {
+                ProjectId = dto.ProjectId,
+                Type = fileType,
+                FileName = dto.FileName,
+                FileUri = result.ObjectKey,
+                UploadedTimestamp = DateTime.UtcNow
+            };
+
+            _db.ProjectFiles.Add(file);
+            await _db.SaveChangesAsync();
+
+            return Ok(new { url = result.Url, key = result.ObjectKey });
+        }
+
+        [HttpGet("{projectId}/files")]
+        public async Task<IActionResult> GetFiles(int projectId, [FromQuery] string? fileType = null)
+        {
+            // Check if the project exists
+            var project = await _db.Projects.FindAsync(projectId);
+            if (project == null)
+            {
+                return NotFound("Project not found.");
+            }
+
+            // Get the user's role and ID
+            var userId = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+            var userRole = User.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("User ID is required.");
+            }
+
+            if (User.IsInRole("projectmanager"))
+            {
+                // Allow access to all files for project managers
+            }
+            else if (User.IsInRole("client"))
+            {
+                // Allow access only if the user is the client of the project
+                if (project.ClientId.ToString() != userId)
+                {
+                    if (!project.IsPublic)
+                    {
+                        return Unauthorized("You are not authorized to access files for this project.");
+                    }
+
+                    if (fileType != "Image")
+                    {
+                        return Unauthorized("Only images can be accessed by users without a role.");
+                    }
+                }
+            }
+            else
+            {
+                // Allow access only to images if the project is public
+                if (!project.IsPublic)
+                {
+                    return Unauthorized("You are not authorized to access files for this project.");
+                }
+
+                if (fileType != "Image")
+                {
+                    return Unauthorized("Only images can be accessed by users without a role.");
+                }
+            }
+
+            var query = _db.ProjectFiles.Where(f => f.ProjectId == projectId);
+
+            if (!string.IsNullOrEmpty(fileType))
+            {
+                if (!Enum.TryParse<FileType>(fileType, out var eFileType))
+                    return BadRequest("Invalid file type specified.");
+                query = query.Where(f => f.Type == eFileType);
+            }
+            var files = await query.ToListAsync();
+
+            var result = new List<FileDownloadDto>();
+
+            foreach (var file in files)
+            {
+                var url = await _storageService.GeneratePresignedDownloadUrlAsync(_projectBucket, file.FileUri);
+                result.Add(new FileDownloadDto
+                {
+                    FileName = file.FileName,
+                    FileType = file.Type.ToString(),
+                    Url = url
+                });
+            }
+
+            return Ok(result);
+        }
+    }
+}
