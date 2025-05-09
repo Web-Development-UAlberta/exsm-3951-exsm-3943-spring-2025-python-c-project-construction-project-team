@@ -11,6 +11,7 @@ namespace RenovationApp.Server.Controllers
 {
     [ApiController]
     [Route("/[controller]")]
+    [Authorize]
     public class RFQImageController : ControllerBase
     {
         private readonly IStorageService _storageService;
@@ -88,10 +89,6 @@ namespace RenovationApp.Server.Controllers
             }
 
             if (User.IsInRole("projectmanager"))
-            {
-                // Allow access to all files for project managers
-            }
-            else if (User.IsInRole("client"))
             {
                 // Allow access only if the user is the client of the project
                 if (rfq.ClientId.ToString() != userId)
