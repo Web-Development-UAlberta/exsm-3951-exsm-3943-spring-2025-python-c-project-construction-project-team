@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using RenovationApp.Server.Data;
@@ -9,46 +10,56 @@ namespace RenovationApp.Server
 {
     public static class SeedData
     {
-        public static void Initialize(IServiceProvider serviceProvider)
+        public static async Task Initialize(IServiceProvider serviceProvider)
         {
             using var context = new ApplicationDbContext(
                 serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>());
 
             // Seed UserRoles
-            if (!context.UserRoles.Any())
+            if (!context.Users.Any())
             {
-                context.UserRoles.AddRange(
-                    new UserRole { Name = "Admin", Description = "Platform administrator with full access." },
-                    new UserRole { Name = "ProjectManager", Description = "Manages renovation projects and tasks." },
-                    new UserRole { Name = "Homeowner", Description = "Homeowner or client user role." }
+                context.Roles.AddRange(
+                    new IdentityRole<int> { Name = "HomeOwner", NormalizedName = "HOMEOWNER" },
+                    new IdentityRole<int> { Name = "ProjectManager", NormalizedName = "PROJECTMANAGER" },
+                    new IdentityRole<int> { Name = "Admin", NormalizedName = "ADMIN" }
                 );
             }
-
-            // Seed RFQStatuses
-            if (!context.RFQStatuses.Any())
+            
+            // Seed RFQStatus and RenovationType enums
+            if (!context.RFQs.Any())
             {
-                context.RFQStatuses.AddRange(
-                    new RFQStatus { Status = "Pending" },
-                    new RFQStatus { Status = "Reviewed" },
-                    new RFQStatus { Status = "Approved" },
-                    new RFQStatus { Status = "Rejected" },
-                    new RFQStatus { Status = "Cancelled" }
+                context.RFQs.AddRange(
+                    new RFQ {
+                        CreatedTimestamp = DateTime.UtcNow,
+                        ClientId = "1",
+                        Status = RFQStatus.Created,
+                        RenovationType = RenovationType.KitchenRemodels,
+                        RoomSize = RoomSize.Small,
+                    },
+                    new RFQ {
+                        CreatedTimestamp = DateTime.UtcNow,
+                        ClientId = "2",
+                        Status = RFQStatus.Quoted,
+                        RenovationType = RenovationType.BathroomRenovations,
+                        RoomSize = RoomSize.Medium,
+                    },
+                    new RFQ {
+                        CreatedTimestamp = DateTime.UtcNow,
+                        ClientId = "3",
+                        Status = RFQStatus.Approved,
+                        RenovationType = RenovationType.BasementFinishing,
+                        RoomSize = RoomSize.Large,
+                    },
+                    new RFQ {
+                        CreatedTimestamp = DateTime.UtcNow,
+                        ClientId = "4",
+                        Status = RFQStatus.Declined,
+                        RenovationType = RenovationType.HomeAdditions,
+                        RoomSize = RoomSize.ExtraSpacious,
+                    }
                 );
             }
-
-            // Seed RenovationTypes
-            if (!context.RenovationTypes.Any())
-            {
-                context.RenovationTypes.AddRange(
-                    new RenovationType { Name = "Kitchen", Description = "Kitchen remodels and upgrades" },
-                    new RenovationType { Name = "Bathroom", Description = "Bathroom renovations and plumbing" },
-                    new RenovationType { Name = "Basement", Description = "Finished basements and suites" },
-                    new RenovationType { Name = "Garage", Description = "Garage expansions and upgrades" },
-                    new RenovationType { Name = "Sunroom", Description = "Sunroom additions and patios" }
-                );
-            }
-
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
     }
 }
