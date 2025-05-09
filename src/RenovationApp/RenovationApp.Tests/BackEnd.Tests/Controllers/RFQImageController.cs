@@ -49,7 +49,7 @@ namespace RenovationApp.Server.Controllers
             {
                 RFQId = rfqId,
                 UploadedTimestamp = DateTime.UtcNow,
-                ImageUri = "/" + filePath.Replace("\", "/")
+                ImageUri = "/" + filePath.Replace("\\", "/")
             };
 
             _context.RFQImages.Add(image);
