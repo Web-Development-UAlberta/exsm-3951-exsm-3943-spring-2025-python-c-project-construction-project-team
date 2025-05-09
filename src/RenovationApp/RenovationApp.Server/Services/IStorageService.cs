@@ -6,5 +6,6 @@ namespace RenovationApp.Server.Services
     {
         Task<PresignedUploadResult> GeneratePresignedUploadUrlAsync(string bucketName, string fileType, int projectId, string fileName, TimeSpan expiry);
         Task<string> GeneratePresignedDownloadUrlAsync(string bucketName, string objectKey);
+        Task<bool> ObjectExistsAsync(string bucketName, string objectKey);
     }
 }

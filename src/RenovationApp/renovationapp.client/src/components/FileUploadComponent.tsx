@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
+import { IPublicClientApplication } from '@azure/msal-browser';
+import { silentRequest } from '../config/authConfig';
 
 interface FileUploadComponentProps {
     projectId: string;
     apiBaseUrl: string;
-    backendRootUrl: string; // New prop for the backend root URL
+    backendRootUrl: string;
+    msalInstance: IPublicClientApplication;
 }
 
-const FileUploadComponent: React.FC<FileUploadComponentProps> = ({ projectId, apiBaseUrl, backendRootUrl }) => {
+const FileUploadComponent: React.FC<FileUploadComponentProps> = ({ projectId, apiBaseUrl, backendRootUrl, msalInstance }) => {
     const [file, setFile] = useState<File | null>(null);
     const [fileName, setFileName] = useState('');
     const [description, setDescription] = useState('');
@@ -26,13 +29,20 @@ const FileUploadComponent: React.FC<FileUploadComponentProps> = ({ projectId, ap
         }
 
         try {
+            // Get the token
+            const token = await msalInstance.acquireTokenSilent(silentRequest);
+
             // Step 1: Get the presigned upload URL
             const response = await fetch(`${apiBaseUrl}/RFQImage/upload-url`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'accept': '*/*' },
+                headers: { 
+                    'Content-Type': 'application/json', 
+                    'accept': '*/*',
+                    'Authorization': `Bearer ${token.accessToken}`
+                },
                 body: JSON.stringify({
                     projectId,
-                    fileType, // Use the selected file type from radio buttons
+                    fileType,
                     fileName,
                     description,
                 }),

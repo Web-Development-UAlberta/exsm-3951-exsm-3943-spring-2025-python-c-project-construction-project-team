@@ -1,5 +1,6 @@
 ﻿using Minio;
 using Minio.DataModel.Args;
+using Minio.Exceptions;
 using RenovationApp.Server.Services.Fileservice.Dtos;
 
 namespace RenovationApp.Server.Services
@@ -35,25 +36,40 @@ namespace RenovationApp.Server.Services
             _minio = minioClient.Build();
 
             // Check and create buckets synchronously on startup
-            EnsureBucketExists(_RFQ_BUCKET);
-            EnsureBucketExists(_PROJECT_BUCKET);
+            //EnsureBucketExists(_RFQ_BUCKET);
+            //EnsureBucketExists(_PROJECT_BUCKET);
         }
+        /*
+       private void EnsureBucketExists(string bucketName)
+       {
 
-        private void EnsureBucketExists(string bucketName)
-        {
-            if (!_minio.BucketExistsAsync(new BucketExistsArgs().WithBucket(bucketName)).GetAwaiter().GetResult())
-            {
-                _logger.LogInformation($"Bucket '{bucketName}' does not exist. Creating it...");
-                _minio.MakeBucketAsync(new MakeBucketArgs().WithBucket(bucketName)).GetAwaiter().GetResult();
-                _logger.LogInformation($"Bucket '{bucketName}' created successfully.");
-            }
-        }
+           try
+           {
+               _logger.LogInformation($"Checking if bucket '{bucketName}' exists...");
+               bool exists = _minio.BucketExistsAsync(new BucketExistsArgs().WithBucket(bucketName)).GetAwaiter().GetResult();
+               _logger.LogInformation($"Bucket '{bucketName}' exists: {exists}");
 
+               if (!exists)
+               {
+                   _logger.LogInformation($"Bucket '{bucketName}' does not exist. Creating it...");
+                   _minio.MakeBucketAsync(new MakeBucketArgs().WithBucket(bucketName)).GetAwaiter().GetResult();
+                   _logger.LogInformation($"Bucket '{bucketName}' created successfully.");
+               }
+           }
+           catch (Exception ex)
+           {
+               _logger.LogError(ex, $"Error while ensuring bucket '{bucketName}' exists.");
+               throw;
+           }
+
+
+       }
+       */
         public async Task<PresignedUploadResult> GeneratePresignedUploadUrlAsync(string bucketName, string fileType, int projectId, string fileName, TimeSpan expiry)
         {
             var safeFileName = Path.GetFileName(fileName);
             var objectKey = $"{projectId}/{fileType}/{Guid.NewGuid()}_{safeFileName}";
-            EnsureBucketExists(bucketName);
+            //EnsureBucketExists(bucketName);
             var url = await _minio.PresignedPutObjectAsync(
                 new PresignedPutObjectArgs()
                     .WithBucket(bucketName)
@@ -101,6 +117,23 @@ namespace RenovationApp.Server.Services
             );
 
             return url;
+        }
+
+        //not working at the moment for some reason
+        public async Task<bool> ObjectExistsAsync(string bucketName, string objectKey)
+        {
+            try
+            {
+                await _minio.StatObjectAsync(new StatObjectArgs()
+                    .WithBucket(bucketName)
+                    .WithObject(objectKey));
+                return true;
+            }
+            catch (MinioException ex)
+            {
+                _logger.LogWarning($"Object '{objectKey}' in bucket '{bucketName}' does not exist or could not be accessed. Exception: {ex.Message}");
+                return false;
+            }
         }
     }
 }

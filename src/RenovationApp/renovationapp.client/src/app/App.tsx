@@ -87,8 +87,18 @@ function App({ instance }: { instance: IPublicClientApplication }) {
           </p>
           <div className="App">
             <AuthenticatedTemplate>
-                <FileUploadComponent projectId="1" apiBaseUrl="http://localhost/api" backendRootUrl="http://localhost:9000" />
-                <RFQImageUploadComponent rfqId="1" apiBaseUrl="http://localhost/api" backendRootUrl="http://localhost:9000" />
+                <FileUploadComponent 
+                    projectId="1" 
+                    apiBaseUrl="http://localhost/api" 
+                    backendRootUrl="http://localhost:9000"
+                    msalInstance={instance}
+                />
+                <RFQImageUploadComponent 
+                    rfqId="1" 
+                    apiBaseUrl="http://localhost/api" 
+                    backendRootUrl="http://localhost:9000"
+                    msalInstance={instance}
+                />
                 <button className="signInButton" onClick={handleLogout}>
                     Log out
                 </button>                

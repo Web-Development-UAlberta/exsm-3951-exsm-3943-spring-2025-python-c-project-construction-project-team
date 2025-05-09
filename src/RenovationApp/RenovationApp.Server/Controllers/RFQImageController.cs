@@ -5,6 +5,7 @@ using RenovationApp.Server.Services.Fileservice.Dtos;
 using RenovationApp.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Build.Framework;
 
 namespace RenovationApp.Server.Controllers
 {
@@ -14,13 +15,13 @@ namespace RenovationApp.Server.Controllers
     {
         private readonly IStorageService _storageService;
         private readonly ApplicationDbContext _db;
-        private readonly string _projectBucket;
+        private readonly string _rfqBucket;
 
         public RFQImageController(IStorageService storageService, ApplicationDbContext db, IConfiguration config)
         {
             _storageService = storageService;
             _db = db;
-            _projectBucket = config["MINIO_RFQ_BUCKET"] ?? throw new ArgumentNullException("MINIO_RFQ_BUCKET");
+            _rfqBucket = config["MINIO_RFQ_BUCKET"] ?? throw new ArgumentNullException("MINIO_RFQ_BUCKET");
         }
 
         [HttpPost("upload-url")]
@@ -30,7 +31,7 @@ namespace RenovationApp.Server.Controllers
             var rfq = await _db.RFQs.FindAsync(dto.RFQId);
             if (rfq == null)
             {
-                return NotFound("Project not found.");
+                return NotFound("RFQ not found.");
             }
 
             // Get the user's role and ID
@@ -51,7 +52,7 @@ namespace RenovationApp.Server.Controllers
 
             var expiry = TimeSpan.FromMinutes(10);
 
-            var result = await _storageService.GeneratePresignedUploadUrlAsync(_projectBucket, "image", dto.RFQId, dto.FileName, expiry);
+            var result = await _storageService.GeneratePresignedUploadUrlAsync(_rfqBucket, "image", dto.RFQId, dto.FileName, expiry);
 
 
             var image = new RFQImage
@@ -71,10 +72,10 @@ namespace RenovationApp.Server.Controllers
         public async Task<IActionResult> GetImages(int rfqId)
         {
             // Check if the project exists
-            var rfq = await _db.Projects.FindAsync(rfqId);
+            var rfq = await _db.RFQs.FindAsync(rfqId);
             if (rfq == null)
             {
-                return NotFound("Project not found.");
+                return NotFound("RFQ not found.");
             }
 
             // Get the user's role and ID
@@ -107,12 +108,23 @@ namespace RenovationApp.Server.Controllers
 
             foreach (var image in images)
             {
-                var url = await _storageService.GeneratePresignedDownloadUrlAsync(_projectBucket, image.ImageUri);
-                result.Add(new RFQDownloadDto
+                //bool fileExists = await _storageService.ObjectExistsAsync(_rfqBucket, image.ImageUri);
+                bool fileExists = true;
+                if (fileExists)
                 {
-                    Url = url
-                });
+                    var url = await _storageService.GeneratePresignedDownloadUrlAsync(_rfqBucket, image.ImageUri);
+                    result.Add(new RFQDownloadDto
+                    {
+                        Url = url
+                    });
+                }
+                else
+                {
+                    _db.RFQImages.Remove(image);
+                }
             }
+
+            await _db.SaveChangesAsync();
 
             return Ok(result);
         }
