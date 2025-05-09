@@ -4,6 +4,9 @@ import { PublicClientApplication, EventType, AuthenticationResult } from '@azure
 import { msalConfig } from './config/authConfig.ts';
 import './index.css'
 import App from './app/App.tsx'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 /**
  * MSAL should be instantiated outside of the component tree to prevent it from being re-instantiated on re-renders.
