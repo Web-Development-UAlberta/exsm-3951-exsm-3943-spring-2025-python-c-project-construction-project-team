@@ -344,7 +344,7 @@ namespace RenovationApp.Server.Migrations
                         .HasColumnName("type");
 
                     b.Property<DateTime>("UploadedTimestamp")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("uploaded_timestamp");
 
                     b.HasKey("Id");

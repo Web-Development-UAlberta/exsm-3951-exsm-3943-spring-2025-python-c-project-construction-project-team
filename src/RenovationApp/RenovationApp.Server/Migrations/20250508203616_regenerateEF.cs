@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace RenovationApp.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class regenerateEF : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -39,6 +39,28 @@ namespace RenovationApp.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ProjectServiceTypes", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RFQs",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    created_timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    client_id = table.Column<string>(type: "varchar(255)", nullable: false),
+                    status = table.Column<string>(type: "text", nullable: true),
+                    assigned_employee_id = table.Column<string>(type: "varchar(255)", nullable: true),
+                    PreferredMaterial = table.Column<string>(type: "character varying(160)", maxLength: 160, nullable: true),
+                    Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    renovation_type = table.Column<string>(type: "text", nullable: true),
+                    budget = table.Column<decimal>(type: "numeric(9,2)", nullable: true),
+                    ProjectAddress = table.Column<string>(type: "character varying(160)", maxLength: 160, nullable: true),
+                    RoomSize = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RFQs", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -90,6 +112,27 @@ namespace RenovationApp.Server.Migrations
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RFQImages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UploadedTimestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ImageUri = table.Column<string>(type: "text", nullable: false),
+                    RFQId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RFQImages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RFQImages_RFQs_RFQId",
+                        column: x => x.RFQId,
+                        principalTable: "RFQs",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -179,40 +222,6 @@ namespace RenovationApp.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RFQs",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    created_timestamp = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    client_id = table.Column<int>(type: "int", nullable: false),
-                    status = table.Column<string>(type: "text", nullable: true),
-                    assigned_employee_id = table.Column<int>(type: "int", nullable: true),
-                    PreferredMaterial = table.Column<string>(type: "character varying(160)", maxLength: 160, nullable: true),
-                    Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    renovation_type = table.Column<string>(type: "text", nullable: true),
-                    budget = table.Column<decimal>(type: "numeric(9,2)", nullable: true),
-                    ProjectAddress = table.Column<string>(type: "character varying(160)", maxLength: 160, nullable: true),
-                    RoomSize = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RFQs", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_RFQs_Users_assigned_employee_id",
-                        column: x => x.assigned_employee_id,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
-                    table.ForeignKey(
-                        name: "FK_RFQs_Users_client_id",
-                        column: x => x.client_id,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Projects",
                 columns: table => new
                 {
@@ -249,27 +258,6 @@ namespace RenovationApp.Server.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RFQImages",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UploadedTimestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ImageUri = table.Column<string>(type: "text", nullable: false),
-                    RFQId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RFQImages", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_RFQImages_RFQs_RFQId",
-                        column: x => x.RFQId,
-                        principalTable: "RFQs",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -351,7 +339,7 @@ namespace RenovationApp.Server.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    uploaded_timestamp = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    uploaded_timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     file_uri = table.Column<string>(type: "text", nullable: false),
                     file_name = table.Column<string>(type: "text", nullable: false),
                     type = table.Column<string>(type: "text", nullable: false),
@@ -551,16 +539,6 @@ namespace RenovationApp.Server.Migrations
                 name: "IX_RFQImages_RFQId",
                 table: "RFQImages",
                 column: "RFQId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RFQs_assigned_employee_id",
-                table: "RFQs",
-                column: "assigned_employee_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RFQs_client_id",
-                table: "RFQs",
-                column: "client_id");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
