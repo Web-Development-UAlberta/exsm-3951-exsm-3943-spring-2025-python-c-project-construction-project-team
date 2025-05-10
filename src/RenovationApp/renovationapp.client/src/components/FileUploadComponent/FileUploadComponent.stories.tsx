@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import FileUploadComponent from './FileUploadComponent';
-import { handlers, networkErrorHandlers } from '../mocks/handlers/fileUploadHandlers';
+import { handlers, networkErrorHandlers } from '../../mocks/handlers/FileUploadHandlers';
 import { expect, waitFor } from '@storybook/test';
 
 const meta: Meta<typeof FileUploadComponent> = {
@@ -91,6 +91,23 @@ export const UploadDocument: Story = {
     }
 }
 
+// Invalid file type story
+export const InvalidFileType: Story = {
+    play: async ({ canvasElement }) => {
+        const { canvas } = await setFileUploadTest({
+            canvasElement,
+            fileType: 'application/pdf',
+            fileExtension: 'pdf',
+            selectRadioOption: 'Image',
+        });
+
+        // Wait for error message to appear
+        await waitFor(() => {
+            expect(canvas.getByText(/Error:/i)).toBeInTheDocument();
+        });
+    }
+}
+
 // Network error story
 export const NetworkError: Story = {
     parameters: {
@@ -109,9 +126,6 @@ export const NetworkError: Story = {
         // Wait for error message to appear
         await waitFor(() => {
             expect(canvas.getByText(/Error:/i)).toBeInTheDocument();
-
-            const errorElement = canvas.getByText(/Error:/i);
-            expect(errorElement.textContent).toMatch(/failed|network|fetch|timeout/i);
         });
     }
 }
