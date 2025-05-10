@@ -1,4 +1,3 @@
-
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
@@ -6,27 +5,29 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 
-public class ModelTestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
+namespace RenovationApp.Tests.BackEnd.Tests.Auth
 {
-    public ModelTestAuthHandler(
-        IOptionsMonitor<AuthenticationSchemeOptions> options,
-        ILoggerFactory logger,
-        UrlEncoder encoder,
-        ISystemClock clock
-    ) : base(options, logger, encoder, clock) {}
-
-    protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+    public class ModelTestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
-        var claims = new[]
+        public ModelTestAuthHandler(
+            IOptionsMonitor<AuthenticationSchemeOptions> options,
+            ILoggerFactory logger,
+            UrlEncoder encoder)
+            : base(options, logger, encoder, TimeProvider.System) { }
+
+        protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            new Claim(ClaimTypes.Name, "Test User"),
-            new Claim("http://schemas.microsoft.com/identity/claims/objectidentifier", "test-user-guid")
-        };
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Name, "Test User"),
+                new Claim("http://schemas.microsoft.com/identity/claims/objectidentifier", "test-user-guid")
+            };
 
-        var identity = new ClaimsIdentity(claims, "Test");
-        var principal = new ClaimsPrincipal(identity);
-        var ticket = new AuthenticationTicket(principal, "Test");
+            var identity = new ClaimsIdentity(claims, Scheme.Name);
+            var principal = new ClaimsPrincipal(identity);
+            var ticket = new AuthenticationTicket(principal, Scheme.Name);
 
-        return Task.FromResult(AuthenticateResult.Success(ticket));
+            return Task.FromResult(AuthenticateResult.Success(ticket));
+        }
     }
 }

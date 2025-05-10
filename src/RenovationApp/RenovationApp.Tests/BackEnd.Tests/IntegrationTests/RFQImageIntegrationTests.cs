@@ -13,7 +13,12 @@ public class RFQImageIntegrationTests : IClassFixture<WebApplicationFactory<Prog
 
     public RFQImageIntegrationTests(WebApplicationFactory<Program> factory)
     {
-        _client = factory.CreateClient();
+        _client = factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false
+        });
+
+        _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
     }
 
     [Fact]

@@ -60,7 +60,7 @@ namespace RenovationApp.Server.Controllers
             {
                 RFQId = dto.RFQId,
                 ImageUri = result.ObjectKey,
-                UploadedTimestamp = DateTime.UtcNow
+                UploadedAt = DateTime.UtcNow
             };
 
             _db.RFQImages.Add(image);
