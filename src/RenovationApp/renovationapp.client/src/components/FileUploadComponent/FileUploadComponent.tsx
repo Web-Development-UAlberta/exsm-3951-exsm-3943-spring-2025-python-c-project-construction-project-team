@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { IPublicClientApplication } from '@azure/msal-browser';
-import { silentRequest } from '../config/authConfig';
+import { silentRequest } from '../../config/authConfig';
 
 interface FileUploadComponentProps {
     projectId: string;
