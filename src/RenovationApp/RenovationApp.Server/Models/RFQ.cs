@@ -43,14 +43,15 @@ namespace RenovationApp.Server.Models
         public DateTime CreatedTimestamp { get; set; } = DateTime.UtcNow; // Default value
 
         [Required]
-        [Column("client_id", TypeName = "varchar(255)")]
-        public required string ClientId { get; set; }
+        [Column("client_id", TypeName = "int")]
+        public int ClientId { get; set; }
         
 
+        [Required]
         [Column("status", TypeName = "text")]
         public RFQStatus? Status { get; set; }
 
-        [Column("assigned_employee_id", TypeName = "varchar(255)")]
+        [Column("assigned_employee_id", TypeName = "int")]
         public string? AssignedEmployeeId { get; set; }
 
 
@@ -60,6 +61,7 @@ namespace RenovationApp.Server.Models
         [StringLength(1000, ErrorMessage = "Renovation Description cannot exceed 1,000 characters.")]
         public string? Description { get; set; }
 
+        [Required]
         [Column("renovation_type")]
         public RenovationType? RenovationType { get; set; }
 
@@ -69,6 +71,7 @@ namespace RenovationApp.Server.Models
         [StringLength(160)]
         public string? ProjectAddress { get; set; }
 
+        [Required]
         public RoomSize? RoomSize { get; set; }
 
         public ICollection<RFQImage>? RFQImages { get; set; } = new List<RFQImage>();

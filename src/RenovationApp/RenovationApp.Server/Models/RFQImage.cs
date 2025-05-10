@@ -8,12 +8,18 @@ namespace RenovationApp.Server.Models
         [Key]
         public int Id { get; set; }
 
-        public DateTime UploadedTimestamp { get; set; } = DateTime.UtcNow; // Default value
+        [Required]
+        public string FileName { get; set; } = string.Empty;
+        [Required]
+        public string FilePath { get; set; } = string.Empty;
+        public DateTime UploadedAt { get; set; } = DateTime.UtcNow; // Default value
 
+        [Required]
         public string ImageUri { get; set; } = string.Empty;
 
         [ForeignKey("RFQ")]
         public int RFQId { get; set; }
+        [Required]
         public RFQ RFQ { get; set; } = null!;
     }
 }

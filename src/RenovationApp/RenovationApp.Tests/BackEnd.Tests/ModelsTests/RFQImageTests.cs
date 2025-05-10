@@ -30,9 +30,9 @@ namespace RenovationApp.Tests.Models
             {
                 Id = 1,
                 CreatedTimestamp = DateTime.UtcNow,
-                ClientId = 1,
-                AssignedEmployeeId = 2,
-                Status = RFQStatus.Submitted,
+                ClientId = "1",
+                AssignedEmployeeId = "2",
+                Status = RFQStatus.Created,
                 PreferredMaterial = "Brick",
                 Description = "New RFQ request",
                 RenovationType = RenovationType.KitchenRemodels,

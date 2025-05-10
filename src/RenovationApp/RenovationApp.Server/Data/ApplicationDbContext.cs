@@ -117,6 +117,28 @@ namespace RenovationApp.Server.Data
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
+            // Configure RFQImage entity
+            modelBuilder.Entity<RFQImage>(entity =>
+            {
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.FileName)
+                  .IsRequired()
+                  .HasMaxLength(255);
+
+            entity.Property(e => e.FilePath)
+                  .IsRequired()
+                  .HasMaxLength(500);
+
+            entity.Property(e => e.ImageUri)
+                  .IsRequired();
+
+            entity.HasOne(e => e.RFQ)
+                  .WithMany(r => r.RFQImages)
+                  .HasForeignKey(e => e.RFQId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
             // Configure ProjectService entity
             modelBuilder.Entity<ProjectService>(entity =>
             {
