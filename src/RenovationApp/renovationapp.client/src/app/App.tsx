@@ -4,6 +4,9 @@ import { Gallery, Home, UserProfile, RequestQuote, Service } from '../pages/clie
 import AdminLayout from '../layouts/AdminLayout';
 import { Projects, Requests } from '../pages/admin';
 import { IPublicClientApplication } from '@azure/msal-browser';
+import { MsalProvider } from '@azure/msal-react';
+
+function App({ instance }: { instance: IPublicClientApplication }) {
     return (
         <MsalProvider instance={instance}>
             <Router>

@@ -25,10 +25,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddMicrosoftIdentityWebApi(builder.Configuration, "AzureAd");
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("SecretAgentsOnly", policy =>
+    options.AddPolicy("projectManagersOnly", policy =>
     {
         policy.RequireAuthenticatedUser();
-        policy.RequireRole("SecretForcast.Read");
+        policy.RequireRole("projectmanager");
     });
 });
 
