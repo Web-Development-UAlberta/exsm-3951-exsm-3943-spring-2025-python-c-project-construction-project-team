@@ -80,7 +80,7 @@ const ClientLayout: React.FC = () => {
               )}
             </div>
 
-            <Link className="nav-link" to="/rfq">Request A Quote</Link>
+            {/* <Link className="nav-link" to="/rfq">Request A Quote</Link> */}
 
           </div>
         </div>
