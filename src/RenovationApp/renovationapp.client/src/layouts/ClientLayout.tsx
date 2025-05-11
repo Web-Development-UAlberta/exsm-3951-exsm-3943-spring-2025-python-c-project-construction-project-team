@@ -86,7 +86,7 @@ const ClientLayout: React.FC = () => {
         </div>
       </nav>
 
-      <main className="container" style={{ paddingTop: '5rem' }}>
+      <main className="container-xxl" style={{ paddingTop: '4rem' }}>
         <Outlet />
       </main>
     </>

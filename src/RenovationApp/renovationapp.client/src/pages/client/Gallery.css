@@ -1,0 +1,102 @@
+.gallery-title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.filter-sidebar {
+    padding-top: 180px;
+    background-color: #f2f2f2;
+    height: 100vh;
+}
+
+.filter-heading {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.filter-subheading {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #444;
+}
+
+.filter-section {
+    margin-bottom: 1.5rem;
+}
+
+.gallery-card {
+    border: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.gallery-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.gallery-image {
+    height: 250px;
+    object-fit: cover;
+    background-color: #eee;
+}
+
+.images-per-row-info {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.gallery-size-indicator {
+    font-size: 0.85rem;
+    color: #888;
+    position: relative;
+}
+
+.gallery-arrows {
+    position: relative;
+    display: flex;
+}
+
+.arrow {
+    font-size: 1.2rem;
+    margin-left: 10px;
+}
+
+.arrow.horizontal {
+    display: inline-block;
+}
+
+.arrow.vertical {
+    display: inline-block;
+    transform: rotate(90deg);
+    margin-left: 5px;
+}
+
+.project-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.project-description {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Make filter sidebar sticky on larger screens */
+@media (min-width: 992px) {
+    .filter-sidebar {
+        position: sticky;
+        top: 20px;
+        height: fit-content;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+    .filter-sidebar {
+        margin-bottom: 1.5rem;
+    }
+}

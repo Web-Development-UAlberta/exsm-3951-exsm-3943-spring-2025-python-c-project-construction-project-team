@@ -41,7 +41,7 @@ const Home = () => {
             </div>
 
             {/* Services Section */}
-            <div className="services-section mb-5 container">
+            <div className="services-section mb-5">
                 <h2 className="text-center mb-5">Browse Services</h2>
 
                 <div className="d-flex justify-content-around">
