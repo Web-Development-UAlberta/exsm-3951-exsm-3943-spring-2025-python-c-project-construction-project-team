@@ -1,5 +1,3 @@
-using System;
-using RenovationApp.Server.Models;
 
 namespace RenovationApp.Server.DTOs
 {
@@ -10,6 +8,4 @@ namespace RenovationApp.Server.DTOs
         public string? Description { get; set; }
         public string? Status { get; set; }
     }
-    
-
 }
