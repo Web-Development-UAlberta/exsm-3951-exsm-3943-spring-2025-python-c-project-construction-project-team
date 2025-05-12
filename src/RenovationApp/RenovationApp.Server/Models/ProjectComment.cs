@@ -13,14 +13,12 @@ namespace RenovationApp.Server.Models
         [Column("comment", TypeName = "text")]
         public string Comment { get; set; } = null!;
 
-        [Column("created_timestamp", TypeName = "timestamp without time zone")]
+        [Column("created_timestamp", TypeName = "timestamp with time zone")]
         public DateTime CreatedTimestamp { get; set; } = DateTime.UtcNow; // Default value
 
-        [Column("created_by_employee")]
-        public int? CreatedByEmployee { get; set; }
+        [Column("created_by_employee", TypeName = "varchar(255)")]
+        required public string CreatedByEmployee { get; set; }
 
-        [ForeignKey(nameof(CreatedByEmployee))]
-        public virtual User? Employee { get; set; }
 
         [Column("project_id")]
         public int ProjectId { get; set; }
