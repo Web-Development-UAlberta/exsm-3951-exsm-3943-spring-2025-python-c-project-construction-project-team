@@ -28,34 +28,6 @@ namespace RenovationApp.Server.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configure User entity
-            modelBuilder.Entity<User>(entity =>
-            {
-                entity.ToTable("Users");
-                
-                // Configure relationships with Project model
-                entity.HasMany(u => u.ProjectEmployee)
-                    .WithOne(p => p.Employee)
-                    .HasForeignKey(p => p.CreatedByEmployee)
-                    .OnDelete(DeleteBehavior.SetNull);
-
-                entity.HasMany(u => u.ProjectClient)
-                    .WithOne(p => p.Client)
-                    .HasForeignKey(p => p.ClientId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                // Configure relationships with ProjectComment
-                entity.HasMany(u => u.Comments)
-                    .WithOne(pc => pc.Employee)
-                    .HasForeignKey(pc => pc.CreatedByEmployee)
-                    .OnDelete(DeleteBehavior.SetNull);
-
-                // Configure relationships with ProjectTask
-                entity.HasMany(u => u.ProjectTasks)
-                    .WithOne(pt => pt.AssignedUser)
-                    .HasForeignKey(pt => pt.UserId)
-                    .OnDelete(DeleteBehavior.SetNull);
-            });
 
             // Configure Project entity
             modelBuilder.Entity<Project>(entity =>

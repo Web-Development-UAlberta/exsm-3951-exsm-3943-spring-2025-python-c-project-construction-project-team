@@ -14,7 +14,6 @@ namespace RenovationApp.Server.Helpers
                 Id = entity.Id,
                 CreatedTimestamp = entity.CreatedTimestamp,
                 ProjectId = entity.ProjectId,
-                UserId = entity.UserId,
                 Title = entity.Title,
                 Description = entity.Description,
                 Status = entity.Status
@@ -27,7 +26,6 @@ namespace RenovationApp.Server.Helpers
             {
                 Id = dto.Id,
                 ProjectId = dto.ProjectId,
-                UserId = dto.UserId,
                 Title = dto.Title,
                 Description = dto.Description,
                 Status = dto.Status,
