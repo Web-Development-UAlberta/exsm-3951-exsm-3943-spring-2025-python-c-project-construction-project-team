@@ -101,7 +101,7 @@ This document defines the scope, components, success and error conditions for a 
 
 - `/register`: Homeowner registration
 - `/login`: Homeowner/staff login
-- `/profile`: User profile page
+- `/account`: User profile page
 - `/services`: Renovation services
 - `/gallery`: View past projects
 - `/submit-rfq`: RFQ submission

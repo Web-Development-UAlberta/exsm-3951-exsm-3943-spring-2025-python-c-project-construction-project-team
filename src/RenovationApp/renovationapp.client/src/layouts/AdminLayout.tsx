@@ -33,7 +33,7 @@ const AdminLayout: React.FC = () => {
   };
 
   const handleUserAccountClick = () => {
-    navigate('/admin/profile');
+    navigate('/admin/account');
   };
 
 

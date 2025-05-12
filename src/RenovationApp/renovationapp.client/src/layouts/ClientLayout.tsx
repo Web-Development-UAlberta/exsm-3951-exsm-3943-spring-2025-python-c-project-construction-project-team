@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useMsal, useIsAuthenticated } from '@azure/msal-react';
 import { loginRequest } from '../config/authConfig';
+import logoPlaceholder from '../assets/logo_name.svg';
 
 const ClientLayout: React.FC = () => {
   const { instance } = useMsal();
@@ -33,14 +34,16 @@ const ClientLayout: React.FC = () => {
   };
 
   const handleUserAccountClick = () => {
-    navigate('/profile');
+    navigate('/account');
   };
 
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top shadow-sm">
         <div className="container">
-          <Link className="navbar-brand" to="/">Client Portal</Link>
+          <Link className="navbar-brand" to="/">
+            <img src={logoPlaceholder} alt="Logo" height="40" />
+          </Link>
 
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#clientNavbar">
             <span className="navbar-toggler-icon"></span>
@@ -62,7 +65,7 @@ const ClientLayout: React.FC = () => {
               </li>
             </ul>
 
-            <div className="d-flex">
+            <div className="d-flex mx-3">
               {isAuthenticated ? (
                 <div className="d-flex gap-2 align-items-center">
                   <button type="button" className="btn btn-sm" onClick={handleUserAccountClick}>
@@ -76,11 +79,14 @@ const ClientLayout: React.FC = () => {
                 <button type="button" className="btn btn-outline-primary btn-sm" onClick={handleLogin}>Login</button>
               )}
             </div>
+
+            {/* <Link className="nav-link" to="/rfq">Request A Quote</Link> */}
+
           </div>
         </div>
       </nav>
 
-      <main className="container" style={{ paddingTop: '5rem' }}>
+      <main className="container-xxl" style={{ paddingTop: '4rem' }}>
         <Outlet />
       </main>
     </>
