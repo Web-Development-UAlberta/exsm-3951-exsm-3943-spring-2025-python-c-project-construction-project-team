@@ -7,8 +7,14 @@ namespace RenovationApp.Server.Models
 {
     public enum ProjectStatus
     {
-        [Display(Name = "Created")]
-        Created,
+        [Display(Name = "New")]
+        New,
+
+        [Display(Name = "Quote Complete")]
+        Quoted,
+
+        [Display(Name = "Quote Approved")]
+        QuoteApproved,
 
         [Display(Name = "In Progress")]
         InProgress,
