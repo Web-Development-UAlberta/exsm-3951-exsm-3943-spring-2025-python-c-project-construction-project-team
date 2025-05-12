@@ -10,7 +10,7 @@ namespace RenovationApp.Server.Models
         [Column("id", TypeName = "int")]
         public int Id { get; set; }
 
-        [Column("created_timestamp", TypeName = "timestamp without time zone")]
+        [Column("created_timestamp", TypeName = "timestamp with time zone")]
         public DateTime CreatedTimeStamp { get; set; }
 
         [Column("service_id", TypeName = "int")]
