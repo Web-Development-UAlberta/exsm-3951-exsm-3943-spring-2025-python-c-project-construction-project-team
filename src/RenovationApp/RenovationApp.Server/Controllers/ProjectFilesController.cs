@@ -4,7 +4,7 @@ using RenovationApp.Server.Services;
 using RenovationApp.Server.Services.Fileservice.Dtos;
 using RenovationApp.Server.Data;
 using Microsoft.EntityFrameworkCore;
-using static RenovationApp.Server.Models.RFQDTOs;
+using static RenovationApp.Server.Dtos.RFQDTOs;
 using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 
