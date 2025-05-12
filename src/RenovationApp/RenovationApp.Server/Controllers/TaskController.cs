@@ -11,7 +11,7 @@ namespace RenovationApp.Server.Controllers
 {
     [ApiController]
     [Route("/[controller]")]
-    [Authorize]
+    [Authorize(Policy = "projectManagersOnly")]
     public class TaskController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -27,7 +27,6 @@ namespace RenovationApp.Server.Controllers
         {
             var tasks = await _context.ProjectTasks
                 .Include(t => t.Project)
-                .Include(t => t.AssignedUser)
                 .ToListAsync();
 
             return tasks.Select(t => t.ToDTO()).ToList();
@@ -39,7 +38,6 @@ namespace RenovationApp.Server.Controllers
         {
             var task = await _context.ProjectTasks
                 .Include(t => t.Project)
-                .Include(t => t.AssignedUser)
                 .FirstOrDefaultAsync(t => t.Id == id);
 
             if (task == null)
@@ -63,7 +61,6 @@ namespace RenovationApp.Server.Controllers
 
             var tasks = await _context.ProjectTasks
                 .Where(t => t.ProjectId == projectId)
-                .Include(t => t.AssignedUser)
                 .ToListAsync();
 
             return tasks.Select(t => t.ToDTO()).ToList();
