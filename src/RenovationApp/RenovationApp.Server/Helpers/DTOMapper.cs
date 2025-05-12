@@ -6,33 +6,6 @@ namespace RenovationApp.Server.Helpers
     public static class DTOMapper
     {
 
-
-        public static ProjectTaskDTO ToDTO(this ProjectTask entity)
-        {
-            return new ProjectTaskDTO
-            {
-                Id = entity.Id,
-                CreatedTimestamp = entity.CreatedTimestamp,
-                ProjectId = entity.ProjectId,
-                Title = entity.Title,
-                Description = entity.Description,
-                Status = entity.Status
-            };
-        }
-
-        public static ProjectTask ToEntity(this ProjectTaskDTO dto)
-        {
-            return new ProjectTask
-            {
-                Id = dto.Id,
-                ProjectId = dto.ProjectId,
-                Title = dto.Title,
-                Description = dto.Description,
-                Status = dto.Status,
-                // CreatedTimestamp is set in controller
-            };
-        }
-
         public static ProjectCommunicationDto ToDto(ProjectCommunication entity)
         {
             return new ProjectCommunicationDto
