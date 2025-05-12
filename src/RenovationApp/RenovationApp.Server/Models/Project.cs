@@ -32,22 +32,15 @@ namespace RenovationApp.Server.Models
         [Column("id", TypeName = "int")]
         public int Id { get; set; }
 
-        [Column("created_timestamp", TypeName = "timestamp without time zone")]
+        [Column("created_timestamp", TypeName = "timestamp with time zone")]
         public DateTime CreatedTimestamp { get; set; } = DateTime.UtcNow; // Default value
 
-        [Column("created_by_employee")]
-        public int? CreatedByEmployee { get; set; }
-
-        [ForeignKey(nameof(CreatedByEmployee))]
-        [InverseProperty("ProjectEmployee")]
-        public virtual User? Employee { get; set; }
+        [Column("created_by_employee", TypeName = "varchar(255)")]
+        required public string CreatedByEmployee { get; set; }
 
         [Required]
-        [Column("client_id")]
-        public int ClientId { get; set; }
-        [ForeignKey(nameof(ClientId))]
-        [InverseProperty("ProjectClient")]
-        public virtual User Client { get; set; } = null!;
+        [Column("client_id", TypeName = "varchar(255)")]
+        required public string ClientId { get; set; }
 
         [Column("rfq_id", TypeName = "int")]
         public int? RFQId { get; set; }
