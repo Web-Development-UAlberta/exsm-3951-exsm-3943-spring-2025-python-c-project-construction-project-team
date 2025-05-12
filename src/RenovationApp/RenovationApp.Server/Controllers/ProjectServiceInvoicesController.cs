@@ -1,3 +1,5 @@
+﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RenovationApp.Server.Data;
@@ -5,7 +7,10 @@ using RenovationApp.Server.Models;
 
 namespace RenovationApp.Server.Controllers
 {
-    public class ProjectServiceInvoicesController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    [Authorize(Policy = "projectManagersOnly")]
+    public class ProjectServiceInvoicesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
@@ -14,82 +19,88 @@ namespace RenovationApp.Server.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        // GET: api/ProjectServiceInvoices
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ProjectServiceInvoice>>> GetProjectServiceInvoices()
         {
-            var invoices = await _context.ProjectServiceInvoices
-                .Include(i => i.ProjectService)
-                .ToListAsync();
-            return View(invoices);
+            return await _context.ProjectServiceInvoices.ToListAsync();
         }
 
-        public async Task<IActionResult> Details(int? id)
+        // GET: api/ProjectServiceInvoices/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ProjectServiceInvoice>> GetProjectServiceInvoice(int id)
         {
-            if (id == null) return NotFound();
-            var invoice = await _context.ProjectServiceInvoices
-                .Include(i => i.ProjectService)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (invoice == null) return NotFound();
-            return View(invoice);
-        }
+            var projectServiceInvoice = await _context.ProjectServiceInvoices.FindAsync(id);
 
-        public IActionResult Create()
-        {
-            ViewData["ProjectServices"] = new SelectList(_context.ProjectServices, "Id", "Id");
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ProjectServiceInvoice invoice)
-        {
-            if (ModelState.IsValid)
+            if (projectServiceInvoice == null)
             {
-                _context.Add(invoice);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            return View(invoice);
+
+            return projectServiceInvoice;
         }
 
-        public async Task<IActionResult> Edit(int? id)
+        // PUT: api/ProjectServiceInvoices/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutProjectServiceInvoice(int id, ProjectServiceInvoice projectServiceInvoice)
         {
-            if (id == null) return NotFound();
-            var invoice = await _context.ProjectServiceInvoices.FindAsync(id);
-            if (invoice == null) return NotFound();
-            return View(invoice);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, ProjectServiceInvoice invoice)
-        {
-            if (id != invoice.Id) return NotFound();
-            if (ModelState.IsValid)
+            if (id != projectServiceInvoice.Id)
             {
-                _context.Update(invoice);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return BadRequest();
             }
-            return View(invoice);
+
+            _context.Entry(projectServiceInvoice).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ProjectServiceInvoiceExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
         }
 
-        public async Task<IActionResult> Delete(int? id)
+        // POST: api/ProjectServiceInvoices
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<ProjectServiceInvoice>> PostProjectServiceInvoice(ProjectServiceInvoice projectServiceInvoice)
         {
-            if (id == null) return NotFound();
-            var invoice = await _context.ProjectServiceInvoices.FindAsync(id);
-            if (invoice == null) return NotFound();
-            return View(invoice);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var invoice = await _context.ProjectServiceInvoices.FindAsync(id);
-            if (invoice != null)
-                _context.ProjectServiceInvoices.Remove(invoice);
+            _context.ProjectServiceInvoices.Add(projectServiceInvoice);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return CreatedAtAction("GetProjectServiceInvoice", new { id = projectServiceInvoice.Id }, projectServiceInvoice);
+        }
+
+        // DELETE: api/ProjectServiceInvoices/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProjectServiceInvoice(int id)
+        {
+            var projectServiceInvoice = await _context.ProjectServiceInvoices.FindAsync(id);
+            if (projectServiceInvoice == null)
+            {
+                return NotFound();
+            }
+
+            _context.ProjectServiceInvoices.Remove(projectServiceInvoice);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private bool ProjectServiceInvoiceExists(int id)
+        {
+            return _context.ProjectServiceInvoices.Any(e => e.Id == id);
         }
     }
 }
