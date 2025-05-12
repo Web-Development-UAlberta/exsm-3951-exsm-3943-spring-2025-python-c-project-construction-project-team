@@ -34,7 +34,7 @@ const ClientLayout: React.FC = () => {
   };
 
   const handleUserAccountClick = () => {
-    navigate('/profile');
+    navigate('/account');
   };
 
   return (

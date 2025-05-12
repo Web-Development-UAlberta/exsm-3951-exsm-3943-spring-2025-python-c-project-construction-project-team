@@ -9,7 +9,7 @@ import './Home.css';
 
 const Home = () => {
     return (
-        <div className="home-page">
+        <div>
             {/* Hero Section */}
             <div className="hero-section bg-light mb-5">
                 <div className="row g-0">
@@ -47,9 +47,9 @@ const Home = () => {
                 <div className="d-flex justify-content-around">
                     {/* Kitchen Remodels */}
                     <div >
-                        <Link to="/service/kitchen" className="text-decoration-none text-dark">
+                        <Link to="/service" className="text-decoration-none text-dark">
                             <div className="service-card bg-light p-4 text-center">
-                                <img src={KitchenImage} alt="kitchen" height="120" />
+                                <img src={KitchenImage} alt="kitchen" height="160" />
                                 <h3 className="h5 mt-3">Kitchen Remodels</h3>
                             </div>
                         </Link>
@@ -57,9 +57,9 @@ const Home = () => {
 
                     {/* Bathroom Renovations */}
                     <div >
-                        <Link to="/service/bathroom" className="text-decoration-none text-dark">
+                        <Link to="/service" className="text-decoration-none text-dark">
                             <div className="service-card bg-light p-4 text-center">
-                                <img src={BathroomImage} alt="bathroom" height="120" />
+                                <img src={BathroomImage} alt="bathroom" height="160" />
                                 <h3 className="h5 mt-3">Bathroom Renovations</h3>
                             </div>
                         </Link>
@@ -67,9 +67,9 @@ const Home = () => {
 
                     {/* Basement Finishings */}
                     <div >
-                        <Link to="/service/basement" className="text-decoration-none text-dark">
+                        <Link to="/service" className="text-decoration-none text-dark">
                             <div className="service-card bg-light p-4 text-center">
-                                <img src={BasementImage} alt="basement" height="120" />
+                                <img src={BasementImage} alt="basement" height="160" />
                                 <h3 className="h5 mt-3">Basement Finishings</h3>
                             </div>
                         </Link>
@@ -77,9 +77,9 @@ const Home = () => {
 
                     {/* Home Additions */}
                     <div >
-                        <Link to="/service/additions" className="text-decoration-none text-dark">
+                        <Link to="/service" className="text-decoration-none text-dark">
                             <div className="service-card bg-light p-4 text-center">
-                                <img src={HomeAdditionImage} alt="basement" height="120" />
+                                <img src={HomeAdditionImage} alt="basement" height="160" />
                                 <h3 className="h5 mt-3">Home Additions</h3>
                             </div>
                         </Link>

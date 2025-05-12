@@ -1,5 +1,5 @@
 export { default as Home } from "./Home"
-export { default as UserProfile } from "./UserProfile"
+export { default as MyAccount } from "./MyAccount"
 export { default as RequestQuote } from "./RequestQuote"
 export { default as Service } from "./Service"
 export { default as Gallery } from "./Gallery"

@@ -106,7 +106,47 @@ const Gallery = () => {
             price: 9500,
             title: 'Budget Basement Makeover',
             description: 'Cost-effective basement renovation with multi-purpose space.'
-        }
+        },
+        {
+            id: 11,
+            imageUrl: '/api/placeholder/250/250',
+            roomType: 'Kitchen Remodels',
+            style: 'Modern',
+            budget: '20k-30k',
+            price: 25000,
+            title: 'Modern Kitchen Renovation',
+            description: 'Complete kitchen renovation with custom cabinets and island.'
+        },
+        {
+            id: 12,
+            imageUrl: '/api/placeholder/250/250',
+            roomType: 'Bathroom Renovations',
+            style: 'Modern',
+            budget: '10k-20k',
+            price: 15000,
+            title: 'Master Bathroom Remodel',
+            description: 'Luxurious bathroom with walk-in shower and dual vanity.'
+        },
+        {
+            id: 13,
+            imageUrl: '/api/placeholder/250/250',
+            roomType: 'Home Additions',
+            style: 'Country style',
+            budget: '30k+',
+            price: 35000,
+            title: 'Family Room Addition',
+            description: 'Spacious family room addition with vaulted ceiling.'
+        },
+        {
+            id: 14,
+            imageUrl: '/api/placeholder/250/250',
+            roomType: 'Basement Finishings',
+            style: 'Budget-friendly',
+            budget: '10k-20k',
+            price: 12000,
+            title: 'Basement Entertainment Area',
+            description: 'Cozy basement transformation with entertainment center.'
+        },
     ];
 
     // Filter and sort images based on selected filters
@@ -222,7 +262,7 @@ const Gallery = () => {
                 {/* Gallery Content */}
                 <Col lg={9} md={8}>
                     <div className='py-3'>
-                        <h1 className="gallery-title text-center mb-2">Gallery</h1>
+                        <h1 className="text-center mb-2">Gallery</h1>
                         <p className="text-center mb-4">
                             Lorem ipsum dolor sit amet consectetur. Pharetra tellus lacus integer lectus adipiscing porttitor senectus amet pulvinar.
                         </p>

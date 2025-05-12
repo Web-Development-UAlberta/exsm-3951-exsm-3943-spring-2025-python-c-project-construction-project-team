@@ -59,7 +59,7 @@ namespace RenovationApp.Tests
         }
 
         [Authorize]
-        [HttpGet("/api/account/profile")]
+        [HttpGet("/api/account/account")]
         public IActionResult GetProfile()
         {
             var oid = User.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier");

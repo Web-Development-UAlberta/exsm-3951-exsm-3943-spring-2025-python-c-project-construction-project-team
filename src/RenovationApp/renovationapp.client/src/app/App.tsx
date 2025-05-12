@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import ClientLayout from '../layouts/ClientLayout';
-import { Gallery, Home, UserProfile, RequestQuote, Service } from '../pages/client';
+import { Gallery, Home, MyAccount, RequestQuote, Service } from '../pages/client';
 import AdminLayout from '../layouts/AdminLayout';
 import { Projects, Requests } from '../pages/admin';
 import { IPublicClientApplication } from '@azure/msal-browser';
@@ -17,7 +17,7 @@ function App({ instance }: { instance: IPublicClientApplication }) {
                         <Route path="service" element={<Service />} />
                         <Route path="gallery" element={<Gallery />} />
                         <Route path="rfq" element={<RequestQuote />} />
-                        <Route path="profile" element={<UserProfile />} />
+                        <Route path="account" element={<MyAccount />} />
                     </Route>
 
                     {/* Admin Portal */}

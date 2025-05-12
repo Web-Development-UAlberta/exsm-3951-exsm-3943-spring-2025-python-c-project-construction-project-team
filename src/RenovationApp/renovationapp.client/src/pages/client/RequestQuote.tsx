@@ -1,17 +1,15 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, ChangeEvent, FormEvent } from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Card from 'react-bootstrap/Card';
 import { useIsAuthenticated } from '@azure/msal-react';
-import { useNavigate } from 'react-router-dom';
 import Container from 'react-bootstrap/esm/Container';
 import Button from 'react-bootstrap/esm/Button';
 import ImagePlaceholder from "../../assets/placeholder-svg.svg";
 
-const RequestQuote: React.FC = () => {
+const RequestQuote = () => {
     const isAuthenticated = useIsAuthenticated();
-    const navigate = useNavigate();
 
     // Form state
     const [formData, setFormData] = useState({
