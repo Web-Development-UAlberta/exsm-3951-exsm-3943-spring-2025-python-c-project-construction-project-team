@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using RenovationApp.Server.Models;
 
-namespace RenovationApp.Server.Models
+namespace RenovationApp.Server.Dtos
 {
     public class RFQDTOs
     {

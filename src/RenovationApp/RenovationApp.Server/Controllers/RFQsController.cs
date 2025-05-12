@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RenovationApp.Server.Models;
-using static RenovationApp.Server.Models.RFQDTOs;
+using static RenovationApp.Server.Dtos.RFQDTOs;
 
 namespace RenovationApp.Server.Data
 {
