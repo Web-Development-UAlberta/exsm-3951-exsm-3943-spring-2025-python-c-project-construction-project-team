@@ -43,15 +43,15 @@ namespace RenovationApp.Server.Models
         public DateTime CreatedTimestamp { get; set; } = DateTime.UtcNow; // Default value
 
         [Required]
-        [Column("client_id", TypeName = "int")]
-        public int ClientId { get; set; }
+        [Column("client_id", TypeName = "varchar(255)")]
+        required public string ClientId { get; set; }
         
 
         [Required]
         [Column("status", TypeName = "text")]
         public RFQStatus? Status { get; set; }
 
-        [Column("assigned_employee_id", TypeName = "int")]
+        [Column("assigned_employee_id", TypeName = "varchar(255)")]
         public string? AssignedEmployeeId { get; set; }
 
 
