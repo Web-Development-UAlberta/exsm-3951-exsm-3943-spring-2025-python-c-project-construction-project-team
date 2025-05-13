@@ -15,27 +15,15 @@ title RenovationApp - Entity Relationship Diagram
 
 ' Entities
 
-entity "User" as User {
-  * id : int <<PK>>
-  --
-  authenticationOid : Guid
-  createdTimestamp : DateTime
-  name : varchar(255)
-  address : varchar(255)
-  role : UserRole
-  email : string
-  phoneNumber : string
-  userName : string
-}
-
 entity "Project" as Project {
   * id : int <<PK>>
   --
   createdTimestamp : DateTime
-  createdByEmployee : int <<FK>>
-  clientId : int <<FK>>
+  createdByEmployee : string
+  clientId : string
   rfqId : int <<FK>>
   status : ProjectStatus
+  renovationType : RenovationType
   isPublic : bool
   quotePriceOverride : decimal(10,2)
   quoteScheduleStartOverride : DateTime
@@ -46,9 +34,9 @@ entity "RFQ" as RFQ {
   * id : int <<PK>>
   --
   createdTimestamp : DateTime
-  clientId : int <<FK>>
+  clientId : string
   status : RFQStatus
-  assignedEmployeeId : int <<FK>>
+  assignedEmployeeId : string
   preferredMaterial : string(160)
   description : string(1000)
   renovationType : RenovationType
@@ -102,7 +90,7 @@ entity "ProjectTask" as ProjectTask {
   --
   createdTimestamp : DateTime
   projectId : int <<FK>>
-  userId : int <<FK>>
+  userId : string
   title : text
   description : text
   status : text
@@ -113,7 +101,7 @@ entity "ProjectComment" as ProjectComment {
   --
   comment : text
   createdTimestamp : DateTime
-  createdByEmployee : int <<FK>>
+  createdByEmployee : string
   projectId : int <<FK>>
 }
 
@@ -146,17 +134,7 @@ entity "ClientInvoice" as ClientInvoice {
   projectId : int <<FK>>
 }
 
-' Relationships
 
-' User relationships - Employee
-User ||--o{ Project
-User ||--o{ ProjectComment
-User ||--o{ ProjectTask
-User ||--o{ RFQ
-
-' User relationships - Client
-User ||--o{ Project
-User ||--o{ RFQ
 
 ' Project relationships
 Project ||--o{ ProjectComment
