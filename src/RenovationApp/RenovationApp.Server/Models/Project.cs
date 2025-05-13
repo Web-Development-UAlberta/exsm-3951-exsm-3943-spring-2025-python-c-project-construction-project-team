@@ -69,6 +69,9 @@ namespace RenovationApp.Server.Models
         [Column("quote_schedule_end_override", TypeName = "timestamp without time zone")]
         public DateTime? QuoteScheduleEndOverride { get; set; }
 
+        [Column("renovation_type")]
+        public RenovationType? RenovationType { get; set; }
+
         // Navigation collections
         [InverseProperty("Project")]
         public virtual ICollection<ProjectComment>? Comments { get; set; } = new List<ProjectComment>();

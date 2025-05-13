@@ -19,6 +19,7 @@ namespace RenovationApp.Server.Dtos
             public decimal? QuotePriceOverride { get; set; }
             public DateTime? QuoteScheduleStartOverride { get; set; }
             public DateTime? QuoteScheduleEndOverride { get; set; }
+            public string? RenovationType { get; set; }
         }
     }
 }

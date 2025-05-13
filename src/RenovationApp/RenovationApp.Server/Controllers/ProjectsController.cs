@@ -149,6 +149,16 @@ namespace RenovationApp.Server.Controllers
                 project.Status = projectStatus;
             }
 
+            // Update fields only if they are provided in the DTO
+            if (!string.IsNullOrEmpty(projectDTO.RenovationType))
+            {
+                if (!Enum.TryParse<RenovationType>(projectDTO.RenovationType, out var projectRenovationType))
+                {
+                    return BadRequest("Please specify an allowed renovation type.");
+                }
+                project.RenovationType = projectRenovationType;
+            }
+
             if (projectDTO.IsPublic != default(bool))
             {
                 project.IsPublic = projectDTO.IsPublic;
