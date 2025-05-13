@@ -11,7 +11,7 @@ using RenovationApp.Server.Models;
 
 namespace RenovationApp.Server.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     [Authorize(Policy = "projectManagersOnly")]
     public class ProjectServiceTypesController : ControllerBase

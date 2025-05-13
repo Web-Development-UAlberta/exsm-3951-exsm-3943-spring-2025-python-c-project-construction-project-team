@@ -6,7 +6,7 @@ using RenovationApp.Server.DTOs;
 
 namespace RenovationApp.Server.Controllers
 {
-    [Route("api/projects/{projectId}/communications")]
+    [Route("projects/{projectId}/communications")]
     [ApiController]
     public class ProjectCommunicationsController : ControllerBase
     {

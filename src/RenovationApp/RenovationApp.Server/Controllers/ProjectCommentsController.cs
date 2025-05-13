@@ -8,7 +8,7 @@ using static RenovationApp.Server.Dtos.ProjectCommentDTOs;
 
 namespace RenovationApp.Server.Controllers
 {
-    [Route("api/projects/{projectId}/comments")]
+    [Route("projects/{projectId}/comments")]
     [ApiController]
     [Authorize(Policy = "projectManagersOnly")]
     public class ProjectCommentsController : ControllerBase
