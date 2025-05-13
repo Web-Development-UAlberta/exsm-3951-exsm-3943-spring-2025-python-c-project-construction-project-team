@@ -1,9 +1,7 @@
-// components/SubmittedRequestsTab.tsx
 import { useState } from 'react';
 import { RequestItem } from '../../../types/client_types';
 import { getRequestStatusBadgeClass } from '../../../utils/getStatusBadgeClass';
 import { RequestDetailsModal } from './components/RequestDetailsModal';
-
 
 // Mock data of submitted requests with full details from the request form
 const submittedRequests: RequestItem[] = [

@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import ClientLayout from '../layouts/ClientLayout';
 import { Gallery, Home, MyAccount, RequestQuote, Service } from '../pages/client';
 import AdminLayout from '../layouts/AdminLayout';
-import { AdminHome, Contacts, ProjectDetail, Projects, Requests } from '../pages/admin';
+import { Contacts, ProjectDetail, Projects, Requests } from '../pages/admin';
 import { IPublicClientApplication } from '@azure/msal-browser';
 import { MsalProvider } from '@azure/msal-react';
 
@@ -22,6 +22,7 @@ function App({ instance }: { instance: IPublicClientApplication }) {
 
                     {/* Admin Portal */}
                     <Route path="/admin" element={<AdminLayout />}>
+                        <Route index element={<Requests />} />
                         <Route path="requests" element={<Requests />} />
                         <Route path="projects" element={<Projects />} />
                         <Route path="projects/:id" element={<ProjectDetail />} />
