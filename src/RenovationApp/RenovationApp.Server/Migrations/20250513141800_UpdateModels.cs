@@ -121,7 +121,7 @@ namespace RenovationApp.Server.Migrations
             migrationBuilder.AlterColumn<string>(
                 name: "user_id",
                 table: "ProjectTasks",
-                type: "varchar(255",
+                type: "varchar(255)",
                 nullable: true,
                 oldClrType: typeof(int),
                 oldType: "int",

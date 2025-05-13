@@ -16,7 +16,7 @@ namespace RenovationApp.Server.Models
         [Column("project_id", TypeName = "int")]
         public int? ProjectId { get; set; }
 
-        [Column("user_id", TypeName = "varchar(255")]
+        [Column("user_id", TypeName = "varchar(255)")]
         public string? UserId { get; set; }
 
         [Column("title", TypeName = "text")]

@@ -191,7 +191,7 @@ namespace RenovationApp.Server.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("ClientInvoices");
+                    b.ToTable("ClientInvoices", (string)null);
                 });
 
             modelBuilder.Entity("RenovationApp.Server.Models.Project", b =>
@@ -284,7 +284,7 @@ namespace RenovationApp.Server.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("ProjectComments");
+                    b.ToTable("ProjectComments", (string)null);
                 });
 
             modelBuilder.Entity("RenovationApp.Server.Models.ProjectCommunication", b =>
@@ -313,7 +313,7 @@ namespace RenovationApp.Server.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("ProjectCommunications");
+                    b.ToTable("ProjectCommunications", (string)null);
                 });
 
             modelBuilder.Entity("RenovationApp.Server.Models.ProjectFile", b =>
@@ -352,7 +352,7 @@ namespace RenovationApp.Server.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("ProjectFiles");
+                    b.ToTable("ProjectFiles", (string)null);
                 });
 
             modelBuilder.Entity("RenovationApp.Server.Models.ProjectService", b =>
@@ -448,7 +448,7 @@ namespace RenovationApp.Server.Migrations
 
                     b.HasIndex("ProjectServiceId");
 
-                    b.ToTable("ProjectServiceInvoices");
+                    b.ToTable("ProjectServiceInvoices", (string)null);
                 });
 
             modelBuilder.Entity("RenovationApp.Server.Models.ProjectServiceType", b =>
@@ -470,7 +470,7 @@ namespace RenovationApp.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProjectServiceTypes");
+                    b.ToTable("ProjectServiceTypes", (string)null);
                 });
 
             modelBuilder.Entity("RenovationApp.Server.Models.ProjectTask", b =>
@@ -512,7 +512,7 @@ namespace RenovationApp.Server.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("ProjectTasks");
+                    b.ToTable("ProjectTasks", (string)null);
                 });
 
             modelBuilder.Entity("RenovationApp.Server.Models.RFQ", b =>
@@ -604,7 +604,7 @@ namespace RenovationApp.Server.Migrations
 
                     b.HasIndex("RFQId");
 
-                    b.ToTable("RFQImages");
+                    b.ToTable("RFQImages", (string)null);
                 });
 
             modelBuilder.Entity("RenovationApp.Server.Models.User", b =>
