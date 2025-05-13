@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import FileUploadComponent from './FileUploadComponent';
-import { handlers, networkErrorHandlers } from '../../mocks/handlers/FileUploadHandlers';
+import { handlers, networkErrorHandlers } from '../../mocks/handlers/fileUploadHandlers';
 import { expect, waitFor } from '@storybook/test';
 
 const meta: Meta<typeof FileUploadComponent> = {
