@@ -1,7 +1,7 @@
 // components/SubmittedRequestsTab.tsx
 import { useState } from 'react';
 import { RequestItem } from '../../../types/client_types';
-import { getStatusBadgeClass } from '../../../utils/getStatusBadgeClass';
+import { getRequestStatusBadgeClass } from '../../../utils/getStatusBadgeClass';
 import { RequestDetailsModal } from './components/RequestDetailsModal';
 
 
@@ -108,7 +108,7 @@ const SubmittedRequestsTab = () => {
               <td>{new Date(request.date).toLocaleDateString()}</td>
               <td>{request.type}</td>
               <td>
-                <span className={`badge ${getStatusBadgeClass(request.status)}`}>
+                <span className={`badge ${getRequestStatusBadgeClass(request.status)}`}>
                   {request.status}
                 </span>
               </td>

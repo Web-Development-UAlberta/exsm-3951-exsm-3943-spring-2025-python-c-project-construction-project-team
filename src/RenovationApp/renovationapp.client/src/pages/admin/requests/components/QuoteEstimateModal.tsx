@@ -256,8 +256,8 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
                             </div>
                         </div>
                     </div>
-                    <div className="modal-footer justify-content-between">
 
+                    <div className="modal-footer justify-content-between">
                         <button
                             type="button"
                             className="btn btn-outline-primary"

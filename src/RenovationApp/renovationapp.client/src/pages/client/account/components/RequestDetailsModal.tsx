@@ -3,7 +3,7 @@ import React from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Badge from 'react-bootstrap/Badge';
-import { getStatusBadgeClass } from '../../../../utils/getStatusBadgeClass';
+import { getRequestStatusBadgeClass } from '../../../../utils/getStatusBadgeClass';
 import { RequestItem } from '../../../../types/client_types';
 import { RequestDetailSection } from './RequestDetailSection';
 import { RequestFilesSection } from './RequestFilesSection';
@@ -31,7 +31,7 @@ export const RequestDetailsModal: React.FC<RequestDetailsModalProps> = ({
     >
       <Modal.Header closeButton>
         <Modal.Title>
-          Request Detail <Badge className={getStatusBadgeClass(request.status)}>
+          Request Detail <Badge className={getRequestStatusBadgeClass(request.status)}>
             {request.status}
           </Badge>
         </Modal.Title>

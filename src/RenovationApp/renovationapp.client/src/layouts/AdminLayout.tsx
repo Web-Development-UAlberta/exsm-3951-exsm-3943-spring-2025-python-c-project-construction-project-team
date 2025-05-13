@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useMsal, useIsAuthenticated } from '@azure/msal-react';
 import { loginRequest } from '../config/authConfig';
@@ -37,6 +37,13 @@ const AdminLayout: React.FC = () => {
     navigate('/admin/account');
   };
 
+  const activeAccount = instance.getActiveAccount();
+  const [activeTab, setActiveTab] = useState<'requests' | 'projects' | 'contacts'>('requests');
+
+  if (!activeAccount) {
+    return <div>Please login to proceed.</div>;
+  }
+
 
   return (
     <>
@@ -68,8 +75,49 @@ const AdminLayout: React.FC = () => {
 
       </nav>
 
-      <main style={{ paddingTop: "2rem" }}>
-        <Outlet />
+      <main style={{ paddingTop: "4rem" }} className="container-fluid">
+        <div className="row">
+          {/* Sidebar */}
+          <div className="col-md-2 bg-dark text-light min-vh-100">
+            <div className="px-3 py-4">
+              <h3 className="mb-4">Dashboard</h3>
+              <div className="nav flex-column">
+                <button
+                  className={`nav-link text-light py-2 text-start ${activeTab === 'requests' ? 'active fw-bold' : ''}`}
+                  onClick={() => {
+                    setActiveTab("requests");
+                    navigate('requests');
+                  }}
+                >
+                  Requests
+                </button>
+                <button
+                  className={`nav-link text-light py-2 text-start ${activeTab === 'projects' ? 'active fw-bold' : ''}`}
+                  onClick={() => {
+                    setActiveTab("projects");
+                    navigate('projects');
+                  }}
+                >
+                  Projects
+                </button>
+                <button
+                  className={`nav-link text-light py-2 text-start ${activeTab === 'contacts' ? 'active fw-bold' : ''}`}
+                  onClick={() => {
+                    setActiveTab("contacts");
+                    navigate('contacts');
+                  }}
+                >
+                  Contacts
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div className="col-md-10 bg-light">
+            <Outlet />
+          </div>
+        </div>
       </main>
     </>
   );

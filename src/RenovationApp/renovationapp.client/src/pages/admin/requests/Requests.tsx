@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { QuoteEstimateModal } from './components/QuoteEstimateModal';
 import RequestDetailsModal from './components/RequestDetailsModal';
+import { getRequestStatusBadgeClass } from '../../../utils/getStatusBadgeClass';
 
 // Define the request type based on the columns shown in the screenshot
 interface Request {
@@ -86,7 +87,7 @@ const requestDetails: Record<number, RequestDetail> = {
   }
 };
 
-const RequestsTab = () => {
+const Requests = () => {
   // Request Detail Modal State
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<RequestDetail | null>(null);
@@ -123,20 +124,19 @@ const RequestsTab = () => {
 
   // Handler for changing project manager
   const handleProjectManagerChange = (requestId: number, newManager: string) => {
-    setRequestsData(prevRequests => 
-      prevRequests.map(request => 
-        request.id === requestId 
-          ? { ...request, project_manager: newManager } 
+    setRequestsData(prevRequests =>
+      prevRequests.map(request =>
+        request.id === requestId
+          ? { ...request, project_manager: newManager }
           : request
       )
     );
   };
 
   return (
-    <div className="container">
-      <h1 className="mb-3">Requests Dashboard</h1>
-      <p className="mb-4">Lorem ipsum dolor sit amet consectetur. Phasellus tellus lacus integer lectus adipiscing porttitor senectus amet pulvinar.</p>
-      
+    <div className="p-4">
+      <h3 className="mb-3">Requests Dashboard</h3>
+
       <div className="table-responsive">
         <table className="table table-hover">
           <thead className="table-light">
@@ -156,7 +156,7 @@ const RequestsTab = () => {
                 <td>{request.client}</td>
                 <td>{request.project_address}</td>
                 <td>
-                  <select 
+                  <select
                     className="form-select form-select-sm"
                     value={request.project_manager}
                     onChange={(e) => handleProjectManagerChange(request.id, e.target.value)}
@@ -168,7 +168,9 @@ const RequestsTab = () => {
                   </select>
                 </td>
                 <td>
-                  <span className="badge bg-info text-light">{request.status}</span>
+                  <span className={`badge ${getRequestStatusBadgeClass(request.status)}`}>
+                    {request.status}
+                  </span>
                 </td>
                 <td>
                   <button
@@ -211,4 +213,4 @@ const RequestsTab = () => {
   );
 };
 
-export default RequestsTab
+export default Requests
