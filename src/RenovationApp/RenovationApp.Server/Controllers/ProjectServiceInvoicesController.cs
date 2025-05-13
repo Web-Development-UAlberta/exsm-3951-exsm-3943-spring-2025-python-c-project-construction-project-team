@@ -1,13 +1,13 @@
-﻿
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RenovationApp.Server.Data;
+using RenovationApp.Server.DTOs;
 using RenovationApp.Server.Models;
 
 namespace RenovationApp.Server.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/projects/{projectId}/services/{serviceId}/invoice")]
     [ApiController]
     [Authorize(Policy = "projectManagersOnly")]
     public class ProjectServiceInvoicesController : ControllerBase
@@ -19,38 +19,62 @@ namespace RenovationApp.Server.Controllers
             _context = context;
         }
 
-        // GET: api/ProjectServiceInvoices
+        // GET: api/projects/{projectId}/services/{serviceId}/invoice
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProjectServiceInvoice>>> GetProjectServiceInvoices()
+        public async Task<ActionResult<IEnumerable<ProjectServiceInvoice>>> GetProjectServiceInvoices(int projectId, int serviceId)
         {
-            return await _context.ProjectServiceInvoices.ToListAsync();
+            var service = await _context.ProjectServices
+                .FirstOrDefaultAsync(s => s.ProjectId == projectId && s.Id == serviceId);
+
+            if (service == null)
+            {
+                return NotFound("Service not found");
+            }
+
+            return await _context.ProjectServiceInvoices
+                .Where(i => i.ProjectServiceId == serviceId)
+                .ToListAsync();
         }
 
-        // GET: api/ProjectServiceInvoices/5
+        // GET: api/projects/{projectId}/services/{serviceId}/invoice/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProjectServiceInvoice>> GetProjectServiceInvoice(int id)
+        public async Task<ActionResult<ProjectServiceInvoice>> GetProjectServiceInvoice(int projectId, int serviceId, int id)
         {
-            var projectServiceInvoice = await _context.ProjectServiceInvoices.FindAsync(id);
+            var invoice = await _context.ProjectServiceInvoices
+                .FirstOrDefaultAsync(i => i.ProjectServiceId == serviceId && i.Id == id);
 
-            if (projectServiceInvoice == null)
+            if (invoice == null)
             {
                 return NotFound();
             }
 
-            return projectServiceInvoice;
+            return invoice;
         }
 
-        // PUT: api/ProjectServiceInvoices/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // PUT: api/projects/{projectId}/services/{serviceId}/invoice/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProjectServiceInvoice(int id, ProjectServiceInvoice projectServiceInvoice)
+        public async Task<IActionResult> PutProjectServiceInvoice(int projectId, int serviceId, int id, ProjectServiceInvoiceDTO dto)
         {
-            if (id != projectServiceInvoice.Id)
+            var service = await _context.ProjectServices
+                .FirstOrDefaultAsync(s => s.ProjectId == projectId && s.Id == serviceId);
+
+            if (service == null)
             {
-                return BadRequest();
+                return NotFound("Service not found");
             }
 
-            _context.Entry(projectServiceInvoice).State = EntityState.Modified;
+            var invoice = await _context.ProjectServiceInvoices
+                .FirstOrDefaultAsync(i => i.ProjectServiceId == serviceId && i.Id == id);
+
+            if (invoice == null)
+            {
+                return NotFound();
+            }
+
+            invoice.Amount = dto.Amount;
+            invoice.Paid = dto.Paid;
+
+            _context.Entry(invoice).State = EntityState.Modified;
 
             try
             {
@@ -71,28 +95,44 @@ namespace RenovationApp.Server.Controllers
             return NoContent();
         }
 
-        // POST: api/ProjectServiceInvoices
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // POST: api/projects/{projectId}/services/{serviceId}/invoice
         [HttpPost]
-        public async Task<ActionResult<ProjectServiceInvoice>> PostProjectServiceInvoice(ProjectServiceInvoice projectServiceInvoice)
+        public async Task<ActionResult<ProjectServiceInvoice>> PostProjectServiceInvoice(int projectId, int serviceId, ProjectServiceInvoiceDTO dto)
         {
-            _context.ProjectServiceInvoices.Add(projectServiceInvoice);
+            var service = await _context.ProjectServices
+                .FirstOrDefaultAsync(s => s.ProjectId == projectId && s.Id == serviceId);
+
+            if (service == null)
+            {
+                return NotFound("Service not found");
+            }
+
+            var invoice = new ProjectServiceInvoice
+            {
+                ProjectServiceId = serviceId,
+                Amount = dto.Amount,
+                Paid = dto.Paid
+            };
+
+            _context.ProjectServiceInvoices.Add(invoice);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetProjectServiceInvoice", new { id = projectServiceInvoice.Id }, projectServiceInvoice);
+            return CreatedAtAction("GetProjectServiceInvoice", new { projectId, serviceId, id = invoice.Id }, invoice);
         }
 
-        // DELETE: api/ProjectServiceInvoices/5
+        // DELETE: api/projects/{projectId}/services/{serviceId}/invoice/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProjectServiceInvoice(int id)
+        public async Task<IActionResult> DeleteProjectServiceInvoice(int projectId, int serviceId, int id)
         {
-            var projectServiceInvoice = await _context.ProjectServiceInvoices.FindAsync(id);
-            if (projectServiceInvoice == null)
+            var invoice = await _context.ProjectServiceInvoices
+                .FirstOrDefaultAsync(i => i.ProjectServiceId == serviceId && i.Id == id);
+
+            if (invoice == null)
             {
                 return NotFound();
             }
 
-            _context.ProjectServiceInvoices.Remove(projectServiceInvoice);
+            _context.ProjectServiceInvoices.Remove(invoice);
             await _context.SaveChangesAsync();
 
             return NoContent();
