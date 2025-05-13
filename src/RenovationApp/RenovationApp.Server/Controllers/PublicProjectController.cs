@@ -4,22 +4,61 @@ using RenovationApp.Server.Services;
 using RenovationApp.Server.Models;
 using RenovationApp.Server.Services.Fileservice.Dtos;
 using Microsoft.EntityFrameworkCore;
+using static RenovationApp.Server.Dtos.ProjectDTOs;
 
 namespace RenovationApp.Server.Controllers
 {
     [ApiController]
-    [Route("/Public/Project/{projectId}/files")]
-    public class PublicProjectFilesController : ControllerBase
+    [Route("/Public/Project/{projectId}")]
+    public class PublicProjectController : ControllerBase
     {
         private readonly IStorageService _storageService;
         private readonly ApplicationDbContext _db;
         private readonly string _projectBucket;
 
-        public PublicProjectFilesController(IStorageService storageService, ApplicationDbContext db, IConfiguration config)
+        public PublicProjectController(IStorageService storageService, ApplicationDbContext db, IConfiguration config)
         {
             _storageService = storageService;
             _db = db;
             _projectBucket = config["MINIO_PROJECT_BUCKET"] ?? throw new ArgumentNullException("MINIO_PROJECT_BUCKET");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetProjectPublic(int projectId)
+        {
+            // Check if the project exists and is public
+            var project = await _db.Projects
+                .Include(p => p.ClientInvoices) // Include related ClientInvoices
+                .FirstOrDefaultAsync(p => p.Id == projectId && p.IsPublic);
+
+            if (project == null)
+            {
+                return NotFound("Project not found or is not public.");
+            }
+
+            // Calculate CostCategory
+            decimal costCategory;
+            if (project.ClientInvoices != null && project.ClientInvoices.Any())
+            {
+                costCategory = Math.Ceiling(project.ClientInvoices.Sum(i => i.Amount ?? 0) / 1000);
+            }
+            else if (project.QuotePriceOverride.HasValue)
+            {
+                costCategory = Math.Ceiling(project.QuotePriceOverride.Value / 1000);
+            }
+            else
+            {
+                costCategory = 0; // Default to 0 if no data is available
+            }
+
+            var publicProjectInfo = new ProjectPublicInfo
+            {
+                Id = project.Id,
+                RenovationType = project.RenovationType,
+                CostCategory = costCategory.ToString() // Convert to string as per ProjectPublicInfo definition
+            };
+
+            return Ok(publicProjectInfo);
         }
 
         [HttpGet("public-images")]

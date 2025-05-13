@@ -21,6 +21,13 @@ namespace RenovationApp.Server.Dtos
             public DateTime? QuoteScheduleEndOverride { get; set; }
             public string? RenovationType { get; set; }
         }
+
+        public class ProjectPublicInfo
+        {
+            public int Id { get; set; }
+            public RenovationType? RenovationType { get; set; }
+            public string? CostCategory { get; set; }
+        }
     }
 }
 
