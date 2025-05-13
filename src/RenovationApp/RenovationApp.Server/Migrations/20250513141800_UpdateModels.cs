@@ -312,7 +312,7 @@ namespace RenovationApp.Server.Migrations
                 type: "int",
                 nullable: true,
                 oldClrType: typeof(string),
-                oldType: "varchar(255",
+                oldType: "varchar(255)",
                 oldNullable: true);
 
             migrationBuilder.AlterColumn<DateTime>(

@@ -90,5 +90,7 @@ namespace RenovationApp.Server.Models
 
         [InverseProperty(nameof(ProjectTask.Project))]
         public virtual ICollection<ProjectTask>? ProjectTasks { get; set; } = new List<ProjectTask>();
+
+        public virtual ICollection<RenovationTag>? RenovationTags { get; set; } = new List<RenovationTag>();
     }
 }

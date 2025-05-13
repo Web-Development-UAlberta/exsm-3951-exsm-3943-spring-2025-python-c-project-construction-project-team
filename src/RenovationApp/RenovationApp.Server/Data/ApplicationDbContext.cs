@@ -23,6 +23,7 @@ namespace RenovationApp.Server.Data
         public DbSet<RFQ> RFQs { get; set; }
         public DbSet<RFQImage> RFQImages { get; set; }
         public DbSet<ClientInvoice> ClientInvoices { get; set; }
+        public DbSet<RenovationTag> RenovationTags { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -76,6 +77,12 @@ namespace RenovationApp.Server.Data
                     .HasForeignKey(pt => pt.ProjectId)
                     .OnDelete(DeleteBehavior.SetNull);
             });
+
+            // Many-to-many: Project <-> RenovationTag
+            modelBuilder.Entity<Project>()
+                .HasMany(p => p.RenovationTags)
+                .WithMany()
+                .UsingEntity(j => j.ToTable("ProjectRenovationTags"));
 
             // Configure RFQ entity
             modelBuilder.Entity<RFQ>(entity =>
@@ -157,6 +164,13 @@ namespace RenovationApp.Server.Data
             modelBuilder.Entity<ProjectFile>()
                 .Property(pf => pf.Type)
                 .HasConversion<string>();
+
+            // Seed sample data for RenovationTags
+            modelBuilder.Entity<RenovationTag>().HasData(
+                new RenovationTag { Id = "Modern" },
+                new RenovationTag { Id = "Rustic" },
+                new RenovationTag { Id = "Sophisticated" }
+            );
         }
     }
 }

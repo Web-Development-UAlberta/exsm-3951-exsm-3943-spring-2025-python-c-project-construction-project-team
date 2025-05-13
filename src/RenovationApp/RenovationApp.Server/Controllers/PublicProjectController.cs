@@ -55,7 +55,8 @@ namespace RenovationApp.Server.Controllers
             {
                 Id = project.Id,
                 RenovationType = project.RenovationType,
-                CostCategory = costCategory.ToString() // Convert to string as per ProjectPublicInfo definition
+                CostCategory = costCategory.ToString(), // Convert to string as per ProjectPublicInfo definition
+                RenovationTagIds = project.RenovationTags?.Select(t => t.Id).ToList()
             };
 
             return Ok(publicProjectInfo);
