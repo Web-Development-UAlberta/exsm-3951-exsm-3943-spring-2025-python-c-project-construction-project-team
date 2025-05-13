@@ -9,7 +9,7 @@ namespace RenovationApp.Server.Models
         [Column("id", TypeName = "int")]
         public int Id { get; set; }
 
-        [Column("created_timestamp", TypeName = "timestamp without time zone")]
+        [Column("created_timestamp", TypeName = "timestamp with time zone")]
         public DateTime CreatedTimestamp { get; set; } = DateTime.UtcNow; // Default value
 
         [Column("description", TypeName = "text")]
@@ -18,7 +18,7 @@ namespace RenovationApp.Server.Models
         [Column("payment_instructions", TypeName = "text")]
         public string? PaymentInstructions { get; set; } 
 
-        [Column("paid", TypeName = "timestamp without time zone")]
+        [Column("paid", TypeName = "timestamp with time zone")]
         public DateTime? Paid { get; set; } 
 
         [Column("amount", TypeName = "decimal")]
