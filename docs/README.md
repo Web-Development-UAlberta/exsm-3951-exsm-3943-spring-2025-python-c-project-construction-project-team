@@ -76,7 +76,9 @@ This will:
 ---
 ## 📋 Usage
 
-### 🔑 Authentication
+### Role-Specific Workflows
+This shows the workflow as a Homeowner user and as a Project Manager or Admin.
+#### 🔑 Authentication
 Clicking the Login will direct you to the sign up / sign in page.
 
 1. **Registration**
@@ -88,8 +90,7 @@ Clicking the Login will direct you to the sign up / sign in page.
 
 ![LoginSignup](demo/LoginSignup.gif)
 
-### 👤 Users
-#### Public
+#### 🏠 For Homeowners
 1. **Browsing Services**
 - Navigate to the Service tab to view available options.
 2. **Gallery**
@@ -98,25 +99,28 @@ Clicking the Login will direct you to the sign up / sign in page.
 
 ![GalleryFilter](demo/Gallery.gif)
 
-#### 🏠 Homeowners (Logged in)
-1. **Submitting a Renovation Request**
+**Accessible only by login**
+
+3. **Submitting a Renovation Request**
 - Navigate to the Request a Quote
 - Fill out the details form
 - Upload (multiple) files for references
 - Submit and wait for contractor response
 
-2. **Account Management**
-- Navgiate to the user profile icon
-- Edit and save personal information
-- Edit address
-
-3. **Check Renovation Requests**
+4. **Check Renovation Requests**
 - Under Account Management section, navigate to Submitted Requests
 - See all submitted requests
 - Check status progress on requests
 - View details on submitted requests
 
-### 🧰 Contractors
+![RenovationRequestHomeowner](demo/SubmitRequest.gif)
+
+5. **Account Management**
+- Navgiate to the user profile icon and go to the Personal Information tab
+- Edit and save personal information
+- Edit address
+
+#### 🧰 Contractors
 Contractors and Admins are directed to the internal dashboard.
 
 1. **Managing Requests**
@@ -150,6 +154,35 @@ Contractors and Admins are directed to the internal dashboard.
    **Invoices Tab**
    - View invoices for project
    - Check payment status
+
+5. **Contact Management**
+- Navigate to Contacts tab
+- View all Contacts and contact details
+
+## 🔧 Troubleshooting
+
+### Startup Issues
+If you are unable to access the application for the backend or frontend:
+
+1. **Backend with Swagger**
+- Open `RenovationApp.sln` in Visual Studio
+- Select `RenovationApp.Server` as the start up project
+- Click the ▶️ Debug button or press F5 to start. Make sure you are using `Container (Dockerfile)`.
+
+2. **Frontend with Vite**
+- cd to the renovationapp.client folder
+   ```bash
+   cd src/RenovationApp/renovationapp.client
+   ```
+- Click the ▶️ Debug button or press F5 to start. Make sure you are using `Chrome + Vite Only`.
+
+### SSL Certificate Issues
+1. **Certificate warnings**
+- Add development certificates to trusted roots
+- Use `dotnet dev-certs https --trust` for development
+```bash
+dotnet dev-certs https --export-path ./certs/devLocalCert.perm --format PEM -p {strongpassword} --trust
+```
 
 ## 🧰 Features
 
