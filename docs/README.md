@@ -36,7 +36,7 @@ Ensure you have the following installed:
 * [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 * [Node.js + npm](https://nodejs.org/)
 * [PostgreSQL](https://www.postgresql.org/)
-* Docker & Docker Compose
+* [Docker & Docker Compose](https://docs.docker.com/desktop/)
 
 Also, configure your environment variables as described below.
 
@@ -74,6 +74,82 @@ This will:
    * Swagger Docs: [https://localhost:60848/swagger/index.html](https://localhost:60848/swagger/index.html)
 
 ---
+## 📋 Usage
+
+### 🔑 Authentication
+Clicking the Login will direct you to the sign up / sign in page.
+
+1. **Registration**
+- Sends a confirmation email
+- Complete the rest of the registration form.
+
+2. **Login**
+- Enter your credentials on the login page
+
+![LoginSignup](docs/demo/LoginSignup.gif)
+
+### 👤 Users
+#### Public
+1. **Browsing Services**
+- Navigate to the Service tab to view available options.
+2. **Gallery**
+- Navigate to the Gallery tab to view all project photos.
+- Filterable by room type, style, and budget
+
+![GalleryFilter](docs/demo/Gallery.gif)
+
+#### 🏠 Homeowners (Logged in)
+1. **Submitting a Renovation Request**
+- Navigate to the Request a Quote
+- Fill out the details form
+- Upload (multiple) files for references
+- Submit and wait for contractor response
+
+2. **Account Management**
+- Navgiate to the user profile icon
+- Edit and save personal information
+- Edit address
+
+3. **Check Renovation Requests**
+- Under Account Management section, navigate to Submitted Requests
+- See all submitted requests
+- Check status progress on requests
+- View details on submitted requests
+
+### 🧰 Contractors
+Contractors and Admins are directed to the internal dashboard.
+
+1. **Managing Requests**
+- View incoming requests on the Requests tab
+- View details of submitted requests
+- Accepting requests generates project and creates a quote estimate to send
+
+2. **Generate Quotes**
+- Use quote builder to itemize costs
+- Add or remove items as needed
+- Edit items as needed
+- Send to homeowner for approval
+
+3. **Project Management**
+- Navigate to Projects tab
+- Track all or ongoing projects
+- Update project status
+- View projects
+
+4. **Project Details**
+
+   **Overview Tab**
+   - View project and contact details
+   - Add notes to project as needed
+   - See tasks for the project
+
+   **Files Tab**
+   - View files from submitted request form
+   - Add or delete files
+
+   **Invoices Tab**
+   - View invoices for project
+   - Check payment status
 
 ## 🧰 Features
 
