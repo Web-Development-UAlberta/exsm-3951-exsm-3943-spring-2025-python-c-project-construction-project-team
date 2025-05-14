@@ -10,7 +10,7 @@ using Microsoft.Build.Framework;
 namespace RenovationApp.Server.Controllers
 {
     [ApiController]
-    [Route("/[controller]")]
+    [Route("rfq/{rfqId}/images")]
     [Authorize]
     public class RFQImageController : ControllerBase
     {
@@ -26,39 +26,27 @@ namespace RenovationApp.Server.Controllers
         }
 
         [HttpPost("upload-url")]
-        public async Task<IActionResult> GetUploadUrl([FromBody] UploadRFQImageRequestDto dto)
+        public async Task<IActionResult> GetUploadUrl(int rfqId, [FromBody] UploadRFQImageRequestDto dto)
         {
-            // Check if the project exists
-            var rfq = await _db.RFQs.FindAsync(dto.RFQId);
+            // Check if the RFQ exists
+            var rfq = await _db.RFQs.FindAsync(rfqId);
             if (rfq == null)
             {
                 return NotFound("RFQ not found.");
             }
 
-            // Get the user's role and ID
-            var userId = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
-            if (string.IsNullOrEmpty(userId))
+            // Check user authorization
+            if (!IsAuthorizedForRFQ(rfq))
             {
-                return BadRequest("User ID is required.");
-            }
-
-            if (!User.IsInRole("projectManager"))
-            {
-                // Check if the user is the client of the project
-                if (rfq.ClientId.ToString() != userId)
-                {
-                    return Unauthorized("You are not authorized to upload files to this RFQ.");
-                }
+                return Unauthorized("You are not authorized to upload files to this RFQ.");
             }
 
             var expiry = TimeSpan.FromMinutes(10);
-
-            var result = await _storageService.GeneratePresignedUploadUrlAsync(_rfqBucket, "image", dto.RFQId, dto.FileName, expiry);
-
+            var result = await _storageService.GeneratePresignedUploadUrlAsync(_rfqBucket, "image", rfqId, dto.FileName, expiry);
 
             var image = new RFQImage
             {
-                RFQId = dto.RFQId,
+                RFQId = rfqId,
                 ImageUri = result.ObjectKey,
                 UploadedAt = DateTime.UtcNow
             };
@@ -69,51 +57,33 @@ namespace RenovationApp.Server.Controllers
             return Ok(new { url = result.Url, key = result.ObjectKey });
         }
 
-        [HttpGet("{rfqId}/images")]
+        [HttpGet]
         public async Task<IActionResult> GetImages(int rfqId)
         {
-            // Check if the project exists
+            // Check if the RFQ exists
             var rfq = await _db.RFQs.FindAsync(rfqId);
             if (rfq == null)
             {
                 return NotFound("RFQ not found.");
             }
 
-            // Get the user's role and ID
-            var userId = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
-            var userRole = User.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
-
-            if (string.IsNullOrEmpty(userId))
+            // Check user authorization
+            if (!IsAuthorizedForRFQ(rfq))
             {
-                return BadRequest("User ID is required.");
-            }
-
-            if (User.IsInRole("projectmanager"))
-            {
-                // Allow access only if the user is the client of the project
-                if (rfq.ClientId.ToString() != userId)
-                {
-                    return Unauthorized("You are not authorized to access files for this project.");
-                }
+                return Unauthorized("You are not authorized to access files for this RFQ.");
             }
 
             var query = _db.RFQImages.Where(f => f.RFQId == rfqId);
-
             var images = await query.ToListAsync();
 
             var result = new List<RFQDownloadDto>();
-
             foreach (var image in images)
             {
-                //bool fileExists = await _storageService.ObjectExistsAsync(_rfqBucket, image.ImageUri);
-                bool fileExists = true;
+                bool fileExists = true; // Replace with actual file existence check if needed
                 if (fileExists)
                 {
                     var url = await _storageService.GeneratePresignedDownloadUrlAsync(_rfqBucket, image.ImageUri);
-                    result.Add(new RFQDownloadDto
-                    {
-                        Url = url
-                    });
+                    result.Add(new RFQDownloadDto { Url = url });
                 }
                 else
                 {
@@ -122,8 +92,23 @@ namespace RenovationApp.Server.Controllers
             }
 
             await _db.SaveChangesAsync();
-
             return Ok(result);
+        }
+
+        private bool IsAuthorizedForRFQ(RFQ rfq)
+        {
+            var userId = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return false;
+            }
+
+            if (User.IsInRole("projectManager"))
+            {
+                return true;
+            }
+
+            return rfq.ClientId == userId;
         }
     }
 }

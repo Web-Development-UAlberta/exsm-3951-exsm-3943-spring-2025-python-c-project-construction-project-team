@@ -1,11 +1,16 @@
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RenovationApp.Server.Data;
+using RenovationApp.Server.DTOs;
 using RenovationApp.Server.Models;
 
 namespace RenovationApp.Server.Controllers
 {
-    public class ProjectServiceInvoicesController : Controller
+    [Route("projects/{projectId}/services/{serviceId}/invoice")]
+    [ApiController]
+    [Authorize(Policy = "projectManagersOnly")]
+    public class ProjectServiceInvoicesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
@@ -14,82 +19,128 @@ namespace RenovationApp.Server.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        // GET: api/projects/{projectId}/services/{serviceId}/invoice
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ProjectServiceInvoice>>> GetProjectServiceInvoices(int projectId, int serviceId)
         {
-            var invoices = await _context.ProjectServiceInvoices
-                .Include(i => i.ProjectService)
+            var service = await _context.ProjectServices
+                .FirstOrDefaultAsync(s => s.ProjectId == projectId && s.Id == serviceId);
+
+            if (service == null)
+            {
+                return NotFound("Service not found");
+            }
+
+            return await _context.ProjectServiceInvoices
+                .Where(i => i.ProjectServiceId == serviceId)
                 .ToListAsync();
-            return View(invoices);
         }
 
-        public async Task<IActionResult> Details(int? id)
+        // GET: api/projects/{projectId}/services/{serviceId}/invoice/{id}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ProjectServiceInvoice>> GetProjectServiceInvoice(int projectId, int serviceId, int id)
         {
-            if (id == null) return NotFound();
             var invoice = await _context.ProjectServiceInvoices
-                .Include(i => i.ProjectService)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (invoice == null) return NotFound();
-            return View(invoice);
-        }
+                .FirstOrDefaultAsync(i => i.ProjectServiceId == serviceId && i.Id == id);
 
-        public IActionResult Create()
-        {
-            ViewData["ProjectServices"] = new SelectList(_context.ProjectServices, "Id", "Id");
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ProjectServiceInvoice invoice)
-        {
-            if (ModelState.IsValid)
+            if (invoice == null)
             {
-                _context.Add(invoice);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            return View(invoice);
+
+            return invoice;
         }
 
-        public async Task<IActionResult> Edit(int? id)
+        // PUT: api/projects/{projectId}/services/{serviceId}/invoice/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutProjectServiceInvoice(int projectId, int serviceId, int id, ProjectServiceInvoiceDTO dto)
         {
-            if (id == null) return NotFound();
-            var invoice = await _context.ProjectServiceInvoices.FindAsync(id);
-            if (invoice == null) return NotFound();
-            return View(invoice);
-        }
+            var service = await _context.ProjectServices
+                .FirstOrDefaultAsync(s => s.ProjectId == projectId && s.Id == serviceId);
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, ProjectServiceInvoice invoice)
-        {
-            if (id != invoice.Id) return NotFound();
-            if (ModelState.IsValid)
+            if (service == null)
             {
-                _context.Update(invoice);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return NotFound("Service not found");
             }
-            return View(invoice);
+
+            var invoice = await _context.ProjectServiceInvoices
+                .FirstOrDefaultAsync(i => i.ProjectServiceId == serviceId && i.Id == id);
+
+            if (invoice == null)
+            {
+                return NotFound();
+            }
+
+            invoice.Amount = dto.Amount;
+            invoice.Paid = dto.Paid;
+
+            _context.Entry(invoice).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ProjectServiceInvoiceExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
         }
 
-        public async Task<IActionResult> Delete(int? id)
+        // POST: api/projects/{projectId}/services/{serviceId}/invoice
+        [HttpPost]
+        public async Task<ActionResult<ProjectServiceInvoice>> PostProjectServiceInvoice(int projectId, int serviceId, ProjectServiceInvoiceDTO dto)
         {
-            if (id == null) return NotFound();
-            var invoice = await _context.ProjectServiceInvoices.FindAsync(id);
-            if (invoice == null) return NotFound();
-            return View(invoice);
-        }
+            var service = await _context.ProjectServices
+                .FirstOrDefaultAsync(s => s.ProjectId == projectId && s.Id == serviceId);
 
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var invoice = await _context.ProjectServiceInvoices.FindAsync(id);
-            if (invoice != null)
-                _context.ProjectServiceInvoices.Remove(invoice);
+            if (service == null)
+            {
+                return NotFound("Service not found");
+            }
+
+            var invoice = new ProjectServiceInvoice
+            {
+                ProjectServiceId = serviceId,
+                Amount = dto.Amount,
+                Paid = dto.Paid
+            };
+
+            _context.ProjectServiceInvoices.Add(invoice);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return CreatedAtAction("GetProjectServiceInvoice", new { projectId, serviceId, id = invoice.Id }, invoice);
+        }
+
+        // DELETE: api/projects/{projectId}/services/{serviceId}/invoice/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProjectServiceInvoice(int projectId, int serviceId, int id)
+        {
+            var invoice = await _context.ProjectServiceInvoices
+                .FirstOrDefaultAsync(i => i.ProjectServiceId == serviceId && i.Id == id);
+
+            if (invoice == null)
+            {
+                return NotFound();
+            }
+
+            _context.ProjectServiceInvoices.Remove(invoice);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private bool ProjectServiceInvoiceExists(int id)
+        {
+            return _context.ProjectServiceInvoices.Any(e => e.Id == id);
         }
     }
 }

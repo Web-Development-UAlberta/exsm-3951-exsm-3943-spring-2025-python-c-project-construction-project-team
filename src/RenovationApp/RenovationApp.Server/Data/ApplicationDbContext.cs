@@ -23,39 +23,12 @@ namespace RenovationApp.Server.Data
         public DbSet<RFQ> RFQs { get; set; }
         public DbSet<RFQImage> RFQImages { get; set; }
         public DbSet<ClientInvoice> ClientInvoices { get; set; }
+        public DbSet<RenovationTag> RenovationTags { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configure User entity
-            modelBuilder.Entity<User>(entity =>
-            {
-                entity.ToTable("Users");
-                
-                // Configure relationships with Project model
-                entity.HasMany(u => u.ProjectEmployee)
-                    .WithOne(p => p.Employee)
-                    .HasForeignKey(p => p.CreatedByEmployee)
-                    .OnDelete(DeleteBehavior.SetNull);
-
-                entity.HasMany(u => u.ProjectClient)
-                    .WithOne(p => p.Client)
-                    .HasForeignKey(p => p.ClientId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                // Configure relationships with ProjectComment
-                entity.HasMany(u => u.Comments)
-                    .WithOne(pc => pc.Employee)
-                    .HasForeignKey(pc => pc.CreatedByEmployee)
-                    .OnDelete(DeleteBehavior.SetNull);
-
-                // Configure relationships with ProjectTask
-                entity.HasMany(u => u.ProjectTasks)
-                    .WithOne(pt => pt.AssignedUser)
-                    .HasForeignKey(pt => pt.UserId)
-                    .OnDelete(DeleteBehavior.SetNull);
-            });
 
             // Configure Project entity
             modelBuilder.Entity<Project>(entity =>
@@ -104,6 +77,12 @@ namespace RenovationApp.Server.Data
                     .HasForeignKey(pt => pt.ProjectId)
                     .OnDelete(DeleteBehavior.SetNull);
             });
+
+            // Many-to-many: Project <-> RenovationTag
+            modelBuilder.Entity<Project>()
+                .HasMany(p => p.RenovationTags)
+                .WithMany()
+                .UsingEntity(j => j.ToTable("ProjectRenovationTags"));
 
             // Configure RFQ entity
             modelBuilder.Entity<RFQ>(entity =>
@@ -185,6 +164,13 @@ namespace RenovationApp.Server.Data
             modelBuilder.Entity<ProjectFile>()
                 .Property(pf => pf.Type)
                 .HasConversion<string>();
+
+            // Seed sample data for RenovationTags
+            modelBuilder.Entity<RenovationTag>().HasData(
+                new RenovationTag { Id = "Modern" },
+                new RenovationTag { Id = "Rustic" },
+                new RenovationTag { Id = "Sophisticated" }
+            );
         }
     }
 }

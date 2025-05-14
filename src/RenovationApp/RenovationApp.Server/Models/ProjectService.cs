@@ -11,7 +11,7 @@ namespace RenovationApp.Server.Models
         public int Id { get; set; }
 
         [Column("status", TypeName = "text")]
-        public ProjectStatus? Status { get; set; }
+        public string? Status { get; set; }
 
         [Required]
         [Column("project_id", TypeName = "int")]

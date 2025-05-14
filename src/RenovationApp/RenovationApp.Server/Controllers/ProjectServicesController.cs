@@ -1,11 +1,16 @@
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RenovationApp.Server.Data;
+using RenovationApp.Server.DTOs;
 using RenovationApp.Server.Models;
 
 namespace RenovationApp.Server.Controllers
 {
-    public class ProjectServicesController : Controller
+    [Route("projects/{projectId}/services")]
+    [ApiController]
+    [Authorize(Policy = "projectManagersOnly")]
+    public class ProjectServicesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
@@ -14,84 +19,174 @@ namespace RenovationApp.Server.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        // GET: api/projects/{projectId}/services
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ProjectService>>> GetProjectServices(int projectId)
         {
+            var project = await _context.Projects.FindAsync(projectId);
+            if (project == null)
+            {
+                return NotFound("Project not found");
+            }
+
             var services = await _context.ProjectServices
-                .Include(s => s.Project)
-                .Include(s => s.ProjectServiceType)
+                .Where(s => s.ProjectId == projectId)
                 .ToListAsync();
-            return View(services);
+
+            return Ok(services);
         }
 
-        public async Task<IActionResult> Details(int? id)
+        // GET: api/projects/{projectId}/services/{serviceId}
+        [HttpGet("{serviceId}")]
+        public async Task<ActionResult<ProjectService>> GetProjectService(int projectId, int serviceId)
         {
-            if (id == null) return NotFound();
             var service = await _context.ProjectServices
-                .Include(s => s.Project)
-                .Include(s => s.ProjectServiceType)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (service == null) return NotFound();
-            return View(service);
-        }
+                .FirstOrDefaultAsync(s => s.ProjectId == projectId && s.Id == serviceId);
 
-        public IActionResult Create()
-        {
-            ViewData["Projects"] = new SelectList(_context.Projects, "Id", "Id");
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ProjectService service)
-        {
-            if (ModelState.IsValid)
+            if (service == null)
             {
-                _context.Add(service);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            return View(service);
+
+            return service;
         }
 
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null) return NotFound();
-            var service = await _context.ProjectServices.FindAsync(id);
-            if (service == null) return NotFound();
-            return View(service);
-        }
-
+        // POST: api/projects/{projectId}/services
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, ProjectService service)
+        public async Task<ActionResult<ProjectService>> PostProjectService(int projectId, ProjectServiceCreateDTO dto)
         {
-            if (id != service.Id) return NotFound();
-            if (ModelState.IsValid)
+            var project = await _context.Projects.FindAsync(projectId);
+            if (project == null)
             {
-                _context.Update(service);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return NotFound("Project not found");
             }
-            return View(service);
-        }
 
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null) return NotFound();
-            var service = await _context.ProjectServices.FindAsync(id);
-            if (service == null) return NotFound();
-            return View(service);
-        }
+            var service = new ProjectService
+            {
+                ProjectId = projectId,
+                Name = dto.Name,
+                Description = dto.Description,
+                ProjectServiceTypeId = dto.ProjectServiceTypeId,
+                QuotePrice = dto.QuotePrice,
+                QuoteCost = dto.QuoteCost,
+                QuoteStartDate = dto.QuoteStartDate,
+                QuoteEndDate = dto.QuoteEndDate,
+                ActualStartDate = dto.ActualStartDate,
+                ActualEndDate = dto.ActualEndDate,
+                Status = dto.Status
+            };
 
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var service = await _context.ProjectServices.FindAsync(id);
-            if (service != null)
-                _context.ProjectServices.Remove(service);
+            _context.ProjectServices.Add(service);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return CreatedAtAction(nameof(GetProjectService), new { projectId = projectId, serviceId = service.Id }, service);
+        }
+
+        // PUT: api/projects/{projectId}/services/{serviceId}
+        [HttpPut("{serviceId}")]
+        public async Task<IActionResult> PutProjectService(int projectId, int serviceId, ProjectServiceUpdateDTO dto)
+        {
+            var service = await _context.ProjectServices
+                .FirstOrDefaultAsync(s => s.ProjectId == projectId && s.Id == serviceId);
+
+            if (service == null)
+            {
+                return NotFound();
+            }
+
+            // Update fields only if they are provided in the DTO
+            if (!string.IsNullOrEmpty(dto.Name))
+            {
+                service.Name = dto.Name;
+            }
+
+            if (!string.IsNullOrEmpty(dto.Description))
+            {
+                service.Description = dto.Description;
+            }
+
+            if (dto.ProjectServiceTypeId.HasValue)
+            {
+                service.ProjectServiceTypeId = dto.ProjectServiceTypeId.Value;
+            }
+
+            if (dto.QuotePrice.HasValue)
+            {
+                service.QuotePrice = dto.QuotePrice.Value;
+            }
+
+            if (dto.QuoteCost.HasValue)
+            {
+                service.QuoteCost = dto.QuoteCost.Value;
+            }
+
+            if (dto.QuoteStartDate.HasValue)
+            {
+                service.QuoteStartDate = dto.QuoteStartDate.Value;
+            }
+
+            if (dto.QuoteEndDate.HasValue)
+            {
+                service.QuoteEndDate = dto.QuoteEndDate.Value;
+            }
+
+            if (dto.ActualStartDate.HasValue)
+            {
+                service.ActualStartDate = dto.ActualStartDate.Value;
+            }
+
+            if (dto.ActualEndDate.HasValue)
+            {
+                service.ActualEndDate = dto.ActualEndDate.Value;
+            }
+
+            if (!string.IsNullOrEmpty(dto.Status))
+            {
+                service.Status = dto.Status;
+            }
+
+            _context.Entry(service).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ProjectServiceExists(serviceId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        // DELETE: api/projects/{projectId}/services/{serviceId}
+        [HttpDelete("{serviceId}")]
+        public async Task<IActionResult> DeleteProjectService(int projectId, int serviceId)
+        {
+            var service = await _context.ProjectServices
+                .FirstOrDefaultAsync(s => s.ProjectId == projectId && s.Id == serviceId);
+
+            if (service == null)
+            {
+                return NotFound();
+            }
+
+            _context.ProjectServices.Remove(service);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private bool ProjectServiceExists(int id)
+        {
+            return _context.ProjectServices.Any(e => e.Id == id);
         }
     }
 }

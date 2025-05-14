@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RenovationApp.Server.Data;
@@ -11,9 +12,11 @@ using RenovationApp.Server.Data;
 namespace RenovationApp.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250513141800_UpdateModels")]
+    partial class UpdateModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -154,21 +157,6 @@ namespace RenovationApp.Server.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ProjectRenovationTag", b =>
-                {
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("RenovationTagsId")
-                        .HasColumnType("nvarchar(255)");
-
-                    b.HasKey("ProjectId", "RenovationTagsId");
-
-                    b.HasIndex("RenovationTagsId");
-
-                    b.ToTable("ProjectRenovationTags", (string)null);
-                });
-
             modelBuilder.Entity("RenovationApp.Server.Models.ClientInvoice", b =>
                 {
                     b.Property<int>("Id")
@@ -251,10 +239,6 @@ namespace RenovationApp.Server.Migrations
                     b.Property<int?>("RFQId")
                         .HasColumnType("int")
                         .HasColumnName("rfq_id");
-
-                    b.Property<int?>("RenovationType")
-                        .HasColumnType("integer")
-                        .HasColumnName("renovation_type");
 
                     b.Property<string>("Status")
                         .HasColumnType("text")
@@ -520,7 +504,7 @@ namespace RenovationApp.Server.Migrations
                         .HasColumnName("title");
 
                     b.Property<string>("UserId")
-                        .HasColumnType("varchar(255)")
+                        .HasColumnType("varchar(255")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id");
@@ -620,32 +604,6 @@ namespace RenovationApp.Server.Migrations
                     b.HasIndex("RFQId");
 
                     b.ToTable("RFQImages");
-                });
-
-            modelBuilder.Entity("RenovationApp.Server.Models.RenovationTag", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
-                        .HasColumnName("id");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("RenovationTags");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "Modern"
-                        },
-                        new
-                        {
-                            Id = "Rustic"
-                        },
-                        new
-                        {
-                            Id = "Sophisticated"
-                        });
                 });
 
             modelBuilder.Entity("RenovationApp.Server.Models.User", b =>
@@ -784,21 +742,6 @@ namespace RenovationApp.Server.Migrations
                     b.HasOne("RenovationApp.Server.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ProjectRenovationTag", b =>
-                {
-                    b.HasOne("RenovationApp.Server.Models.Project", null)
-                        .WithMany()
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RenovationApp.Server.Models.RenovationTag", null)
-                        .WithMany()
-                        .HasForeignKey("RenovationTagsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

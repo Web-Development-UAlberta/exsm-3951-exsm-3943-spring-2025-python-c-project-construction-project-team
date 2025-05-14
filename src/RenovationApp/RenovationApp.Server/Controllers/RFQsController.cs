@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RenovationApp.Server.Models;
-using static RenovationApp.Server.Models.RFQDTOs;
+using static RenovationApp.Server.Dtos.RFQDTOs;
 
 namespace RenovationApp.Server.Data
 {
@@ -74,21 +74,66 @@ namespace RenovationApp.Server.Data
 
         // PUT: api/RFQs/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRFQ(int id, RFQ rFQ)
+        public async Task<IActionResult> PutRFQ(int id, RFQEditDTO dto)
         {
-
             string? UserId = GetUserId(User);
             if (string.IsNullOrEmpty(UserId))
             {
                 return BadRequest("User ID is required.");
             }
 
-            if (id != rFQ.Id)
+            var existingRFQ = await _context.RFQs.FindAsync(id);
+            if (existingRFQ == null)
             {
-                return BadRequest();
+                return NotFound("RFQ not found.");
             }
 
-            _context.Entry(rFQ).State = EntityState.Modified;
+            if (existingRFQ.ClientId != UserId && !User.IsInRole("projectManager"))
+            {
+                return Unauthorized();
+            }
+
+            // Update only the provided fields
+            if (dto.Status.HasValue)
+            {
+                if (!Enum.IsDefined(typeof(RFQStatus), dto.Status.Value))
+                {
+                    return BadRequest("Invalid RFQ status.");
+                }
+                existingRFQ.Status = dto.Status.Value;
+            }
+
+            if (!string.IsNullOrEmpty(dto.AssignedEmployeeId))
+            {
+                existingRFQ.AssignedEmployeeId = dto.AssignedEmployeeId;
+            }
+
+            if (!string.IsNullOrEmpty(dto.PreferredMaterial))
+            {
+                existingRFQ.PreferredMaterial = dto.PreferredMaterial;
+            }
+
+            if (!string.IsNullOrEmpty(dto.Description))
+            {
+                existingRFQ.Description = dto.Description;
+            }
+
+            if (dto.RenovationType.HasValue)
+            {
+                existingRFQ.RenovationType = dto.RenovationType.Value;
+            }
+
+            if (dto.Budget.HasValue)
+            {
+                existingRFQ.Budget = dto.Budget.Value;
+            }
+
+            if (!string.IsNullOrEmpty(dto.ProjectAddress))
+            {
+                existingRFQ.ProjectAddress = dto.ProjectAddress;
+            }
+
+            _context.Entry(existingRFQ).State = EntityState.Modified;
 
             try
             {

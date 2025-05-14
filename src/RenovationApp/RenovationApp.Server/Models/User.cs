@@ -34,16 +34,5 @@ namespace RenovationApp.Server.Models
 
         // Navigation collections with Project Model
 
-        [InverseProperty("Employee")]
-        public virtual ICollection<ProjectComment>? Comments { get; set; } = new List<ProjectComment>();
-
-        [InverseProperty("Employee")]
-        public virtual ICollection<Project>? ProjectEmployee { get; set; } = new List<Project>();
-
-        [InverseProperty("Client")]
-        public virtual ICollection<Project>? ProjectClient { get; set; } = new List<Project>();
-
-        [InverseProperty(nameof(ProjectTask.AssignedUser))]
-        public virtual ICollection<ProjectTask>? ProjectTasks { get; set; } = new List<ProjectTask>();
     }
 }

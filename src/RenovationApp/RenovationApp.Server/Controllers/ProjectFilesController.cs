@@ -4,15 +4,13 @@ using RenovationApp.Server.Services;
 using RenovationApp.Server.Services.Fileservice.Dtos;
 using RenovationApp.Server.Data;
 using Microsoft.EntityFrameworkCore;
-using static RenovationApp.Server.Models.RFQDTOs;
-using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 
 namespace RenovationApp.Server.Controllers
 {
     [ApiController]
-    [Route("/[controller]")]
-    [Authorize]
+    [Route("/Project/{projectId}/files")]
+    [Authorize(Policy = "projectManagerOnly")]
     public class ProjectFilesController : ControllerBase
     {
         private readonly IStorageService _storageService;
@@ -27,10 +25,16 @@ namespace RenovationApp.Server.Controllers
         }
 
         [HttpPost("upload-url")]
-        public async Task<IActionResult> GetUploadUrl([FromBody] UploadProjectFileRequestDto dto)
+        public async Task<IActionResult> GetUploadUrl(int projectId, [FromBody] UploadProjectFileRequestDto dto)
         {
+            // Validate projectId matches dto.ProjectId
+            if (projectId != dto.ProjectId)
+            {
+                return BadRequest("Project ID in the route does not match the Project ID in the request body.");
+            }
+
             // Check if the project exists
-            var project = await _db.Projects.FindAsync(dto.ProjectId);
+            var project = await _db.Projects.FindAsync(projectId);
             if (project == null)
             {
                 return NotFound("Project not found.");
@@ -76,7 +80,7 @@ namespace RenovationApp.Server.Controllers
             return Ok(new { url = result.Url, key = result.ObjectKey });
         }
 
-        [HttpGet("{projectId}/files")]
+        [HttpGet]
         public async Task<IActionResult> GetFiles(int projectId, [FromQuery] string? fileType = null)
         {
             // Check if the project exists
