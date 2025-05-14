@@ -86,7 +86,7 @@ Clicking the Login will direct you to the sign up / sign in page.
 2. **Login**
 - Enter your credentials on the login page
 
-![LoginSignup](docs/demo/LoginSignup.gif)
+![LoginSignup](demo/LoginSignup.gif)
 
 ### 👤 Users
 #### Public
@@ -96,7 +96,7 @@ Clicking the Login will direct you to the sign up / sign in page.
 - Navigate to the Gallery tab to view all project photos.
 - Filterable by room type, style, and budget
 
-![GalleryFilter](docs/demo/Gallery.gif)
+![GalleryFilter](demo/Gallery.gif)
 
 #### 🏠 Homeowners (Logged in)
 1. **Submitting a Renovation Request**
