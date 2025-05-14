@@ -1,34 +1,52 @@
-import { apiClient } from '../axios';
 import { IPublicClientApplication } from "@azure/msal-browser";
-import { useQuery } from "@tanstack/react-query";
-import { RFQ } from "./rfq.types";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { fetchAllRFQs, fetchRFQById, createRFQ, updateRFQ, fetchRFQImages } from "./rfqQueries";
+import { RFQ, RFQCreate, RFQUpdate, RFQImage } from "./rfq.types";
 
-async function fetchRFQById(rfqId: string, msalInstance: IPublicClientApplication): Promise<RFQ> {
-    const response = await apiClient(msalInstance).get(`/RFQ/${rfqId}`, {
-        headers: { 'accept': '*/*' },
+const QUERY_KEY = "rfq";
+
+export function getRFQById(rfqId: bigint, msalInstance: IPublicClientApplication) {
+    const query = useQuery({
+        queryKey: [QUERY_KEY, {id:rfqId}],
+        queryFn: () => fetchRFQById(rfqId, msalInstance),
     });
-    if (!response.data) {
-        throw new Error(`Failed to fetch RFQ with ID ${rfqId}`);
-    }
-    return response.data;
+    return query;
 }
 
-async function fetchRFQsByClientId(clientId: string, msalInstance: IPublicClientApplication): Promise<RFQ[]> {
-    const response = await apiClient(msalInstance).get(`/RFQ/client/${clientId}`, {
-        headers: { 'accept': '*/*' },
+export function getAllRFQs(msalInstance: IPublicClientApplication) {
+    const query = useQuery({
+        queryKey: [QUERY_KEY],
+        queryFn: () => fetchAllRFQs(msalInstance),
     });
-    if (!response.data) {
-        throw new Error(`Failed to fetch RFQs for client ID ${clientId}`);
-    }
-    return response.data;
+    return query;
 }
 
-async function fetchAllRFQs(msalInstance: IPublicClientApplication): Promise<RFQ[]> {
-    const response = await apiClient(msalInstance).get(`/RFQ`, {
-        headers: { 'accept': '*/*' },
+export function useCreateRFQ(msalInstance: IPublicClientApplication) {
+    const queryClient = useQueryClient();
+    const mutation = useMutation({
+        mutationFn: (rfq: RFQCreate) => createRFQ(rfq, msalInstance),
+        onSuccess: (result: RFQ) => {
+            queryClient.setQueryData(["rfqs", { id: result.id }], result);
+        }
     });
-    if (!response.data) {
-        throw new Error(`Failed to fetch all RFQs`);
-    }
-    return response.data;
+    return mutation;
+}
+
+export function useUpdateRFQ(msalInstance: IPublicClientApplication) {
+    const queryClient = useQueryClient();
+    const mutation = useMutation({
+        mutationFn: ({ rfqid, rfq }: { rfqid: bigint; rfq: RFQUpdate }) => updateRFQ(rfqid, rfq, msalInstance),
+        onSuccess: (result: RFQ) => {
+            queryClient.setQueryData(["rfqs", { id: result.id }], result);
+        }
+    });
+    return mutation;
+}
+
+export function getRFQImagesByRFQId(rfqId: bigint, msalInstance: IPublicClientApplication) {
+    const query = useQuery({
+        queryKey: [QUERY_KEY, "images", {id:rfqId}],
+        queryFn: () => fetchRFQImages(rfqId, msalInstance),
+    });
+    return query;
 }

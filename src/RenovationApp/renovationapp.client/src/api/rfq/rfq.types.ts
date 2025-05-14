@@ -1,46 +1,41 @@
-export enum RoomSize {
-    Small = "Small",
-    Medium = "Medium",
-    Large = "Large",
-    ExtraSpacious = "ExtraSpacious"
-}
-
-export enum RFQStatus {
-    Created = "Created",
-    Quoted = "Quoted",
-    Approved = "Approved",
-    Declined = "Declined"
-}
-
-export enum RenovationType {
-    KitchenRemodels = "KitchenRemodels",
-    BathroomRenovations = "BathroomRenovations",
-    BasementFinishing = "BasementFinishing",
-    HomeAdditions = "HomeAdditions"
-}
-
 export type RFQImage = {
-    id: number;
-    fileName: string;
-    filePath: string;
-    uploadedAt: string; // ISO string for DateTime
-    imageUri: string;
-    rfqId: number;
-    rfq: RFQ;
+    Id: bigint,
+    FileName: string,
+    UploadedAt: string, // ISO string
+    ImageUri: string,
 };
 
 export type RFQ = {
-    id: number;
+    id: bigint;
     createdTimestamp: string; // ISO string
-    clientId: number;
-    status?: RFQStatus | null;
+    clientId: string;
+    status?: string;
     assignedEmployeeId?: string | null;
     preferredMaterial?: string | null;
     description?: string | null;
-    renovationType?: RenovationType | null;
+    renovationType?: string | null;
     budget?: number | null;
     projectAddress?: string | null;
-    roomSize?: RoomSize | null;
-    rfqImages?: RFQImage[] | null;
-    project?: string | null; //TODO this will need to be changed to a project object when we have it
+    roomSize?: string | null;
+    rfqImages?: bigint[] | null;
+    project?: bigint | null; 
 };
+
+export type RFQCreate ={
+    renovationType: string,
+    roomSize: string,
+    preferredMaterial: string,
+    description: string,
+    budget: number,
+    projectAddress: string
+}
+
+export type RFQUpdate ={
+    status?: string,
+    renovationType?: string,
+    roomSize?: string,
+    preferredMaterial?: string,
+    description?: string,
+    budget?: number,
+    projectAddress?: string
+}
