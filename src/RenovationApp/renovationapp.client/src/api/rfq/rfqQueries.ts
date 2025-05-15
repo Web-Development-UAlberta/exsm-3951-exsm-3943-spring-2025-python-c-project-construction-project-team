@@ -3,7 +3,7 @@ import { IPublicClientApplication } from "@azure/msal-browser";
 import { RFQ, RFQCreate, RFQUpdate, RFQImage } from "./rfq.types";
 
 export async function fetchRFQById(rfqId: bigint, msalInstance: IPublicClientApplication): Promise<RFQ> {
-    const response = await apiClient(msalInstance).get(`/RFQ/${rfqId}`, {});
+    const response = await apiClient(msalInstance).get(`/rfq/${rfqId}`, {});
     if (!response.data) {
         throw new Error(`Failed to fetch RFQ with ID ${rfqId}`);
     }
@@ -11,7 +11,7 @@ export async function fetchRFQById(rfqId: bigint, msalInstance: IPublicClientApp
 }
 
 export async function fetchAllRFQs(msalInstance: IPublicClientApplication): Promise<RFQ[]> {
-    const response = await apiClient(msalInstance).get(`/RFQs`, {});
+    const response = await apiClient(msalInstance).get(`/rfq`, {});
     if (!response.data) {
         throw new Error(`Failed to fetch all RFQs`);
     }
@@ -19,7 +19,7 @@ export async function fetchAllRFQs(msalInstance: IPublicClientApplication): Prom
 }
 
 export async function createRFQ(rfq: RFQCreate, msalInstance: IPublicClientApplication): Promise<RFQ> {
-    const response = await apiClient(msalInstance).post(`/RFQs`, rfq, {});
+    const response = await apiClient(msalInstance).post(`/rfq`, rfq, {});
     if (!response.data) {
         throw new Error(`Failed to create RFQ`);
     }
@@ -27,7 +27,7 @@ export async function createRFQ(rfq: RFQCreate, msalInstance: IPublicClientAppli
 }
 
 export async function updateRFQ(rfqId: bigint, rfq: RFQUpdate, msalInstance: IPublicClientApplication): Promise<RFQ> {
-    const response = await apiClient(msalInstance).put(`/RFQs/${rfqId}`, rfq, {});
+    const response = await apiClient(msalInstance).put(`/rfq/${rfqId}`, rfq, {});
     if (!response.data) {
         throw new Error(`Failed to update RFQ with ID ${rfqId}`);
     }
@@ -36,7 +36,7 @@ export async function updateRFQ(rfqId: bigint, rfq: RFQUpdate, msalInstance: IPu
 
 
 export async function fetchRFQImages(rfqId: bigint, msalInstance: IPublicClientApplication): Promise<RFQImage[]> {
-    const response = await apiClient(msalInstance).get(`/RFQs/${rfqId}/images`, {});
+    const response = await apiClient(msalInstance).get(`/rfq/${rfqId}/images`, {});
     if (!response.data) {
         throw new Error(`Failed to fetch RFQ images for RFQ with ID ${rfqId}`);
     }

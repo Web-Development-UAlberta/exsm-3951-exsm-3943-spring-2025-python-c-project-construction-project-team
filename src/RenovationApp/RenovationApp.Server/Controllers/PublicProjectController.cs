@@ -9,7 +9,7 @@ using static RenovationApp.Server.Dtos.ProjectDTOs;
 namespace RenovationApp.Server.Controllers
 {
     [ApiController]
-    [Route("/Public/Project/{projectId}")]
+    [Route("/projects-pub/{projectId}")]
     public class PublicProjectController : ControllerBase
     {
         private readonly IStorageService _storageService;

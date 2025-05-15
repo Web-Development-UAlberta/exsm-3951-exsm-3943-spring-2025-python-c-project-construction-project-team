@@ -7,7 +7,7 @@ using static RenovationApp.Server.Dtos.RFQDTOs;
 
 namespace RenovationApp.Server.Data
 {
-    [Route("[controller]")]
+    [Route("/rfq")]
     [ApiController]
     [Authorize]
     [Produces("application/json")]
