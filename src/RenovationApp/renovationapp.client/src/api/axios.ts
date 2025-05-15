@@ -8,7 +8,7 @@ const apiScopes = (import.meta.env.VITE_BACKEND_API_SCOPE as string)?.split(',')
 export const apiClient = (msalInstance: IPublicClientApplication): AxiosInstance => {
   const axiosInstance = axios.create({
     baseURL: apiEndpoint,
-    headers: {},
+    headers: { 'accept': '*/*' },
     transitional: {}
   });
 
