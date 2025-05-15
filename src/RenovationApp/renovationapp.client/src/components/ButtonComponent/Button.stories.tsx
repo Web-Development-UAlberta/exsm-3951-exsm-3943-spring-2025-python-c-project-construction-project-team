@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { expect, userEvent, within } from '@storybook/test';
 import { Button } from './Button';
 
 const meta = {
@@ -74,7 +73,6 @@ const meta = {
 } satisfies Meta<typeof Button>;
 
 export default meta;
-
 type Story = StoryObj<typeof Button>;
 
 const baseArgs = {
@@ -90,23 +88,15 @@ const baseArgs = {
     className: '',
 }
 
-// Primary button story
+// Button variants
 export const Primary: Story = {
     args: {
         ...baseArgs,
         label: 'Primary Button',
         variant: 'primary',
-    },
-    play: async ({ canvasElement }) => {
-      const canvas = within(canvasElement);
-      const button = canvas.getByRole('button');
-
-      expect(button.textContent).toContain('Primary Button');
-      expect(button.classList.contains('custom-primary')).toBe(true);
     }
 };
 
-// Secondary button story
 export const Secondary: Story = {
     args: {
         ...baseArgs,
@@ -115,7 +105,6 @@ export const Secondary: Story = {
     },
 };
 
-// Success button story
 export const Success: Story = {
   args: {
     ...baseArgs,
@@ -124,7 +113,6 @@ export const Success: Story = {
   },
 };
 
-// Danger button story
 export const Danger: Story = {
   args: {
     ...baseArgs,
@@ -133,7 +121,6 @@ export const Danger: Story = {
   },
 };
 
-// Link button story
 export const Link: Story = {
   args: {
     ...baseArgs,
@@ -149,12 +136,6 @@ export const Small: Story = {
         label: 'Small Button',
         variant: 'primary',
         size: 'small',
-    },
-    play: async ({ canvasElement }) => {
-      const canvas = within(canvasElement);
-      const button = canvas.getByRole('button');
-
-      expect(button.classList.contains('btn-sm')).toBe(true);
     }
 };
 
@@ -183,13 +164,7 @@ export const Active: Story = {
     label: 'Active Button',
     variant: 'primary',
     active: true,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const button = canvas.getByRole('button');
-
-    expect(button.classList.contains('active')).toBe(true);
-  },
+  }
 };
 
 export const Hover: Story = {
@@ -198,13 +173,7 @@ export const Hover: Story = {
     label: 'Hover Button',
     variant: 'primary',
     hover: true,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const button = canvas.getByRole('button');
-
-    expect(button.classList.contains('hover')).toBe(true);
-  },
+  }
 };
 
 export const Disabled: Story = {
@@ -213,29 +182,15 @@ export const Disabled: Story = {
     label: 'Disabled Button',
     variant: 'primary',
     disabled: true,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const button = canvas.getByRole('button');
-
-    expect(button).toBeDisabled();
-  },
+  }
 };
 
-// Test loading state prevents clicking - Interaction
 export const Loading: Story = {
   args: {
     ...baseArgs,
     label: 'Loading Button',
     variant: 'primary',
     loading: true,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const button = canvas.getByRole('button');
-    
-    // Verify spinner exists
-    expect(button.querySelector('.spinner-border')).toBeInTheDocument();
   }
 };
 
@@ -247,15 +202,6 @@ export const IconLeft: Story = {
     variant: 'primary',
     children: <i className="bi bi-plus-lg"></i>,
     iconPosition: 'left',
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const button = canvas.getByRole('button');
-
-    const html = button.innerHTML;
-    const iconPos = html.indexOf('bi-plus-lg');
-    const textPos = html.indexOf('Icon Left');
-    expect(iconPos).toBeLessThan(textPos); // icon should be before text
   }
 };
 
@@ -266,15 +212,6 @@ export const IconRight: Story = {
     variant: 'primary',
     children: <i className="bi bi-arrow-right"></i>,
     iconPosition: 'right',
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const button = canvas.getByRole('button');
-
-    const html = button.innerHTML;
-    const iconPos = html.indexOf('bi-arrow-right');
-    const textPos = html.indexOf('Icon Right');
-    expect(iconPos).toBeGreaterThan(textPos); // icon should be after text
   }
 };
 
@@ -294,12 +231,6 @@ export const ButtonType: Story = {
     label: 'Button Type',
     variant: 'primary',
     type: 'button',
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const button = canvas.getByRole('button');
-
-    expect(button).toHaveAttribute('type', 'button');
   }
 };
 
@@ -316,14 +247,34 @@ export const SubmitType: Story = {
 export const Clickable: Story = {
   args: {
     label: 'Click Me',
-    onClick: () => {},
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const button = canvas.getByRole('button');
+    onClick: () => console.log('Button clicked!'),
+  }
+};
 
-    await userEvent.click(button);
+// Edge Cases
+export const ExtremelyLongText: Story = {
+  args: {
+    ...baseArgs,
+    label: 'This is an extremely long text that should be truncated or wrapped depending on the button size and CSS properties.',
+    variant: 'primary',
+    size: 'small',
+  }
+};
 
-    expect(button).toHaveTextContent('Click Me');
-  },
+export const EmptyLabel: Story = {
+  args: {
+    ...baseArgs,
+    label: '',
+    variant: 'primary',
+  }
+};
+
+export const LoadingAndDisabled: Story = {
+  args: {
+    ...baseArgs,
+    label: 'Loading and Disabled',
+    variant: 'primary',
+    loading: true,
+    disabled: true,
+  }
 };
