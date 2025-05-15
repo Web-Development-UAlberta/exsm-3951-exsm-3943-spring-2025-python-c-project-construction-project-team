@@ -7,7 +7,7 @@ using static RenovationApp.Server.Dtos.RFQDTOs;
 
 namespace RenovationApp.Server.Data
 {
-    [Route("[controller]")]
+    [Route("/rfq")]
     [ApiController]
     [Authorize]
     [Produces("application/json")]
@@ -22,7 +22,7 @@ namespace RenovationApp.Server.Data
 
         // GET: api/RFQs
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RFQ>>> GetRFQs()
+        public async Task<ActionResult<IEnumerable<RFQOutputDTO>>> GetRFQs()
         {
             // Get the user's role and ID
             string? UserId = GetUserId(User);
@@ -33,13 +33,17 @@ namespace RenovationApp.Server.Data
 
             if (User.IsInRole("projectManager"))
             {
-                // Return only RFQs where the ClientId matches the user's ID
-                return await _context.RFQs.ToListAsync();
+                // Return all RFQs mapped to RFQOutputDTO
+                var rFQList = await _context.RFQs.ToListAsync();
+                var outputList = rFQList.Select(r => MapToOutputRFQ(r)).ToList();
+                return outputList;
             }
             else
             {
-                // Return all RFQs
-                return await _context.RFQs.Where(rfq => rfq.ClientId == UserId).ToListAsync();
+                // Return only RFQs where the ClientId matches the user's ID, mapped to RFQOutputDTO
+                var rFQList = await _context.RFQs.Where(rfq => rfq.ClientId == UserId).ToListAsync();
+                var outputList = rFQList.Select(r => MapToOutputRFQ(r)).ToList();
+                return outputList;
             }
 
             // If the role is not recognized, return an empty list
@@ -48,7 +52,7 @@ namespace RenovationApp.Server.Data
 
         // GET: api/RFQs/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<RFQ>> GetRFQ(int id)
+        public async Task<ActionResult<RFQOutputDTO>> GetRFQ(int id)
         {
 
             string? UserId = GetUserId(User);
@@ -69,12 +73,12 @@ namespace RenovationApp.Server.Data
             }
 
 
-            return rFQ;
+            return Ok(MapToOutputRFQ(rFQ));
         }
 
         // PUT: api/RFQs/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRFQ(int id, RFQEditDTO dto)
+        public async Task<ActionResult<RFQOutputDTO>> PutRFQ(int id, RFQEditDTO dto)
         {
             string? UserId = GetUserId(User);
             if (string.IsNullOrEmpty(UserId))
@@ -151,11 +155,11 @@ namespace RenovationApp.Server.Data
                 }
             }
 
-            return NoContent();
+            return Ok(MapToOutputRFQ(existingRFQ));
         }
 
         [HttpPost()]
-        public async Task<ActionResult<RFQ>> PostRFQ(RFQCreateDTO rFQCreateDTO)
+        public async Task<ActionResult<RFQOutputDTO>> PostRFQ(RFQCreateDTO rFQCreateDTO)
         {
             if (!Enum.TryParse<RenovationType>(rFQCreateDTO.RenovationType, out var renovationType))
             {
@@ -176,17 +180,38 @@ namespace RenovationApp.Server.Data
                 PreferredMaterial = rFQCreateDTO.PreferredMaterial,
                 Description = rFQCreateDTO.Description,
                 Budget = rFQCreateDTO.Budget,
-                ProjectAddress = rFQCreateDTO.ProjectAddress
+                ProjectAddress = rFQCreateDTO.ProjectAddress,
+                Status = RFQStatus.Created
             };
             _context.RFQs.Add(rFQ);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetRFQ", new { id = rFQ.Id }, rFQ);
+            return CreatedAtAction("GetRFQ", new { id = rFQ.Id }, MapToOutputRFQ(rFQ));
         }
 
         private bool RFQExists(int id)
         {
             return _context.RFQs.Any(e => e.Id == id);
+        }
+
+        private RFQOutputDTO MapToOutputRFQ (RFQ rFQ)
+        {
+            return new RFQOutputDTO
+            {
+                Id = rFQ.Id,
+                CreatedTimestamp = rFQ.CreatedTimestamp,
+                ClientId = rFQ.ClientId,
+                Status = rFQ.Status.ToString(),
+                AssignedEmployeeId = rFQ.AssignedEmployeeId,
+                PreferredMaterial = rFQ.PreferredMaterial,
+                Description = rFQ.Description,
+                RenovationType = rFQ.RenovationType.ToString(),
+                Budget = rFQ.Budget,
+                ProjectAddress = rFQ.ProjectAddress,
+                RoomSize = rFQ.RoomSize.ToString(),
+                RFQImages = rFQ.RFQImages?.Select(o => o.Id).ToArray(),
+                Project = rFQ.Project?.Id
+            };
         }
 
         private string? GetUserId(ClaimsPrincipal user)

@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace RenovationApp.Server.Controllers
 {
     [ApiController]
-    [Route("/Project/{projectId}/files")]
+    [Route("/projects/{projectId}/files")]
     [Authorize(Policy = "projectManagerOnly")]
     public class ProjectFilesController : ControllerBase
     {

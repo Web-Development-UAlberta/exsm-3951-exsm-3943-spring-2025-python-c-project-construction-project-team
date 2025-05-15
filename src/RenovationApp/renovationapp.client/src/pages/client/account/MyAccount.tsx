@@ -4,7 +4,7 @@ import { useMsal } from '@azure/msal-react';
 import "./MyAccount.css";
 import PersonalInfoTab from './PersonalInfoTab';
 import SubmittedRequestsTab from './SubmittedRequestsTab';
-
+import { getActiveUserInfo } from '../../../api/identity/graph';
 
 
 const MyAccount: React.FC = () => {
@@ -13,6 +13,9 @@ const MyAccount: React.FC = () => {
   // Tab state
   const [activeTab, setActiveTab] = useState<'personal' | 'requests'>('personal');
 
+  const {data, isLoading, error } = getActiveUserInfo(instance);
+  if (isLoading) return <div>Loading...</div>
+  if (error) return <div>Error loading account</div>
   if (!activeAccount) {
     return <div>No active account found</div>;
   }
@@ -45,7 +48,7 @@ const MyAccount: React.FC = () => {
         {/* Personal Information Tab */}
         {activeTab === 'personal' && (
           <div className="p-4 shadow-sm">
-            <PersonalInfoTab />
+            <PersonalInfoTab graphData={data}/>
           </div>
         )}
 

@@ -26,5 +26,33 @@ namespace RenovationApp.Server.Dtos
             public string? ProjectAddress { get; set; }
 
         }
+
+        public class RFQOutputDTO
+        {
+            required public int Id { get; set; }
+            public DateTime CreatedTimestamp { get; set; }
+            required public string ClientId { get; set; }
+            public string? Status { get; set; }
+
+            public string? AssignedEmployeeId { get; set; }
+
+            public string? PreferredMaterial { get; set; }
+
+            public string? Description { get; set; }
+
+            public string? RenovationType { get; set; }
+
+            public decimal? Budget { get; set; }
+
+            public string? ProjectAddress { get; set; }
+
+            public string? RoomSize { get; set; }
+
+            public int[]? RFQImages { get; set; }
+
+            public int? Project { get; set; }
+
+        }
     }
 }
+

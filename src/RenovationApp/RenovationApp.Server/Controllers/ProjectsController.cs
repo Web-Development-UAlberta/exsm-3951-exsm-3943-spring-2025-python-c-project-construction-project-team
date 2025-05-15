@@ -8,7 +8,7 @@ using static RenovationApp.Server.Dtos.ProjectDTOs;
 
 namespace RenovationApp.Server.Controllers
 {
-    [Route("[controller]")]
+    [Route("/projects")]
     [ApiController]
     [Authorize]
     public class ProjectsController : ControllerBase
