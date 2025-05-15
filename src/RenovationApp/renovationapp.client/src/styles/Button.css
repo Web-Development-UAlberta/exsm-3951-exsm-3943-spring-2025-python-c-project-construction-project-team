@@ -1,114 +1,27 @@
-/* Base button styles */
-.button {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-family: 'Open Sans', sans-serif;
-  transition: all 0.2s ease;
-  border: none;
-  box-sizing: border-box;
-}
-
-/* Button variants */
-.button-primary {
+/* Primary button */
+.btn-primary {
   background: #092B49; /* Blue from Figma */
   color: white;
 }
 
-.button-primary:hover:not(:disabled) {
-  background: #103b64; /* Slightly lighter for hover */
+.btn-primary:hover:not(:disabled):not(.disabled),
+.btn-primary:focus:not(:disabled):not(.disabled),
+.btn-primary:active:not(:disabled):not(.disabled) {
+  background-color: #103b64; /* Slightly lighter for hover */
+  border-color: #103b64;
 }
 
-.button-secondary {
+/* Custom colors for secondary button */
+.btn-secondary {
   border: 2px solid #092B49;
-  background: transparent;
+  background-color: transparent;
   color: #092B49;
 }
 
-.button-secondary:hover:not(:disabled) {
-  background: rgba(9, 43, 73, 0.05);
-}
-
-.button-tertiary {
-  background: transparent;
+.btn-secondary:hover:not(:disabled):not(.disabled),
+.btn-secondary:focus:not(:disabled):not(.disabled),
+.btn-secondary:active:not(:disabled):not(.disabled) {
+  background-color: rgba(9, 43, 73, 0.05);
+  border-color: #092B49;
   color: #092B49;
-  text-decoration: underline;
 }
-
-/* Button sizes */
-.button-small {
-  padding: 4px 12px;
-  font-size: 12px;
-  line-height: 16px;
-}
-
-.button-medium {
-  padding: 8px 16px;
-  font-size: 14px;
-  line-height: 19px;
-}
-
-.button-large {
-  padding: 16px 24px;
-  font-size: 16px;
-  line-height: 22px;
-}
-
-/* Disabled state styles */
-.button-primary:disabled {
-  background: #DDE1EA;
-  color: #6D7079;
-  cursor: not-allowed;
-}
-
-.button-secondary:disabled {
-  background: rgba(0, 0, 0, 0.12);
-  border: 2px solid #A7A9B1;
-  color: #6D7079;
-  cursor: not-allowed;
-}
-
-.button-tertiary:disabled {
-  color: #A7A9B1;
-  cursor: not-allowed;
-}
-
-/* Loading spinner */
-/* .spinner {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid currentColor;
-  border-right-color: transparent;
-  border-radius: 50%;
-  animation: spin 0.75s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-Icon positioning
-.icon-left {
-  margin-right: 8px;
-  display: flex;
-  align-items: center;
-}
-
-.icon-right {
-  margin-left: 8px;
-  display: flex;
-  align-items: center;
-}
-
-.icon-only {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-} */

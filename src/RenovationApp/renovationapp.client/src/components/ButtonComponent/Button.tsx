@@ -1,57 +1,80 @@
 import React from 'react';
-import '../../styles/button.css';
+import { Spinner } from 'react-bootstrap';
+import '../../styles/Button.css';
 
 interface ButtonProps {
   label?: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  active?: boolean;
+  hover?: boolean;
   disabled?: boolean;
   loading?: boolean;
-  type?: 'button' | 'submit' | 'reset';
-  variant?: 'primary' | 'secondary' | 'tertiary';
+  type?: 'button' | 'submit' ;
+  variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'link';
   size?: 'small' | 'medium' | 'large';
-//   icon?: React.ReactNode;
-//   iconPosition?: 'left' | 'right';
-//   iconOnly?: boolean;
+  children?: React.ReactNode;
+  iconPosition?: 'left' | 'right';
+  iconOnly?: boolean;
   className?: string;
 }
 
-const Button: React.FC<ButtonProps> = ({
+export const Button: React.FC<ButtonProps> = ({
   label,
   onClick,
+  active = false,
+  hover = false,
   disabled = false,
   loading = false,
   type = 'button',
   variant = 'primary',
   size = 'medium',
-//   icon,
-//   iconPosition = 'left',
-//   iconOnly = false,
+  children,
+  iconPosition = 'left',
+  iconOnly = false,
   className = '',
 }) => {
-  const buttonClassNames = `button button-${variant} button-${size} ${className}`;
+  const btnSize = size === 'small' ? 'sm' : size === 'large' ? 'lg' : undefined;
+  
+  const buttonClasses = [
+    'btn',
+    `btn-${variant}`,                     // Variant-specific class
+    btnSize ? `btn-${btnSize}` : '', // Size class if specified
+    active ? 'active' : '',
+    hover ? 'hover' : '',
+    className,                      // Additional custom classes
+  ].filter(Boolean).join(' ');
 
   return (
     <button
       type={type}
-      className={buttonClassNames}
-      onClick={(event) => {
-        event.preventDefault();
-        if (!disabled && !loading) {
-          onClick?.(event);
-        }
-      }}
+      className={buttonClasses}
+      onClick={onClick}
       disabled={disabled || loading}
+      aria-disabled={disabled || loading}
     >
-      {/* {loading && <span className="spinner" role="status" aria-hidden="true"></span>}
-      {!iconOnly && (
-        <>
-          {icon && iconPosition === 'left' && <span className="icon-left">{icon}</span>}
-          {label}
-          {icon && iconPosition === 'right' && <span className="icon-right">{icon}</span>}
-        </>
+      {loading && (
+        <Spinner
+          as="span"
+          animation="border"
+          size="sm"
+          role="status"
+          aria-hidden="true"
+          className="me-2"
+        />
       )}
-        {iconOnly && <span className="icon-only">{icon}</span>} */}
-        {label}
+      {!iconOnly ? (
+        <>
+          {children && iconPosition === 'left' && (
+            <span className="icon-left me-2">{children}</span>
+          )}
+          {label}
+          {children && iconPosition === 'right' && (
+            <span className="icon-right ms-2">{children}</span>
+          )}
+        </>
+      ) : (
+        <span className="icon-only">{children}</span>
+      )}
     </button>
   );
 };
