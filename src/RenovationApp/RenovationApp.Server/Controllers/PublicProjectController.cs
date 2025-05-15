@@ -9,7 +9,7 @@ using static RenovationApp.Server.Dtos.ProjectDTOs;
 namespace RenovationApp.Server.Controllers
 {
     [ApiController]
-    [Route("/projects-pub/{projectId}")]
+    [Route("/projects-pub/")]
     public class PublicProjectController : ControllerBase
     {
         private readonly IStorageService _storageService;
@@ -24,46 +24,46 @@ namespace RenovationApp.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProjectPublic(int projectId)
+        public async Task<ActionResult<List<ProjectPublicInfo>>> GetProjectPublic()
         {
             // Check if the project exists and is public
-            var project = await _db.Projects
-                .Include(p => p.ClientInvoices) // Include related ClientInvoices
-                .FirstOrDefaultAsync(p => p.Id == projectId && p.IsPublic);
+            var projects = await _db.Projects.Include(p => p.ClientInvoices).Where(p => p.IsPublic).ToListAsync();
 
-            if (project == null)
+            var projectsOut = new List<ProjectPublicInfo>();
+
+            foreach (var project in projects)
             {
-                return NotFound("Project not found or is not public.");
+                // Calculate CostCategory
+                decimal costCategory;
+                if (project.ClientInvoices != null && project.ClientInvoices.Any())
+                {
+                    costCategory = Math.Ceiling(project.ClientInvoices.Sum(i => i.Amount ?? 0) / 1000);
+                }
+                else if (project.QuotePriceOverride.HasValue)
+                {
+                    costCategory = Math.Ceiling(project.QuotePriceOverride.Value / 1000);
+                }
+                else
+                {
+                    costCategory = 0; // Default to 0 if no data is available
+                }
+
+                var publicProjectInfo = new ProjectPublicInfo
+                {
+                    Id = project.Id,
+                    RenovationType = project.RenovationType,
+                    CostCategory = costCategory,
+                    RenovationTagIds = project.RenovationTags?.Select(t => t.Id).ToList()
+                };
             }
 
-            // Calculate CostCategory
-            decimal costCategory;
-            if (project.ClientInvoices != null && project.ClientInvoices.Any())
-            {
-                costCategory = Math.Ceiling(project.ClientInvoices.Sum(i => i.Amount ?? 0) / 1000);
-            }
-            else if (project.QuotePriceOverride.HasValue)
-            {
-                costCategory = Math.Ceiling(project.QuotePriceOverride.Value / 1000);
-            }
-            else
-            {
-                costCategory = 0; // Default to 0 if no data is available
-            }
 
-            var publicProjectInfo = new ProjectPublicInfo
-            {
-                Id = project.Id,
-                RenovationType = project.RenovationType,
-                CostCategory = costCategory.ToString(), // Convert to string as per ProjectPublicInfo definition
-                RenovationTagIds = project.RenovationTags?.Select(t => t.Id).ToList()
-            };
 
-            return Ok(publicProjectInfo);
+            return projectsOut;
         }
 
-        [HttpGet("public-images")]
-        public async Task<IActionResult> GetPublicImages(int projectId)
+        [HttpGet("/projects-pub/{projectId}/public-images")]
+        public async Task<ActionResult<List<FileDownloadDto>>> GetPublicImages(int projectId)
         {
             // Check if the project exists and is public
             var project = await _db.Projects
@@ -98,7 +98,7 @@ namespace RenovationApp.Server.Controllers
                 });
             }
 
-            return Ok(result);
+            return result;
         }
     }
 }

@@ -28,7 +28,7 @@ namespace RenovationApp.Server.Dtos
         {
             public int Id { get; set; }
             public RenovationType? RenovationType { get; set; }
-            public string? CostCategory { get; set; }
+            public decimal CostCategory { get; set; }
             public List<string>? RenovationTagIds { get; set; }
         }
     }
