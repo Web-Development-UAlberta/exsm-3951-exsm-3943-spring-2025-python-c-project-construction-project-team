@@ -56,8 +56,9 @@ const setFileUploadTest = async ({
     );
 
     // Fill out form fields
-    await userEvent.type(canvas.getByLabelText(/File Name:/i), fileName);
-    await userEvent.type(canvas.getByLabelText(/Description:/i), description);
+    await userEvent.type(canvas.getByLabelText(/File Name:?/i), fileName);
+    const descriptionInput = canvas.getByRole('textbox', { name: /description/i }) || canvas.getByLabelText(/description/i, { exact: false });
+    await userEvent.type(descriptionInput, description);
     await userEvent.click(canvas.getByRole('radio', { name: new RegExp(selectRadioOption, 'i') }));
 
     // Click the upload button

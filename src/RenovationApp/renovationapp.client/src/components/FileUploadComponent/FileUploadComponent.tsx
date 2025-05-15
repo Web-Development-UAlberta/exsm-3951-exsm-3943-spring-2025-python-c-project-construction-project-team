@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { IPublicClientApplication } from '@azure/msal-browser';
 import { silentRequest } from '../../config/authConfig';
+import { Button } from '../ButtonComponent/Button';
+import { TextInput } from '../InputComponent/TextInput';
 
 interface FileUploadComponentProps {
     projectId: string;
@@ -9,12 +11,13 @@ interface FileUploadComponentProps {
     msalInstance: IPublicClientApplication;
 }
 
-const FileUploadComponent: React.FC<FileUploadComponentProps> = ({ projectId, apiBaseUrl, backendRootUrl, msalInstance }) => {
+export const FileUploadComponent: React.FC<FileUploadComponentProps> = ({ projectId, apiBaseUrl, backendRootUrl, msalInstance }) => {
     const [file, setFile] = useState<File | null>(null);
     const [fileName, setFileName] = useState('');
     const [description, setDescription] = useState('');
     const [uploadStatus, setUploadStatus] = useState<string | null>(null);
     const [fileType, setFileType] = useState<'image' | 'document'>('image');
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files.length > 0) {
@@ -27,6 +30,9 @@ const FileUploadComponent: React.FC<FileUploadComponentProps> = ({ projectId, ap
             setUploadStatus('Please select a file and provide a file name.');
             return;
         }
+
+        setIsLoading(true); // Start Loading
+        setUploadStatus(null);
 
         try {
             // Get the token
@@ -97,6 +103,9 @@ const FileUploadComponent: React.FC<FileUploadComponentProps> = ({ projectId, ap
             console.error('Upload error details:', error);
             setUploadStatus(`Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`);
         }
+        finally {
+            setIsLoading(false); // Stop Loading
+        }
     };
 
     return (
@@ -108,15 +117,17 @@ const FileUploadComponent: React.FC<FileUploadComponentProps> = ({ projectId, ap
                     <input type="file" onChange={handleFileChange} />
                 </label>
             </div>
-            <div>
-                <label>
-                    File Name:
-                    <input
-                        type="text"
+            <div className="col-md-6">
+                    <TextInput
+                        id="fileName"
+                        label="File Name"
+                        placeholder="Enter file name"
+                        data-testid="file-name-input"
+                        required
                         value={fileName}
                         onChange={(e) => setFileName(e.target.value)}
+                        error={!fileName && uploadStatus ? 'File name is required' : ''}
                     />
-                </label>
             </div>
             <div>
                 <label>File Type:</label>
@@ -150,7 +161,15 @@ const FileUploadComponent: React.FC<FileUploadComponentProps> = ({ projectId, ap
                     />
                 </label>
             </div>
-            <button onClick={handleUpload}>Upload</button>
+            <Button 
+                label="Upload"
+                onClick={handleUpload}
+                loading={isLoading}
+                disabled={isLoading}
+                variant="primary"
+                size="medium"
+                className="mt-3"
+            />
             {uploadStatus && <p>{uploadStatus}</p>}
         </div>
     );
