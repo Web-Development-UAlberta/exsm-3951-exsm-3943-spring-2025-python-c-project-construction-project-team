@@ -8,7 +8,6 @@ import {
     deleteProjectService
 } from "./projectServiceQueries";
 import {
-    ProjectService,
     ProjectServiceCreateDTO,
     ProjectServiceUpdateDTO
 } from "./project.types";
