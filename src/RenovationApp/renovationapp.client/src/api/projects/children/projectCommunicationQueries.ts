@@ -1,6 +1,6 @@
-import { apiClient } from '../axios';
+import { apiClient } from '../../axios';
 import { IPublicClientApplication } from "@azure/msal-browser";
-import { ProjectCommunication, ProjectCommunicationDTO } from "./project.types";
+import { ProjectCommunication, ProjectCommunicationDTO } from "../project.types";
 
 // Fetch all communications for a project
 export async function fetchProjectCommunications(

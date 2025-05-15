@@ -1,6 +1,6 @@
-import { apiClient } from '../axios';
+import { apiClient } from '../../axios';
 import { IPublicClientApplication } from "@azure/msal-browser";
-import { ClientInvoice, ClientInvoiceDTO } from "./project.types";
+import { ClientInvoice, ClientInvoiceDTO } from "../project.types";
 
 // Fetch all client invoices for a project
 export async function fetchClientInvoices(projectId: bigint, msalInstance: IPublicClientApplication): Promise<ClientInvoice[]> {

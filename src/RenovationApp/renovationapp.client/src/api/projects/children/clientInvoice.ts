@@ -8,7 +8,7 @@ import {
     deleteClientInvoice,
     payClientInvoice
 } from "./clientInvoiceQueries";
-import { ClientInvoiceDTO } from "./project.types";
+import { ClientInvoiceDTO } from "../project.types";
 
 export function useClientInvoices(projectId: bigint, msalInstance: IPublicClientApplication) {
     return useQuery({

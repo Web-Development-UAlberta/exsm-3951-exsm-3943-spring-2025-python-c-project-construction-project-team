@@ -172,4 +172,57 @@ export type ClientInvoiceDTO = {
     amount?: number;
 };
 
+export type ProjectOutComment = {
+    id: number;
+    createdByEmployee?: string | null;
+    comment?: string | null;
+    createdTimestamp: string;
+};
+
+export type ProjectOutFile = {
+    id: number;
+    fileName: string;
+    type: string;
+    fileUri: string;
+    uploadedTimestamp: string;
+};
+
+export type ProjectOutCommunication = {
+    id: number;
+    message?: string | null;
+    createdTimestamp: string;
+};
+
+export type ProjectOutClientInvoice = {
+    id: number;
+    paid?: string | null;
+};
+
+export type ProjectOutService = {
+    id: number;
+    status?: string | null;
+    name: string;
+    serviceTypeName?: string | null;
+};
+
+export type ProjectOutTask = {
+    id: number;
+    userId?: string | null;
+    title?: string | null;
+    status?: string | null;
+};
+
+export type ProjectOutputDTO = {
+    id: number;
+    status?: string | null;
+    renovationType?: string | null;
+    rfq?: number | null;
+    comments?: ProjectOutComment[];
+    files?: ProjectOutFile[];
+    communications?: ProjectOutCommunication[];
+    clientInvoices?: ProjectOutClientInvoice[];
+    projectServices?: ProjectOutService[];
+    projectTasks?: ProjectOutTask[];
+};
+
 

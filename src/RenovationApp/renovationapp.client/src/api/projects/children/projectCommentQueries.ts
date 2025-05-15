@@ -1,6 +1,6 @@
-import { apiClient } from '../axios';
+import { apiClient } from '../../axios';
 import { IPublicClientApplication } from "@azure/msal-browser";
-import { ProjectComment,ProjectCommentEdit } from "./project.types";
+import { ProjectComment,ProjectCommentEdit } from "../project.types";
 
 // Fetch all comments for a project
 export async function fetchProjectComments(projectId: bigint, msalInstance: IPublicClientApplication): Promise<ProjectComment[]> {

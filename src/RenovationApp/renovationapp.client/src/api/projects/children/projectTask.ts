@@ -7,7 +7,7 @@ import {
     updateProjectTask,
     deleteProjectTask
 } from "./projectTaskQueries";
-import { ProjectTaskDTO } from "./project.types";
+import { ProjectTaskDTO } from "../project.types";
 
 export function useProjectTasks(projectId: bigint, msalInstance: IPublicClientApplication) {
     return useQuery({

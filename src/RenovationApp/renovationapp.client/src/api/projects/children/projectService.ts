@@ -10,7 +10,7 @@ import {
 import {
     ProjectServiceCreateDTO,
     ProjectServiceUpdateDTO
-} from "./project.types";
+} from "../project.types";
 
 export function useProjectServices(projectId: bigint, msalInstance: IPublicClientApplication) {
     return useQuery({

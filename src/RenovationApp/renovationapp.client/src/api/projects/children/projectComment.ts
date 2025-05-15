@@ -7,7 +7,7 @@ import {
     updateProjectComment,
     deleteProjectComment,
 } from "./projectCommentQueries";
-import { ProjectCommentEdit } from "./project.types";
+import { ProjectCommentEdit } from "../project.types";
 
 export function useProjectComments(projectId: bigint, msalInstance: IPublicClientApplication) {
     return useQuery({

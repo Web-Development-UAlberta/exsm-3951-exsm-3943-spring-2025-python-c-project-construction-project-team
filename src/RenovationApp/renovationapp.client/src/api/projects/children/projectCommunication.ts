@@ -7,7 +7,7 @@ import {
     updateProjectCommunication,
     deleteProjectCommunication
 } from "./projectCommunicationQueries";
-import { ProjectCommunicationDTO } from "./project.types";
+import { ProjectCommunicationDTO } from "../project.types";
 
 export function useProjectCommunications(projectId: bigint, msalInstance: IPublicClientApplication) {
     return useQuery({
