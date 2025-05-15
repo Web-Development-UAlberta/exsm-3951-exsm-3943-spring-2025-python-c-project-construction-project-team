@@ -48,10 +48,11 @@ export const msalConfig = {
  * https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
  */
 export const loginRequest = {
-    scopes: ["openid", "offline_access", "profile","api://99ffb099-af80-41d1-9c16-e844f8ed5308/user_impersonation"],
+    scopes: ["openid", "offline_access", "profile","api://99ffb099-af80-41d1-9c16-e844f8ed5308/user_impersonation", "user.read"],
 };
 
  export const silentRequest = {
-     scopes: ["openid", "offline_access", "profile","api://99ffb099-af80-41d1-9c16-e844f8ed5308/user_impersonation"],
+     scopes: ["openid", "offline_access", "profile","api://99ffb099-af80-41d1-9c16-e844f8ed5308/user_impersonation", "user.read"],
      loginHint: "example@renovationstationexsm3943.onmicrosoft.com"
  };
+ 
