@@ -9,18 +9,16 @@ import {
 } from "./projectCommentQueries";
 import { ProjectCommentEdit } from "./project.types";
 
-const QUERY_KEY = "projectComments";
-
 export function useProjectComments(projectId: bigint, msalInstance: IPublicClientApplication) {
     return useQuery({
-        queryKey: [QUERY_KEY, { projectId }],
+        queryKey: ["projects", projectId, "comments"],
         queryFn: () => fetchProjectComments(projectId, msalInstance),
     });
 }
 
 export function useProjectComment(projectId: bigint, commentId: bigint, msalInstance: IPublicClientApplication) {
     return useQuery({
-        queryKey: [QUERY_KEY, { commentId }],
+        queryKey: ["projects", projectId, "comments", commentId],
         queryFn: () => fetchProjectCommentById(projectId, commentId, msalInstance),
     });
 }
@@ -31,8 +29,7 @@ export function useCreateProjectComment(projectId: bigint, msalInstance: IPublic
         mutationFn: (comment: ProjectCommentEdit) =>
             createProjectComment(projectId, comment, msalInstance),
         onSuccess: () => {
-            // Invalidate the list of comments for this project
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEY, { projectId }] });
+            queryClient.invalidateQueries({ queryKey: ["projects", projectId, "comments"] });
         }
     });
 }
@@ -43,9 +40,8 @@ export function useUpdateProjectComment(msalInstance: IPublicClientApplication) 
         mutationFn: ({ projectId, commentId, comment }: {projectId: bigint, commentId: bigint; comment: ProjectCommentEdit }) =>
             updateProjectComment(projectId, commentId, comment, msalInstance),
         onSuccess: (_result, variables) => {
-            // Invalidate both the single comment and the list for this project
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEY, { projectId: variables.projectId }] });
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEY, { projectId: variables.projectId, commentId: variables.commentId }] });
+            queryClient.invalidateQueries({ queryKey: ["projects", variables.projectId, "comments"] });
+            queryClient.invalidateQueries({ queryKey: ["projects", variables.projectId, "comments", variables.commentId] });
         }
     });
 }
@@ -56,8 +52,7 @@ export function useDeleteProjectComment(msalInstance: IPublicClientApplication) 
         mutationFn: ({ projectId, commentId } : {projectId: bigint, commentId: bigint;}) =>
             deleteProjectComment(projectId, commentId, msalInstance),
         onSuccess: (_result, variables) => {
-            // Invalidate the list of comments for this project
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEY, { projectId: variables.projectId }] });
+            queryClient.invalidateQueries({ queryKey: ["projects", variables.projectId, "comments"] });
         }
     });
 }

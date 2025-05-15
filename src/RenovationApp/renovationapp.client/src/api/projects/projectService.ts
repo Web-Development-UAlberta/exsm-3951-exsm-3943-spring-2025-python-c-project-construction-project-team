@@ -12,18 +12,16 @@ import {
     ProjectServiceUpdateDTO
 } from "./project.types";
 
-const QUERY_KEY = "projectServices";
-
 export function useProjectServices(projectId: bigint, msalInstance: IPublicClientApplication) {
     return useQuery({
-        queryKey: [QUERY_KEY, { projectId }],
+        queryKey: ["projects", projectId, "services"],
         queryFn: () => fetchProjectServices(projectId, msalInstance),
     });
 }
 
 export function useProjectService(projectId: bigint, serviceId: bigint, msalInstance: IPublicClientApplication) {
     return useQuery({
-        queryKey: [QUERY_KEY, { projectId, serviceId }],
+        queryKey: ["projects", projectId, "services", serviceId],
         queryFn: () => fetchProjectServiceById(projectId, serviceId, msalInstance),
     });
 }
@@ -34,7 +32,7 @@ export function useCreateProjectService(projectId: bigint, msalInstance: IPublic
         mutationFn: (service: ProjectServiceCreateDTO) =>
             createProjectService(projectId, service, msalInstance),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEY, { projectId }] });
+            queryClient.invalidateQueries({ queryKey: ["projects", projectId, "services"] });
         }
     });
 }
@@ -45,8 +43,8 @@ export function useUpdateProjectService(msalInstance: IPublicClientApplication) 
         mutationFn: ({ projectId, serviceId, service }: { projectId: bigint, serviceId: bigint, service: ProjectServiceUpdateDTO }) =>
             updateProjectService(projectId, serviceId, service, msalInstance),
         onSuccess: (_result, variables) => {
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEY, { projectId: variables.projectId }] });
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEY, { projectId: variables.projectId, serviceId: variables.serviceId }] });
+            queryClient.invalidateQueries({ queryKey: ["projects", variables.projectId, "services"] });
+            queryClient.invalidateQueries({ queryKey: ["projects", variables.projectId, "services", variables.serviceId] });
         }
     });
 }
@@ -57,7 +55,7 @@ export function useDeleteProjectService(msalInstance: IPublicClientApplication) 
         mutationFn: ({ projectId, serviceId }: { projectId: bigint, serviceId: bigint }) =>
             deleteProjectService(projectId, serviceId, msalInstance),
         onSuccess: (_result, variables) => {
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEY, { projectId: variables.projectId }] });
+            queryClient.invalidateQueries({ queryKey: ["projects", variables.projectId, "services"] });
         }
     });
 }

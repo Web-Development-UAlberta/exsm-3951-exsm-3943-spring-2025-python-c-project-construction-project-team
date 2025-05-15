@@ -9,18 +9,16 @@ import {
 } from "./projectTaskQueries";
 import { ProjectTaskDTO } from "./project.types";
 
-const QUERY_KEY = "projectTasks";
-
 export function useProjectTasks(projectId: bigint, msalInstance: IPublicClientApplication) {
     return useQuery({
-        queryKey: [QUERY_KEY, { projectId }],
+        queryKey: ["projects", projectId, "tasks"],
         queryFn: () => fetchProjectTasks(projectId, msalInstance),
     });
 }
 
 export function useProjectTask(projectId: bigint, taskId: bigint, msalInstance: IPublicClientApplication) {
     return useQuery({
-        queryKey: [QUERY_KEY, { projectId, taskId }],
+        queryKey: ["projects", projectId, "tasks", taskId],
         queryFn: () => fetchProjectTaskById(projectId, taskId, msalInstance),
     });
 }
@@ -31,7 +29,7 @@ export function useCreateProjectTask(projectId: bigint, msalInstance: IPublicCli
         mutationFn: (task: ProjectTaskDTO) =>
             createProjectTask(projectId, task, msalInstance),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEY, { projectId }] });
+            queryClient.invalidateQueries({ queryKey: ["projects", projectId, "tasks"] });
         }
     });
 }
@@ -42,8 +40,8 @@ export function useUpdateProjectTask(msalInstance: IPublicClientApplication) {
         mutationFn: ({ projectId, taskId, task }: { projectId: bigint, taskId: bigint, task: ProjectTaskDTO }) =>
             updateProjectTask(projectId, taskId, task, msalInstance),
         onSuccess: (_result, variables) => {
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEY, { projectId: variables.projectId }] });
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEY, { projectId: variables.projectId, taskId: variables.taskId }] });
+            queryClient.invalidateQueries({ queryKey: ["projects", variables.projectId, "tasks"] });
+            queryClient.invalidateQueries({ queryKey: ["projects", variables.projectId, "tasks", variables.taskId] });
         }
     });
 }
@@ -54,7 +52,7 @@ export function useDeleteProjectTask(msalInstance: IPublicClientApplication) {
         mutationFn: ({ projectId, taskId }: { projectId: bigint, taskId: bigint }) =>
             deleteProjectTask(projectId, taskId, msalInstance),
         onSuccess: (_result, variables) => {
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEY, { projectId: variables.projectId }] });
+            queryClient.invalidateQueries({ queryKey: ["projects", variables.projectId, "tasks"] });
         }
     });
 }

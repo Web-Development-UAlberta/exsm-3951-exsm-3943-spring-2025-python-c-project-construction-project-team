@@ -10,18 +10,16 @@ import {
 } from "./clientInvoiceQueries";
 import { ClientInvoiceDTO } from "./project.types";
 
-const QUERY_KEY = "clientInvoices";
-
 export function useClientInvoices(projectId: bigint, msalInstance: IPublicClientApplication) {
     return useQuery({
-        queryKey: [QUERY_KEY, { projectId }],
+        queryKey: ["projects", projectId, "clientinvoices"],
         queryFn: () => fetchClientInvoices(projectId, msalInstance),
     });
 }
 
 export function useClientInvoice(projectId: bigint, invoiceId: bigint, msalInstance: IPublicClientApplication) {
     return useQuery({
-        queryKey: [QUERY_KEY, { projectId, invoiceId }],
+        queryKey: ["projects", projectId, "clientinvoices", invoiceId],
         queryFn: () => fetchClientInvoiceById(projectId, invoiceId, msalInstance),
     });
 }
@@ -32,7 +30,7 @@ export function useCreateClientInvoice(projectId: bigint, msalInstance: IPublicC
         mutationFn: (invoice: ClientInvoiceDTO) =>
             createClientInvoice(projectId, invoice, msalInstance),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEY, { projectId }] });
+            queryClient.invalidateQueries({ queryKey: ["projects", projectId, "clientinvoices"] });
         }
     });
 }
@@ -43,8 +41,8 @@ export function useUpdateClientInvoice(msalInstance: IPublicClientApplication) {
         mutationFn: ({ projectId, invoiceId, invoice }: { projectId: bigint, invoiceId: bigint, invoice: ClientInvoiceDTO }) =>
             updateClientInvoice(projectId, invoiceId, invoice, msalInstance),
         onSuccess: (_result, variables) => {
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEY, { projectId: variables.projectId }] });
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEY, { projectId: variables.projectId, invoiceId: variables.invoiceId }] });
+            queryClient.invalidateQueries({ queryKey: ["projects", variables.projectId, "clientinvoices"] });
+            queryClient.invalidateQueries({ queryKey: ["projects", variables.projectId, "clientinvoices", variables.invoiceId] });
         }
     });
 }
@@ -55,7 +53,7 @@ export function useDeleteClientInvoice(msalInstance: IPublicClientApplication) {
         mutationFn: ({ projectId, invoiceId }: { projectId: bigint, invoiceId: bigint }) =>
             deleteClientInvoice(projectId, invoiceId, msalInstance),
         onSuccess: (_result, variables) => {
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEY, { projectId: variables.projectId }] });
+            queryClient.invalidateQueries({ queryKey: ["projects", variables.projectId, "clientinvoices"] });
         }
     });
 }
@@ -66,8 +64,8 @@ export function usePayClientInvoice(msalInstance: IPublicClientApplication) {
         mutationFn: ({ projectId, invoiceId }: { projectId: bigint, invoiceId: bigint }) =>
             payClientInvoice(projectId, invoiceId, msalInstance),
         onSuccess: (_result, variables) => {
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEY, { projectId: variables.projectId }] });
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEY, { projectId: variables.projectId, invoiceId: variables.invoiceId }] });
+            queryClient.invalidateQueries({ queryKey: ["projects", variables.projectId, "clientinvoices"] });
+            queryClient.invalidateQueries({ queryKey: ["projects", variables.projectId, "clientinvoices", variables.invoiceId] });
         }
     });
 }

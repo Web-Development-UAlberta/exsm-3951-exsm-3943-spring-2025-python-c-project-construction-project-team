@@ -9,18 +9,16 @@ import {
 } from "./projectCommunicationQueries";
 import { ProjectCommunicationDTO } from "./project.types";
 
-const QUERY_KEY = "projectCommunications";
-
 export function useProjectCommunications(projectId: bigint, msalInstance: IPublicClientApplication) {
     return useQuery({
-        queryKey: [QUERY_KEY, { projectId }],
+        queryKey: ["projects", projectId, "communications"],
         queryFn: () => fetchProjectCommunications(projectId, msalInstance),
     });
 }
 
 export function useProjectCommunication(projectId: bigint, communicationId: bigint, msalInstance: IPublicClientApplication) {
     return useQuery({
-        queryKey: [QUERY_KEY, { projectId, communicationId }],
+        queryKey: ["projects", projectId, "communications", communicationId],
         queryFn: () => fetchProjectCommunicationById(projectId, communicationId, msalInstance),
     });
 }
@@ -31,7 +29,7 @@ export function useCreateProjectCommunication(projectId: bigint, msalInstance: I
         mutationFn: (communication: ProjectCommunicationDTO) =>
             createProjectCommunication(projectId, communication, msalInstance),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEY, { projectId }] });
+            queryClient.invalidateQueries({ queryKey: ["projects", projectId, "communications"] });
         }
     });
 }
@@ -42,8 +40,8 @@ export function useUpdateProjectCommunication(msalInstance: IPublicClientApplica
         mutationFn: ({ projectId, communicationId, communication }: { projectId: bigint, communicationId: bigint, communication: ProjectCommunicationDTO }) =>
             updateProjectCommunication(projectId, communicationId, communication, msalInstance),
         onSuccess: (_result, variables) => {
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEY, { projectId: variables.projectId }] });
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEY, { projectId: variables.projectId, communicationId: variables.communicationId }] });
+            queryClient.invalidateQueries({ queryKey: ["projects", variables.projectId, "communications"] });
+            queryClient.invalidateQueries({ queryKey: ["projects", variables.projectId, "communications", variables.communicationId] });
         }
     });
 }
@@ -54,7 +52,7 @@ export function useDeleteProjectCommunication(msalInstance: IPublicClientApplica
         mutationFn: ({ projectId, communicationId }: { projectId: bigint, communicationId: bigint }) =>
             deleteProjectCommunication(projectId, communicationId, msalInstance),
         onSuccess: (_result, variables) => {
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEY, { projectId: variables.projectId }] });
+            queryClient.invalidateQueries({ queryKey: ["projects", variables.projectId, "communications"] });
         }
     });
 }
