@@ -7,7 +7,7 @@ import {
     updateProjectServiceInvoice,
     deleteProjectServiceInvoice
 } from "./projectServiceInvoiceQueries";
-import { ProjectServiceInvoice, ProjectServiceInvoiceDTO } from "./project.types";
+import { ProjectServiceInvoiceDTO } from "./project.types";
 
 export function useProjectServiceInvoices(projectId: bigint, serviceId: bigint, msalInstance: IPublicClientApplication) {
     return useQuery({
