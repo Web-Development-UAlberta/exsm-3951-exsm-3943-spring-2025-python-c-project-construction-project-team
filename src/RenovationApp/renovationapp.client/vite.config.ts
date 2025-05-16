@@ -64,8 +64,11 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url)),
-            '@popperjs/core': '@popperjs/core/dist/umd/popper.js'
+            '@popperjs/core': path.resolve(__dirname, 'node_modules/@popperjs/core')
         }
+    },
+    optimizeDeps: {
+        include: ['@popperjs/core']
     },
     server: {
         proxy: {

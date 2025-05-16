@@ -20,7 +20,7 @@ export const handlers = [
     }),
 
     // mock successful file upload
-    http.put('https://mock-upload.com', () => {
+    http.put('*/mock-upload.com/*', () => {
         return HttpResponse.json(
             { success: true },
             { status: 200 }

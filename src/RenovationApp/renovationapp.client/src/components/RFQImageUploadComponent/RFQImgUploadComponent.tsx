@@ -4,19 +4,17 @@ import { silentRequest } from '../../config/authConfig';
 import { Button } from '../ButtonComponent/Button';
 import { TextInput } from '../InputComponent/TextInput';
 
-interface FileUploadComponentProps {
-    projectId: string;
+interface RFQImageUploadComponentProps {
+    rfqId: string;
     apiBaseUrl: string;
     backendRootUrl: string;
     msalInstance: IPublicClientApplication;
 }
 
-export const FileUploadComponent: React.FC<FileUploadComponentProps> = ({ projectId, apiBaseUrl, backendRootUrl, msalInstance }) => {
+export const RFQImageUploadComponent: React.FC<RFQImageUploadComponentProps> = ({ rfqId, apiBaseUrl, backendRootUrl, msalInstance }) => {
     const [file, setFile] = useState<File | null>(null);
     const [fileName, setFileName] = useState('');
-    const [description, setDescription] = useState('');
     const [uploadStatus, setUploadStatus] = useState<string | null>(null);
-    const [fileType, setFileType] = useState<'image' | 'document'>('image');
     const [isLoading, setIsLoading] = useState(false);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,7 +30,6 @@ export const FileUploadComponent: React.FC<FileUploadComponentProps> = ({ projec
         }
 
         setIsLoading(true); // Start Loading
-        setUploadStatus(null);
 
         try {
             // Get the token
@@ -47,10 +44,8 @@ export const FileUploadComponent: React.FC<FileUploadComponentProps> = ({ projec
                     'Authorization': `Bearer ${token.accessToken}`
                 },
                 body: JSON.stringify({
-                    projectId,
-                    fileType,
-                    fileName,
-                    description,
+                    rfqId,
+                    fileName
                 }),
             });
 
@@ -86,8 +81,6 @@ export const FileUploadComponent: React.FC<FileUploadComponentProps> = ({ projec
                 // Clear form after successful upload
                 setFile(null);
                 setFileName('');
-                setDescription('');
-                setFileType('image');
                 
                 // Also clear the file input element
                 const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
@@ -108,84 +101,39 @@ export const FileUploadComponent: React.FC<FileUploadComponentProps> = ({ projec
         }
     };
 
-    const fileInputId = useId();
-    const fileNameInputId = useId();
-    const descriptionInputId = useId();
-    const imageFileId = useId();
-    const fileTypeId = useId();
-
+    const fileRFQInputId = useId();
+    const fileRFQNameInputId = useId();
+    
     return (
         <div>
-            <h2>Upload a File</h2>
+            <h2>Upload a File - RFQ</h2>
             <div>
-                <label htmlFor={fileInputId}>
+                <label htmlFor={fileRFQInputId}>
                     File:
-                    <input id={fileInputId} type="file" onChange={handleFileChange} data-testid="file-input"/>
+                    <input id={fileRFQInputId} type="file" onChange={handleFileChange} data-testid='rfq-file-input'/>
                 </label>
             </div>
-            <div className="col-md-6">
-                    <TextInput
-                        id={fileNameInputId}
-                        label="File Name"
-                        placeholder="Enter file name"
-                        required
-                        value={fileName}
-                        onChange={(e) => setFileName(e.target.value)}
-                        error={!fileName && uploadStatus ? 'File name is required' : ''}
-                        data-testid="file-name-input"
-                    />
-            </div>
             <div>
-                <label>File Type:</label>
-                <div>
-                    <label htmlFor={imageFileId}>
-                        <input
-                            id={imageFileId}
-                            type="radio"
-                            value="image"
-                            checked={fileType === 'image'}
-                            onChange={() => setFileType('image')}
-                            data-testid="image-radio"
-                        />
-                        Image
-                    </label>
-                    <label style={{ marginLeft: '10px' }} htmlFor={fileTypeId}>
-                        <input
-                            id={fileTypeId}
-                            type="radio"
-                            value="document"
-                            checked={fileType === 'document'}
-                            onChange={() => setFileType('document')}
-                            data-testid="document-radio"
-                        />
-                        File
-                    </label>
-                </div>
+                <TextInput
+                    id={fileRFQNameInputId}
+                    label="File Name"
+                    placeholder="Enter file name"
+                    required
+                    value={fileName}
+                    onChange={(e) => setFileName(e.target.value)}
+                    data-testid='rfq-file-name-input'
+                />
             </div>
-            <div>
-                <label htmlFor={descriptionInputId}>
-                    Description:
-                    <textarea
-                        id={descriptionInputId}
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        data-testid="description-input"
-                    />
-                </label>
-            </div>
-            <Button 
+            <Button
                 label="Upload"
                 onClick={handleUpload}
                 loading={isLoading}
                 disabled={isLoading}
-                variant="primary"
-                size="medium"
-                className="mt-3"
-                data-testid="upload-button"
+                data-testid='rfq-upload-button'
             />
-            {uploadStatus && <p data-testid="status-message">{uploadStatus}</p>}
+            {uploadStatus && <p data-testid="rfq-status-message">{uploadStatus}</p>}
         </div>
     );
 };
 
-export default FileUploadComponent;
+export default RFQImageUploadComponent;
