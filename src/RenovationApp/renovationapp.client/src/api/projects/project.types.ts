@@ -1,3 +1,5 @@
+import { RenovationTag } from "../renotags/renotags.types";
+
 export type ProjectPublicInfo = {
     id: bigint;
     renovationType?: string;
@@ -89,11 +91,6 @@ export type ProjectTask = {
     title?: string | null;
     description?: string | null;
     status?: string | null;
-};
-
-export type RenovationTag = {
-    id: string;
-    name: string;
 };
 
 export type Project = {
