@@ -1,10 +1,11 @@
 // components/AddressSection.tsx
 import React from 'react';
 import { Address } from '../../../../types/client_types';
+import { graphMe } from '../../../../api/identity/graph.types';
 
 interface AddressSectionProps {
   isEditing: boolean;
-  address: Address;
+  address?: graphMe;
   tempAddress: Address;
   onEdit: () => void;
   onCancel: () => void;
@@ -38,10 +39,9 @@ export const AddressSection: React.FC<AddressSectionProps> = ({
         <div className="p-3 mb-3">
           <div className="d-flex justify-content-between">
             <div>
-              <div className="fw-bold">{address.fullName}</div>
-              <div>{address.street}</div>
-              <div>{address.city}, {address.province} {address.postalCode}</div>
-              <div>{address.country}</div>
+              <div>{address?.streetAddress}</div>
+              <div>{address?.city}, {address?.state} {address?.postalCode}</div>
+              <div>{address?.country}</div>
             </div>
           </div>
         </div>
@@ -52,17 +52,6 @@ export const AddressSection: React.FC<AddressSectionProps> = ({
         <div className="border rounded p-3 mb-3">
           <h5>Edit Address</h5>
           <div className="row g-3">
-            <div className="col-12">
-              <label htmlFor="fullName" className="form-label">Full Name</label>
-              <input
-                type="text"
-                className="form-control"
-                id="fullName"
-                name="fullName"
-                value={tempAddress.fullName}
-                onChange={onChange}
-              />
-            </div>
             <div className="col-12">
               <label htmlFor="street" className="form-label">Street Address</label>
               <input

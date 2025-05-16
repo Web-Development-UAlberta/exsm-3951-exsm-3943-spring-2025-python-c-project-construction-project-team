@@ -3,6 +3,8 @@ import { Address, PersonalInformation } from "../../../types/client_types";
 import { AddressSection } from "./components/AddressSectionProps"
 import { PersonalInfoSection } from "./components/PersonalInfoSection"
 import { graphMe } from "../../../api/identity/graph.types";
+import { updateActiveUserInfo } from "../../../api/identity/graph";
+import { useMsal } from "@azure/msal-react";
 
 
 interface PersonalInfoTabProps {
@@ -11,31 +13,31 @@ interface PersonalInfoTabProps {
 
 const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ graphData }) => {
     // Personal Information state
+    const { instance } = useMsal();
+    const updateUser = updateActiveUserInfo(instance);
+
     const [isEditingPersonal, setIsEditingPersonal] = useState(false);
-    const [personalInfo, setPersonalInfo] = useState<PersonalInformation>({
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john.doe@gmail.com',
-        phone: '123-456-7890'
+
+    const [tempPersonalInfo, setTempPersonalInfo] = useState<PersonalInformation>({
+        firstName: graphData?.givenName ?? "",
+        lastName: graphData?.surname ?? "",
+        email: graphData?.mail ?? "",
+        phone: graphData?.mobilePhone ?? "",
     });
-    const [tempPersonalInfo, setTempPersonalInfo] = useState<PersonalInformation>({ ...personalInfo });
 
     // Address state
-    const [address, setAddress] = useState<Address>({
-        fullName: 'John Doe',
-        street: '99 Maple St',
-        city: 'Calgary',
-        province: 'Alberta',
-        postalCode: 'Q1Q 0P0',
-        country: 'Canada'
-    });
     const [isEditingAddress, setIsEditingAddress] = useState(false);
-    const [tempAddress, setTempAddress] = useState<Address>({ ...address });
+    const [tempAddress, setTempAddress] = useState<Address>(({
+        street: graphData?.streetAddress ?? "",
+        city: graphData?.city ?? "",
+        province: graphData?.state ?? "",
+        postalCode: graphData?.postalCode ?? "",
+        country: graphData?.country ?? "",
+    }));
 
 
     // Personal Information handlers
     const editPersonalInfo = () => {
-        setTempPersonalInfo({ ...personalInfo });
         setIsEditingPersonal(true);
     };
 
@@ -44,9 +46,20 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ graphData }) => {
         setTempPersonalInfo(prev => ({ ...prev, [name]: value }));
     };
 
-    const savePersonalInfo = () => {
-        setPersonalInfo(tempPersonalInfo);
+    const savePersonalInfo = async () => {
+        console.log(tempPersonalInfo);
         setIsEditingPersonal(false);
+        try {
+            await updateUser.mutateAsync({
+                givenName: tempPersonalInfo.firstName,
+                surname: tempPersonalInfo.lastName,
+                mail: tempPersonalInfo.email,
+                mobilePhone: tempPersonalInfo.phone
+            });
+            console.log("Profile updated successfully!");
+        } catch (error) {
+            console.error("Profile update failed:", error);
+        }
     };
 
     const cancelPersonalEdit = () => {
@@ -55,7 +68,6 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ graphData }) => {
 
     // Address handlers
     const editAddress = () => {
-        setTempAddress({ ...address });
         setIsEditingAddress(true);
     };
 
@@ -64,9 +76,21 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ graphData }) => {
         setTempAddress(prev => ({ ...prev, [name]: value }));
     };
 
-    const saveAddress = () => {
-        setAddress(tempAddress);
+    const saveAddress = async () => {
         setIsEditingAddress(false);
+        console.log(tempAddress)
+        try {
+            await updateUser.mutateAsync({
+                streetAddress: tempAddress.street,
+                city: tempAddress.city,
+                state: tempAddress.province,
+                country: tempAddress.country,
+                postalCode: tempAddress.postalCode,
+            });
+            console.log("Address updated successfully!");
+        } catch (error) {
+            console.error("Address update failed:", error);
+        }
     };
 
     const cancelAddressEdit = () => {
@@ -79,21 +103,17 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ graphData }) => {
         <>
             <PersonalInfoSection
                 isEditing={isEditingPersonal}
-                personalInfo={personalInfo}
+                personalInfo={graphData}
                 tempPersonalInfo={tempPersonalInfo}
                 onEdit={editPersonalInfo}
                 onCancel={cancelPersonalEdit}
                 onChange={handlePersonalInfoChange}
                 onSave={savePersonalInfo}
             />
-            <pre>
-                <code>
-                    {JSON.stringify(graphData, null, 2)}
-                </code>
-            </pre>
+
             <AddressSection
                 isEditing={isEditingAddress}
-                address={address}
+                address={graphData}
                 tempAddress={tempAddress}
                 onEdit={editAddress}
                 onCancel={cancelAddressEdit}
