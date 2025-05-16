@@ -1,7 +1,7 @@
 import { IPublicClientApplication } from "@azure/msal-browser";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchAllRFQs, fetchRFQById, createRFQ, updateRFQ, fetchRFQImages } from "./rfqQueries";
-import { RFQ, RFQCreate, RFQUpdate, } from "./rfq.types";
+import { fetchAllRFQs, fetchRFQById, createRFQ, updateRFQ, fetchRFQImages, uploadRFQImage } from "./rfqQueries";
+import { RFQ, RFQCreate, RFQUpdate} from "./rfq.types";
 
 const QUERY_KEY = "rfq";
 
@@ -47,6 +47,13 @@ export function useUpdateRFQ(msalInstance: IPublicClientApplication) {
         onSuccess: (result: RFQ) => {
             queryClient.setQueryData(["rfqs", { id: result.id }], result);
         }
+    });
+    return mutation;
+}
+
+export function uploadImageToRFQ(msalInstance: IPublicClientApplication) {
+    const mutation = useMutation({
+        mutationFn: ({ rfqId, file, fileName }: { rfqId: bigint; file: File; fileName: string }) => uploadRFQImage(rfqId, file, fileName, msalInstance),
     });
     return mutation;
 }
