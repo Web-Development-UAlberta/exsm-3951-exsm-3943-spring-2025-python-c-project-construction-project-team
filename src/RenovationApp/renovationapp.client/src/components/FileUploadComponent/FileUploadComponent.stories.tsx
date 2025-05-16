@@ -3,6 +3,7 @@ import FileUploadComponent from './FileUploadComponent';
 import { handlers, networkErrorHandlers } from '../../mocks/handlers/fileUploadHandlers';
 import { expect, waitFor } from '@storybook/test';
 
+// Mocking the MSAL instance
 const meta: Meta<typeof FileUploadComponent> = {
     title: 'Upload/FileUploadComponent',
     component: FileUploadComponent,
@@ -49,20 +50,20 @@ const setFileUploadTest = async ({
     const canvas = within(canvasElement);
 
     // Select a file
-    const fileInput = canvas.getByLabelText(/File:/i);
+    const fileInput = canvas.getByTestId('file-input')
     await userEvent.upload(
         fileInput, 
         new File(['test'], `${fileName}.${fileExtension}`, { type: fileType })
     );
 
     // Fill out form fields
-    await userEvent.type(canvas.getByLabelText(/File Name:?/i), fileName);
-    const descriptionInput = canvas.getByRole('textbox', { name: /description/i }) || canvas.getByLabelText(/description/i, { exact: false });
+    await userEvent.type(canvas.getByTestId('file-name-input'), fileName);
+    const descriptionInput = canvas.getByTestId('description-input');
     await userEvent.type(descriptionInput, description);
     await userEvent.click(canvas.getByRole('radio', { name: new RegExp(selectRadioOption, 'i') }));
 
     // Click the upload button
-    const uploadButton = canvas.getByRole('button', { name: /Upload/i });
+    const uploadButton = canvas.getByTestId('upload-button');
     await userEvent.click(uploadButton);
 
     return { canvas, userEvent };
@@ -104,7 +105,9 @@ export const InvalidFileType: Story = {
 
         // Wait for error message to appear
         await waitFor(() => {
-            expect(canvas.getByText(/Error:/i)).toBeInTheDocument();
+            const statusMessage = canvas.getByTestId('status-message');
+            expect(statusMessage).toBeInTheDocument();
+            expect(statusMessage.textContent).toContain('Error');
         });
     }
 }
@@ -126,7 +129,9 @@ export const NetworkError: Story = {
 
         // Wait for error message to appear
         await waitFor(() => {
-            expect(canvas.getByText(/Error:/i)).toBeInTheDocument();
+            const statusMessage = canvas.getByTestId('status-message');
+            expect(statusMessage).toBeInTheDocument();
+            expect(statusMessage.textContent).toContain('Error');
         });
     }
 }

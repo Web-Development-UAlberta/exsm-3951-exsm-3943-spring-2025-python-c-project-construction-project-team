@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useId } from 'react';
 import { IPublicClientApplication } from '@azure/msal-browser';
 import { silentRequest } from '../../config/authConfig';
 import { Button } from '../ButtonComponent/Button';
@@ -108,56 +108,68 @@ export const FileUploadComponent: React.FC<FileUploadComponentProps> = ({ projec
         }
     };
 
+    const fileInputId = useId();
+    const fileNameInputId = useId();
+    const descriptionInputId = useId();
+    const imageFileId = useId();
+    const fileTypeId = useId();
+
     return (
         <div>
             <h2>Upload a File</h2>
             <div>
-                <label>
+                <label htmlFor={fileInputId}>
                     File:
-                    <input type="file" onChange={handleFileChange} />
+                    <input id={fileInputId} type="file" onChange={handleFileChange} data-testid="file-input"/>
                 </label>
             </div>
             <div className="col-md-6">
                     <TextInput
-                        id="fileName"
+                        id={fileNameInputId}
                         label="File Name"
                         placeholder="Enter file name"
-                        data-testid="file-name-input"
                         required
                         value={fileName}
                         onChange={(e) => setFileName(e.target.value)}
                         error={!fileName && uploadStatus ? 'File name is required' : ''}
+                        data-testid="file-name-input"
                     />
             </div>
             <div>
                 <label>File Type:</label>
                 <div>
-                    <label>
+                    <label htmlFor={imageFileId}>
                         <input
+                            id={imageFileId}
                             type="radio"
                             value="image"
                             checked={fileType === 'image'}
                             onChange={() => setFileType('image')}
+                            data-testid="image-radio"
                         />
                         Image
                     </label>
-                    <label style={{ marginLeft: '10px' }}>
+                    <label style={{ marginLeft: '10px' }} htmlFor={fileTypeId}>
                         <input
+                            id={fileTypeId}
                             type="radio"
                             value="document"
                             checked={fileType === 'document'}
                             onChange={() => setFileType('document')}
+                            data-testid="document-radio"
                         />
                         File
                     </label>
                 </div>
             </div>
             <div>
-                <label>
+                <label htmlFor={descriptionInputId}>
                     Description:
                     <textarea
+                        id={descriptionInputId}
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
+                        data-testid="description-input"
                     />
                 </label>
             </div>
@@ -169,8 +181,9 @@ export const FileUploadComponent: React.FC<FileUploadComponentProps> = ({ projec
                 variant="primary"
                 size="medium"
                 className="mt-3"
+                data-testid="upload-button"
             />
-            {uploadStatus && <p>{uploadStatus}</p>}
+            {uploadStatus && <p data-testid="status-message">{uploadStatus}</p>}
         </div>
     );
 };

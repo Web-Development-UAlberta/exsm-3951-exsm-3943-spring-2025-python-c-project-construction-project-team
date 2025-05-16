@@ -30,11 +30,11 @@ vi.mock('../ButtonComponent/Button', async () => {
   const actual = await vi.importActual<typeof ButtonModule>('../ButtonComponent/Button');
   return {
     ...actual,
-    Button: vi.fn(({ label, onClick, loading, disabled }) => (
+    Button: vi.fn(({ label, onClick, loading, disabled, 'data-testid': testId, ...rest }) => (
       <button 
         onClick={onClick} 
         disabled={disabled} 
-        data-testid="custom-button"
+        data-testid={testId || 'custom-button'}
         aria-busy={loading ? 'true' : 'false'}
       >
         {loading && <span role="status" className="spinner-border" />}
@@ -78,29 +78,38 @@ describe('FileUploadComponent', () => {
         expect(screen.getByTestId('file-name-input')).toBeInTheDocument();
 
         // File type radio buttons
-        const imageRadio = screen.getByRole('radio', { name: /Image/i });
+        const imageRadio = screen.getByTestId('image-radio');
         expect(imageRadio).toBeInTheDocument();
-        const fileRadio = screen.getByRole('radio', { name: /File/i });
+        const fileRadio = screen.getByTestId('document-radio');
         expect(fileRadio).toBeInTheDocument();
 
-        expect(screen.getByLabelText('Description:')).toBeInTheDocument();
+        expect(screen.getByTestId('description-input')).toBeInTheDocument();
         // Upload button
-        const button = screen.getByRole('button');
+        const button = screen.getByTestId('upload-button');
         expect(button).toHaveTextContent('Upload');
     });
 
+    // File Selection Tests
     it('renders file input correctly', () => {
         render(<FileUploadComponent {...defaultProps} />);
-        const fileInput = document.querySelector('input[type="file"]');
+        const fileInput = document.querySelector('[data-testid="file-input"]');
         expect(fileInput).toBeInTheDocument();
         expect(fileInput).toHaveAttribute('type', 'file');
+    });
+
+    it('selecting a file updates the component state', () => {
+        render(<FileUploadComponent {...defaultProps} />);
+        const fileInput = document.querySelector('[data-testid="file-input"]');
+        const testFile = createTestFile();
+        fireEvent.change(fileInput, { target: { files: [testFile] } });
+        expect(fileInput.files[0]).toEqual(testFile);
     });
 
     // Form Validation Tests
     it('shows error when uploading without selecting a file', async () => {
         render(<FileUploadComponent {...defaultProps} />);
-        const uploadButton = document.querySelector('button');
-        fireEvent.click(uploadButton!);
+        const uploadButton = document.querySelector('[data-testid="upload-button"]');
+        fireEvent.click(uploadButton);
         await waitFor(() => {
         expect(screen.getByText('Please select a file and provide a file name.')).toBeInTheDocument();
       });
@@ -108,10 +117,10 @@ describe('FileUploadComponent', () => {
 
     it('shows error when uploading without a file name', async () => {
         render(<FileUploadComponent {...defaultProps} />);
-        const fileInput = document.querySelector('input[type="file"]')!;
+        const fileInput = document.querySelector('[data-testid="file-input"]');
         fireEvent.change(fileInput, { target: { files: [createTestFile()] } });
-        const uploadButton = document.querySelector('button');
-        fireEvent.click(uploadButton!);
+        const uploadButton = document.querySelector('[data-testid="upload-button"]');
+        fireEvent.click(uploadButton);
         await waitFor(() => {
             expect(screen.getByText('Please select a file and provide a file name.')).toBeInTheDocument();
         });
@@ -120,14 +129,14 @@ describe('FileUploadComponent', () => {
     // User Interaction Tests
     it('updates file name on input change', () => {
         render(<FileUploadComponent {...defaultProps} />);
-        const fileName = document.querySelector('input[id="fileName"]')!;
+        const fileName = document.querySelector('[data-testid="file-name-input"]');
         fireEvent.change(fileName, { target: { value: 'test-file' } });
         expect(fileName).toHaveValue('test-file');
     });
 
     it('updates description on input change', () => {
         render(<FileUploadComponent {...defaultProps} />);
-        const descriptionInput = document.querySelector('textarea')!;
+        const descriptionInput = document.querySelector('[data-testid="description-input"]');
         fireEvent.change(descriptionInput, { target: { value: 'Test description' } });
         expect(descriptionInput).toHaveValue('Test description');
     });

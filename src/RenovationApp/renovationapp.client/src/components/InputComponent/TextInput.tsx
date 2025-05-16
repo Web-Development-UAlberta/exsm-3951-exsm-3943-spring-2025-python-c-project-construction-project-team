@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useId } from 'react';
 
 export type TextInputRows = number | string;
 export type TextInputSize = 'sm' | ''; // Bootstrap size classes
@@ -11,7 +11,7 @@ export type TextInputProps = Omit<React.ComponentPropsWithoutRef<'input'>, OmitP
     id?: string;
     label?: string;
     type?: TextInputType;
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>, value: string) => void;
     value?: string | number; // Sets the value of the input, use with `onChange` prop. Otherwise, use `defaultValue` prop
     name?: string;
     placeholder?: string;
@@ -68,7 +68,8 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(({
     const inputClassName = `form-control ${size ? `form-control-${size}` : ''} ${className} ${error ? 'is-invalid' : ''}`;
     
     // Generate unique ID if not provided
-    const inputId = id || name || `input-${Math.random().toString(36).substring(2, 9)}`;
+    const generatedId = useId();
+    const inputId = id || name || `input-${generatedId}`;
 
     const inputElement = (
         <input

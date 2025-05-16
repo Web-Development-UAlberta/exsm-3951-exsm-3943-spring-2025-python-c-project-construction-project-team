@@ -18,7 +18,7 @@ interface ButtonProps {
   className?: string;
 }
 
-export const Button: React.FC<ButtonProps> = ({
+export const Button: React.FC<ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>> = ({
   label,
   onClick,
   active = false,
@@ -32,6 +32,7 @@ export const Button: React.FC<ButtonProps> = ({
   iconPosition = 'left',
   iconOnly = false,
   className = '',
+  ...rest
 }) => {
   const btnSize = size === 'small' ? 'sm' : size === 'large' ? 'lg' : undefined;
   
@@ -51,6 +52,7 @@ export const Button: React.FC<ButtonProps> = ({
       onClick={onClick}
       disabled={disabled || loading}
       aria-disabled={disabled || loading}
+      {...rest}
     >
       {loading && (
         <Spinner
