@@ -7,8 +7,12 @@ import { useIsAuthenticated } from '@azure/msal-react';
 import Container from 'react-bootstrap/esm/Container';
 import Button from 'react-bootstrap/esm/Button';
 import ImagePlaceholder from "../../assets/placeholder-svg.svg";
+import { RFQCreate } from '../../api/rfq/rfq.types';
+import { useCreateRFQ, uploadImageToRFQ } from '../../api/rfq/rfq';
+import { useMsal } from '@azure/msal-react';
 
 const RequestQuote = () => {
+    const { instance } = useMsal();
     const isAuthenticated = useIsAuthenticated();
 
     // Form state
@@ -92,21 +96,52 @@ const RequestQuote = () => {
             // Simulate API call with timeout
             await new Promise(resolve => setTimeout(resolve, 1000));
 
+            // Get the first true service   
+            const firstService = Object.entries(formData.services).find(([_, v]) => v === true)?.[0] || '';
+
             // Create form data to send
-            const requestFormData = new FormData();
-            requestFormData.append('projectAddress', formData.projectAddress);
-            requestFormData.append('services', JSON.stringify(formData.services));
-            requestFormData.append('roomSize', formData.roomSize);
-            requestFormData.append('budget', formData.budget);
-            requestFormData.append('preferredMaterials', formData.preferredMaterials);
-            requestFormData.append('message', formData.message);
+            const rfqCreateBody: RFQCreate = {
+                projectAddress: formData.projectAddress,
+                renovationType: firstService,
+                roomSize: formData.roomSize,
+                budget: Number(formData.budget),
+                preferredMaterial: formData.preferredMaterials,
+                description: formData.message,
+            }
+
+            // Initialize fileList as an array of RFQImage
+            const fileList = [];
 
             // Append files if any
             if (files) {
                 for (let i = 0; i < files.length; i++) {
-                    requestFormData.append('files', files[i]);
+                    const fileObj = {
+                        FileName: files[i].name,
+                        File: files[i],
+                        UploadStats: 'pending'
+                    };
+                    fileList.push(fileObj);
                 }
             }
+
+            const newRFQ = await useCreateRFQ(instance).mutateAsync(rfqCreateBody);
+            if (!newRFQ) {
+                throw new Error('Failed to create RFQ');
+            }
+            else {
+                // Upload all files in parallel and wait for all to finish
+                await Promise.all(
+                    fileList.map(file => {
+                        const mutateObj = {
+                            rfqId: newRFQ.id,
+                            fileName: file.FileName,
+                            file: file.File,
+                        };
+                        return uploadImageToRFQ(instance).mutateAsync(mutateObj);
+                    })
+                );
+            }
+
 
             // In a real app, you would send this data to your API
             // const response = await fetch('/api/request-quote', {
