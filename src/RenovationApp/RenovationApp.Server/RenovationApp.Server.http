@@ -1,0 +1,6 @@
+@RenovationApp.Server_HostAddress = https://localhost
+
+GET {{RenovationApp.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
