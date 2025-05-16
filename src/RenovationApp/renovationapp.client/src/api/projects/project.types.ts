@@ -11,3 +11,7 @@ export type FileDownload = {
     fileType: string;
     url: string;
 }
+
+export type ProjectPublicInfoWithImages = ProjectPublicInfo & {
+    images: FileDownload[];
+}

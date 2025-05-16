@@ -27,38 +27,41 @@ namespace RenovationApp.Server.Controllers
         public async Task<ActionResult<List<ProjectPublicInfo>>> GetProjectPublic()
         {
             // Check if the project exists and is public
-            var projects = await _db.Projects.Include(p => p.ClientInvoices).Where(p => p.IsPublic).ToListAsync();
+            var projects = await _db.Projects
+                .Include(p => p.ClientInvoices)
+                .Include(p => p.RenovationTags)  // Added this to load RenovationTags
+                .Where(p => p.IsPublic)
+                .ToListAsync();
 
             var projectsOut = new List<ProjectPublicInfo>();
 
             foreach (var project in projects)
             {
                 // Calculate CostCategory
-                decimal costCategory;
+                decimal totalCost;
                 if (project.ClientInvoices != null && project.ClientInvoices.Any())
                 {
-                    costCategory = Math.Ceiling(project.ClientInvoices.Sum(i => i.Amount ?? 0) / 1000);
+                    totalCost = project.ClientInvoices.Sum(i => i.Amount ?? 0);
                 }
                 else if (project.QuotePriceOverride.HasValue)
                 {
-                    costCategory = Math.Ceiling(project.QuotePriceOverride.Value / 1000);
+                    totalCost = project.QuotePriceOverride.Value;
                 }
                 else
                 {
-                    costCategory = 0; // Default to 0 if no data is available
+                    totalCost = 0; // Default to 0 if no data is available
                 }
 
                 var publicProjectInfo = new ProjectPublicInfo
                 {
                     Id = project.Id,
                     RenovationType = project.RenovationType,
-                    CostCategory = costCategory,
-                    RenovationTagIds = project.RenovationTags?.Select(t => t.Id).ToList()
+                    Cost = totalCost,
+                    RenovationTags = project.RenovationTags?.ToList(),
                 };
+                // Add the item to the list - this was missing
+                projectsOut.Add(publicProjectInfo);
             }
-
-
-
             return projectsOut;
         }
 

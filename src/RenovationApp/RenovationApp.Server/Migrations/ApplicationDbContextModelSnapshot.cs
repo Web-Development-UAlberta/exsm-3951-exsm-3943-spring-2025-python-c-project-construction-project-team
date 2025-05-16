@@ -154,21 +154,6 @@ namespace RenovationApp.Server.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ProjectRenovationTag", b =>
-                {
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("RenovationTagsId")
-                        .HasColumnType("nvarchar(255)");
-
-                    b.HasKey("ProjectId", "RenovationTagsId");
-
-                    b.HasIndex("RenovationTagsId");
-
-                    b.ToTable("ProjectRenovationTags", (string)null);
-                });
-
             modelBuilder.Entity("RenovationApp.Server.Models.ClientInvoice", b =>
                 {
                     b.Property<int>("Id")
@@ -207,6 +192,78 @@ namespace RenovationApp.Server.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("ClientInvoices");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Amount = 5500m,
+                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1260),
+                            ProjectId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Amount = 3000m,
+                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1265),
+                            ProjectId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Amount = 6000m,
+                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1267),
+                            ProjectId = 2
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Amount = 9000m,
+                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1268),
+                            ProjectId = 3
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Amount = 8000m,
+                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1269),
+                            ProjectId = 4
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Amount = 8000m,
+                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1270),
+                            ProjectId = 5
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Amount = 8000m,
+                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1271),
+                            ProjectId = 6
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Amount = 4000m,
+                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1272),
+                            ProjectId = 7
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Amount = 5000m,
+                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1272),
+                            ProjectId = 8
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Amount = 3500m,
+                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1273),
+                            ProjectId = 9
+                        });
                 });
 
             modelBuilder.Entity("RenovationApp.Server.Models.Project", b =>
@@ -228,9 +285,11 @@ namespace RenovationApp.Server.Migrations
                         .HasColumnType("varchar(255)")
                         .HasColumnName("created_by_employee");
 
-                    b.Property<DateTime>("CreatedTimestamp")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_timestamp");
+                    b.Property<DateTime?>("CreatedTimestamp")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("created_timestamp")
+                        .HasDefaultValueSql("NOW()");
 
                     b.Property<bool>("IsPublic")
                         .HasColumnType("boolean")
@@ -252,6 +311,10 @@ namespace RenovationApp.Server.Migrations
                         .HasColumnType("int")
                         .HasColumnName("rfq_id");
 
+                    b.Property<string>("RenovationTags")
+                        .HasColumnType("text")
+                        .HasColumnName("renovation_tags");
+
                     b.Property<int?>("RenovationType")
                         .HasColumnType("integer")
                         .HasColumnName("renovation_type");
@@ -266,6 +329,94 @@ namespace RenovationApp.Server.Migrations
                         .IsUnique();
 
                     b.ToTable("Projects", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ClientId = "client-001",
+                            CreatedByEmployee = "employee-001",
+                            IsPublic = true,
+                            QuotePriceOverride = 12500m,
+                            RenovationTags = "modern,luxury",
+                            RenovationType = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ClientId = "client-002",
+                            CreatedByEmployee = "employee-002",
+                            IsPublic = true,
+                            QuotePriceOverride = 9500m,
+                            RenovationTags = "rustic",
+                            RenovationType = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ClientId = "client-003",
+                            CreatedByEmployee = "employee-003",
+                            IsPublic = true,
+                            QuotePriceOverride = 18000m,
+                            RenovationTags = "modern,luxury",
+                            RenovationType = 2
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ClientId = "client-004",
+                            CreatedByEmployee = "employee-004",
+                            IsPublic = true,
+                            RenovationTags = "rustic",
+                            RenovationType = 1
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ClientId = "client-005",
+                            CreatedByEmployee = "employee-001",
+                            IsPublic = true,
+                            QuotePriceOverride = 7600m,
+                            RenovationTags = "countrstyle",
+                            RenovationType = 0
+                        },
+                        new
+                        {
+                            Id = 6,
+                            ClientId = "client-006",
+                            CreatedByEmployee = "employee-002",
+                            IsPublic = true,
+                            RenovationTags = "rustic,modern",
+                            RenovationType = 3
+                        },
+                        new
+                        {
+                            Id = 7,
+                            ClientId = "client-007",
+                            CreatedByEmployee = "employee-001",
+                            IsPublic = true,
+                            QuotePriceOverride = 12300m,
+                            RenovationTags = "rustic,modern",
+                            RenovationType = 3
+                        },
+                        new
+                        {
+                            Id = 8,
+                            ClientId = "client-008",
+                            CreatedByEmployee = "employee-004",
+                            IsPublic = true,
+                            RenovationTags = "countrstyle,luxury",
+                            RenovationType = 0
+                        },
+                        new
+                        {
+                            Id = 9,
+                            ClientId = "client-009",
+                            CreatedByEmployee = "employee-001",
+                            IsPublic = true,
+                            RenovationTags = "luxury,modern",
+                            RenovationType = 2
+                        });
                 });
 
             modelBuilder.Entity("RenovationApp.Server.Models.ProjectComment", b =>
@@ -622,32 +773,6 @@ namespace RenovationApp.Server.Migrations
                     b.ToTable("RFQImages");
                 });
 
-            modelBuilder.Entity("RenovationApp.Server.Models.RenovationTag", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
-                        .HasColumnName("id");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("RenovationTags");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "Modern"
-                        },
-                        new
-                        {
-                            Id = "Rustic"
-                        },
-                        new
-                        {
-                            Id = "Sophisticated"
-                        });
-                });
-
             modelBuilder.Entity("RenovationApp.Server.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -784,21 +909,6 @@ namespace RenovationApp.Server.Migrations
                     b.HasOne("RenovationApp.Server.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ProjectRenovationTag", b =>
-                {
-                    b.HasOne("RenovationApp.Server.Models.Project", null)
-                        .WithMany()
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RenovationApp.Server.Models.RenovationTag", null)
-                        .WithMany()
-                        .HasForeignKey("RenovationTagsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
