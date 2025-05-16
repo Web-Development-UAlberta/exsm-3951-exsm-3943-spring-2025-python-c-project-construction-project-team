@@ -47,7 +47,6 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ graphData }) => {
     };
 
     const savePersonalInfo = async () => {
-        console.log(tempPersonalInfo);
         setIsEditingPersonal(false);
         try {
             await updateUser.mutateAsync({
@@ -56,7 +55,6 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ graphData }) => {
                 mail: tempPersonalInfo.email,
                 mobilePhone: tempPersonalInfo.phone
             });
-            console.log("Profile updated successfully!");
         } catch (error) {
             console.error("Profile update failed:", error);
         }
@@ -78,7 +76,6 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ graphData }) => {
 
     const saveAddress = async () => {
         setIsEditingAddress(false);
-        console.log(tempAddress)
         try {
             await updateUser.mutateAsync({
                 streetAddress: tempAddress.street,
@@ -87,7 +84,6 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ graphData }) => {
                 country: tempAddress.country,
                 postalCode: tempAddress.postalCode,
             });
-            console.log("Address updated successfully!");
         } catch (error) {
             console.error("Address update failed:", error);
         }
