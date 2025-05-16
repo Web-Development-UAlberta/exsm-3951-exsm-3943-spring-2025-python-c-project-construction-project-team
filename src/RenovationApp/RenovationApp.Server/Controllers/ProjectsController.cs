@@ -8,7 +8,7 @@ using static RenovationApp.Server.Dtos.ProjectDTOs;
 
 namespace RenovationApp.Server.Controllers
 {
-    [Route("[controller]")]
+    [Route("/projects")]
     [ApiController]
     [Authorize]
     public class ProjectsController : ControllerBase
@@ -22,7 +22,7 @@ namespace RenovationApp.Server.Controllers
 
         // GET: api/Projects
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Project>>> GetProjects()
+        public async Task<ActionResult<IEnumerable<ProjectOutputDTO>>> GetProjects()
         {
             string? UserId = GetUserId(User);
             if (string.IsNullOrEmpty(UserId))
@@ -30,22 +30,40 @@ namespace RenovationApp.Server.Controllers
                 return BadRequest("User ID is required.");
             }
 
+            List<Project> projects;
             if (User.IsInRole("projectManager"))
             {
-                // Return only RFQs where the ClientId matches the user's ID
-                return await _context.Projects.ToListAsync();
+                projects = await _context.Projects
+                    .Include(p => p.Comments)
+                    .Include(p => p.Files)
+                    .Include(p => p.Communications)
+                    .Include(p => p.ClientInvoices)
+                    .Include(p => p.ProjectServices!)
+                        .ThenInclude(ps => ps.ProjectServiceType)
+                    .Include(p => p.ProjectTasks)
+                    .ToListAsync();
             }
             else
             {
-                // Return all RFQs
-                return await _context.Projects.Where(project => project.ClientId == UserId).ToListAsync();
+                projects = await _context.Projects
+                    .Where(project => project.ClientId == UserId)
+                    .Include(p => p.Comments)
+                    .Include(p => p.Files)
+                    .Include(p => p.Communications)
+                    .Include(p => p.ClientInvoices)
+                    .Include(p => p.ProjectServices!)
+                        .ThenInclude(ps => ps.ProjectServiceType)
+                    .Include(p => p.ProjectTasks)
+                    .ToListAsync();
             }
 
+            var output = projects.Select(MapToOutputProject).ToList();
+            return output;
         }
 
         // GET: api/Projects/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Project>> GetProject(int id)
+        public async Task<ActionResult<ProjectOutputDTO>> GetProject(int id)
         {
             string? UserId = GetUserId(User);
             if (string.IsNullOrEmpty(UserId))
@@ -53,32 +71,27 @@ namespace RenovationApp.Server.Controllers
                 return BadRequest("User ID is required.");
             }
 
-            var project = await _context.Projects.FindAsync(id);
+            var project = await _context.Projects
+                .Include(p => p.Comments)
+                .Include(p => p.Files)
+                .Include(p => p.Communications)
+                .Include(p => p.ClientInvoices)
+                .Include(p => p.ProjectServices!)
+                    .ThenInclude((System.Linq.Expressions.Expression<Func<ProjectService, ProjectServiceType?>>)(ps => ps.ProjectServiceType))
+                .Include(p => p.ProjectTasks)
+                .FirstOrDefaultAsync(p => p.Id == id);
 
             if (project == null)
             {
                 return NotFound();
             }
 
-
-            if (project.ClientId != UserId & !User.IsInRole("projectManager"))
+            if (project.ClientId != UserId && !User.IsInRole("projectManager"))
             {
                 return Unauthorized();
             }
 
-            return project;
-        }
-
-        //GET: api/Projects/Public
-        [HttpGet("Public")]
-        public async Task<ActionResult<IEnumerable<int>>> GetPublicProjects()
-        {
-            var projectIds = await _context.Projects
-                .Where(p => p.IsPublic)
-                .Select(p => p.Id)
-                .ToListAsync();
-
-            return Ok(projectIds);
+            return MapToOutputProject(project);
         }
 
         //PUT: api/Projects/5/ApproveQuote
@@ -244,6 +257,58 @@ namespace RenovationApp.Server.Controllers
         private string? GetUserId(ClaimsPrincipal user)
         {
             return user.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+        }
+
+        // Mapping method for Project to ProjectOutputDTO
+        private ProjectOutputDTO MapToOutputProject(Project project)
+        {
+            return new ProjectOutputDTO
+            {
+                Id = project.Id,
+                Status = project.Status?.ToString(),
+                RenovationType = project.RenovationType?.ToString(),
+                RFQ = project.RFQId,
+                Comments = project.Comments?.Select(c => new Project_OutCommentDTO
+                {
+                    Id = c.Id,
+                    CreatedByEmployee = c.CreatedByEmployee,
+                    Comment = c.Comment,
+                    CreatedTimestamp = c.CreatedTimestamp
+                }).ToList(),
+                Files = project.Files?.Select(f => new Project_OutFileDTO
+                {
+                    Id = f.Id,
+                    FileName = f.FileName,
+                    Type = f.Type.ToString(),
+                    FileUri = f.FileUri,
+                    UploadedTimestamp = f.UploadedTimestamp
+                }).ToList(),
+                Communications = project.Communications?.Select(comm => new Project_OutCommunicationDTO
+                {
+                    Id = comm.Id,
+                    Message = comm.Message,
+                    CreatedTimestamp = comm.CreatedTimestamp
+                }).ToList(),
+                ClientInvoices = project.ClientInvoices?.Select(inv => new Project_OutClientInvoiceDTO
+                {
+                    Id = inv.Id,
+                    Paid = inv.Paid
+                }).ToList(),
+                ProjectServices = project.ProjectServices?.Select(s => new Project_OutServiceDTO
+                {
+                    Id = s.Id,
+                    Status = s.Status,
+                    Name = s.Name,
+                    ServiceTypeName = s.ProjectServiceType?.Name
+                }).ToList(),
+                ProjectTasks = project.ProjectTasks?.Select(t => new Project_OutTaskDTO
+                {
+                    Id = t.Id,
+                    UserId = t.UserId,
+                    Title = t.Title,
+                    Status = t.Status
+                }).ToList()
+            };
         }
     }
 }

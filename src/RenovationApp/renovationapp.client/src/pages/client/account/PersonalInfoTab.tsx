@@ -2,8 +2,14 @@ import { useState } from "react";
 import { Address, PersonalInformation } from "../../../types/client_types";
 import { AddressSection } from "./components/AddressSectionProps"
 import { PersonalInfoSection } from "./components/PersonalInfoSection"
+import { graphMe } from "../../../api/identity/graph.types";
 
-const PersonalInfoTab = () => {
+
+interface PersonalInfoTabProps {
+    graphData: graphMe | undefined;
+}
+
+const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ graphData }) => {
     // Personal Information state
     const [isEditingPersonal, setIsEditingPersonal] = useState(false);
     const [personalInfo, setPersonalInfo] = useState<PersonalInformation>({
@@ -80,7 +86,11 @@ const PersonalInfoTab = () => {
                 onChange={handlePersonalInfoChange}
                 onSave={savePersonalInfo}
             />
-
+            <pre>
+                <code>
+                    {JSON.stringify(graphData, null, 2)}
+                </code>
+            </pre>
             <AddressSection
                 isEditing={isEditingAddress}
                 address={address}

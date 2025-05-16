@@ -6,6 +6,7 @@ using RenovationApp.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Build.Framework;
+using static RenovationApp.Server.Dtos.RFQImageDTOs;
 
 namespace RenovationApp.Server.Controllers
 {
@@ -58,7 +59,7 @@ namespace RenovationApp.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetImages(int rfqId)
+        public async Task<ActionResult<List<GetImageDTOs>>> GetImages(int rfqId)
         {
             // Check if the RFQ exists
             var rfq = await _db.RFQs.FindAsync(rfqId);
@@ -76,14 +77,21 @@ namespace RenovationApp.Server.Controllers
             var query = _db.RFQImages.Where(f => f.RFQId == rfqId);
             var images = await query.ToListAsync();
 
-            var result = new List<RFQDownloadDto>();
+            var result = new List<GetImageDTOs>();
             foreach (var image in images)
             {
                 bool fileExists = true; // Replace with actual file existence check if needed
                 if (fileExists)
                 {
                     var url = await _storageService.GeneratePresignedDownloadUrlAsync(_rfqBucket, image.ImageUri);
-                    result.Add(new RFQDownloadDto { Url = url });
+                    var resultDto = new GetImageDTOs
+                    {
+                        Id = image.Id,
+                        FileName = image.FileName,
+                        UploadedAt = image.UploadedAt,
+                        ImageUri = url
+                    };
+                    result.Add(resultDto);
                 }
                 else
                 {

@@ -18,7 +18,6 @@
     }
     public class UploadRFQImageRequestDto
     {
-        required public int RFQId { get; set; }
         required public string FileName { get; set; }
     }
     public class PresignedUploadResult
