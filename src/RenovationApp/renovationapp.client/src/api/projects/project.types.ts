@@ -14,6 +14,10 @@ export type FileDownload = {
     url: string;
 }
 
+export type ProjectPublicInfoWithImages = ProjectPublicInfo & {
+    images: FileDownload[];
+}
+
 export type ProjectComment = {
     id: number;
     comment: string;

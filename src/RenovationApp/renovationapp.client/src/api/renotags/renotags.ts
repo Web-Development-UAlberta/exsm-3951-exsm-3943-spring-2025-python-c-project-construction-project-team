@@ -8,10 +8,10 @@ import {
 import { RenovationTag } from "./renotags.types";
 
 // GET all tags
-export function useRenovationTags(msalInstance: IPublicClientApplication) {
+export function useRenovationTags() {
     return useQuery({
         queryKey: ["renotags"],
-        queryFn: () => fetchRenovationTags(msalInstance),
+        queryFn: () => fetchRenovationTags(),
     });
 }
 

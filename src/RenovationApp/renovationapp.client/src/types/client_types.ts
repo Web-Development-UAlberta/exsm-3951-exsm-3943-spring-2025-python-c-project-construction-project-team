@@ -1,6 +1,6 @@
 // types.ts
 export interface Address {
-  fullName: string;
+  // fullName: string;
   street: string;
   city: string;
   province: string;

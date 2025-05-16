@@ -1,16 +1,12 @@
 // Utility function for determining badge classes
 export const getRequestStatusBadgeClass = (status: string): string => {
   switch (status.toLowerCase()) {
-    case 'new':
+    case 'created':
       return 'bg-primary';
-    case 'pending':
+    case 'quoted':
       return 'bg-warning';
     case 'approved':
       return 'bg-success';
-    case 'in progress':
-      return 'bg-info';
-    case 'completed':
-      return 'bg-dark';
     case 'declined':
       return 'bg-danger';
     default:

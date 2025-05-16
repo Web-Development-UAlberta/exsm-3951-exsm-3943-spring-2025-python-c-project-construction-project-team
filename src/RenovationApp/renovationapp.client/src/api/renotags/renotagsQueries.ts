@@ -1,12 +1,11 @@
 import { apiClient } from '../axios';
 import { IPublicClientApplication } from "@azure/msal-browser";
 import { RenovationTag } from "./renotags.types";
+import publicApiClient from '../publicAxios';
 
 // GET all tags
-export async function fetchRenovationTags(
-    msalInstance: IPublicClientApplication
-): Promise<RenovationTag[]> {
-    const response = await apiClient(msalInstance).get('/renotags', {});
+export async function fetchRenovationTags(): Promise<RenovationTag[]> {
+    const response = await publicApiClient().get('/renotags', {});
     if (!response.data) throw new Error('Failed to fetch renovation tags');
     return response.data;
 }

@@ -5,7 +5,7 @@ import { graphMe } from "./graph.types";
 // Example: scopes: ["User.Read"]
 
 export async function fetchGraphMe(msalInstance: IPublicClientApplication): Promise<graphMe> {
-    const response = await graphClient(msalInstance).get(`/me?$select=displayName,givenName,surname,mail,postalCode,state,streetAddress,country,city`, {
+    const response = await graphClient(msalInstance).get(`/me?$select=displayName,givenName,surname,mail,mobilePhone,postalCode,state,streetAddress,country,city`, {
         //headers: { 'accept': 'application/json' }
     });
     if (!response.data) {
@@ -14,3 +14,13 @@ export async function fetchGraphMe(msalInstance: IPublicClientApplication): Prom
     return response.data;
 }
 
+// Update user profile in Microsoft Graph
+export async function updateGraphMe(msalInstance: IPublicClientApplication, data: Partial<graphMe>): Promise<void> {
+    try {
+        await graphClient(msalInstance).patch(`/me`, data, {
+            headers: { 'Content-Type': 'application/json' }
+        });
+    } catch (error) {
+        throw new Error("Failed to update user profile");
+    }
+}

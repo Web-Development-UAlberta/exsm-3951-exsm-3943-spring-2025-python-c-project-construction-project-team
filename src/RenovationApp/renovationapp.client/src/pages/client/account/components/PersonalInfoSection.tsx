@@ -1,10 +1,11 @@
 // components/PersonalInfoSection.tsx
 import React from 'react';
 import { PersonalInformation } from '../../../../types/client_types';
+import { graphMe } from '../../../../api/identity/graph.types';
 
 interface PersonalInfoSectionProps {
   isEditing: boolean;
-  personalInfo: PersonalInformation;
+  personalInfo?: graphMe;
   tempPersonalInfo: PersonalInformation;
   onEdit: () => void;
   onCancel: () => void;
@@ -67,6 +68,7 @@ export const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
               name="email"
               value={tempPersonalInfo.email}
               onChange={onChange}
+              disabled
             />
           </div>
           <div className="col-md-6">
@@ -94,19 +96,19 @@ export const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
         <div className="row">
           <div className="col-md-6 mb-3">
             <label className="fw-bold d-block">First Name</label>
-            <span>{personalInfo.firstName}</span>
+            <span>{personalInfo?.givenName}</span>
           </div>
           <div className="col-md-6 mb-3">
             <label className="fw-bold d-block">Last Name</label>
-            <span>{personalInfo.lastName}</span>
+            <span>{personalInfo?.surname}</span>
           </div>
           <div className="col-md-6 mb-3">
             <label className="fw-bold d-block">Email Address</label>
-            <span>{personalInfo.email}</span>
+            <span>{personalInfo?.mail}</span>
           </div>
           <div className="col-md-6 mb-3">
             <label className="fw-bold d-block">Phone Number</label>
-            <span>{personalInfo.phone}</span>
+            <span>{personalInfo?.mobilePhone}</span>
           </div>
         </div>
       )}

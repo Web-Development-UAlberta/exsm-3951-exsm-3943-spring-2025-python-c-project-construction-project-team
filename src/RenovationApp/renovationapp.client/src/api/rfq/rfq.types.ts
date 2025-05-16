@@ -1,8 +1,8 @@
 export type RFQImage = {
-    Id: bigint,
-    FileName: string,
-    UploadedAt: string, // ISO string
-    ImageUri: string,
+    id: bigint,
+    fileName: string,
+    uploadedAt: string, // ISO string
+    imageUri: string,
 };
 
 export type RFQ = {
