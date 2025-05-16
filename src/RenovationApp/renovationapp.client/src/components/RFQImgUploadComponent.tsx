@@ -1,15 +1,12 @@
 import React, { useState } from 'react';
-import { IPublicClientApplication } from '@azure/msal-browser';
-import { silentRequest } from '../config/authConfig';
 
 interface RFQImageUploadComponentProps {
     rfqId: string;
     apiBaseUrl: string;
-    backendRootUrl: string;
-    msalInstance: IPublicClientApplication;
+    backendRootUrl: string; // New prop for the backend root URL
 }
 
-const RFQImageUploadComponent: React.FC<RFQImageUploadComponentProps> = ({ rfqId, apiBaseUrl, backendRootUrl, msalInstance }) => {
+const RFQImageUploadComponent: React.FC<RFQImageUploadComponentProps> = ({ rfqId, apiBaseUrl, backendRootUrl }) => {
     const [file, setFile] = useState<File | null>(null);
     const [fileName, setFileName] = useState('');
     const [uploadStatus, setUploadStatus] = useState<string | null>(null);
@@ -27,17 +24,10 @@ const RFQImageUploadComponent: React.FC<RFQImageUploadComponentProps> = ({ rfqId
         }
 
         try {
-            // Get the token
-            const token = await msalInstance.acquireTokenSilent(silentRequest);
-
             // Step 1: Get the presigned upload URL
             const response = await fetch(`${apiBaseUrl}/RFQImage/upload-url`, {
                 method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json', 
-                    'accept': '*/*',
-                    'Authorization': `Bearer ${token.accessToken}`
-                },
+                headers: { 'Content-Type': 'application/json', 'accept': '*/*' },
                 body: JSON.stringify({
                     rfqId,
                     fileName
