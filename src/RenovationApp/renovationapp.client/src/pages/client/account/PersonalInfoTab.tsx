@@ -1,107 +1,51 @@
-import { useState } from "react";
-import { Address, PersonalInformation } from "../../../types/client_types";
-import { AddressSection } from "./components/AddressSectionProps"
-import { PersonalInfoSection } from "./components/PersonalInfoSection"
 import { graphMe } from "../../../api/identity/graph.types";
-
 
 interface PersonalInfoTabProps {
     graphData: graphMe | undefined;
 }
 
 const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ graphData }) => {
-    // Personal Information state
-    const [isEditingPersonal, setIsEditingPersonal] = useState(false);
-    const [personalInfo, setPersonalInfo] = useState<PersonalInformation>({
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john.doe@gmail.com',
-        phone: '123-456-7890'
-    });
-    const [tempPersonalInfo, setTempPersonalInfo] = useState<PersonalInformation>({ ...personalInfo });
 
-    // Address state
-    const [address, setAddress] = useState<Address>({
-        fullName: 'John Doe',
-        street: '99 Maple St',
-        city: 'Calgary',
-        province: 'Alberta',
-        postalCode: 'Q1Q 0P0',
-        country: 'Canada'
-    });
-    const [isEditingAddress, setIsEditingAddress] = useState(false);
-    const [tempAddress, setTempAddress] = useState<Address>({ ...address });
-
-
-    // Personal Information handlers
-    const editPersonalInfo = () => {
-        setTempPersonalInfo({ ...personalInfo });
-        setIsEditingPersonal(true);
-    };
-
-    const handlePersonalInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setTempPersonalInfo(prev => ({ ...prev, [name]: value }));
-    };
-
-    const savePersonalInfo = () => {
-        setPersonalInfo(tempPersonalInfo);
-        setIsEditingPersonal(false);
-    };
-
-    const cancelPersonalEdit = () => {
-        setIsEditingPersonal(false);
-    };
-
-    // Address handlers
-    const editAddress = () => {
-        setTempAddress({ ...address });
-        setIsEditingAddress(true);
-    };
-
-    const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setTempAddress(prev => ({ ...prev, [name]: value }));
-    };
-
-    const saveAddress = () => {
-        setAddress(tempAddress);
-        setIsEditingAddress(false);
-    };
-
-    const cancelAddressEdit = () => {
-        setIsEditingAddress(false);
-    };
-
-
+    const onClick = () => {
+        window.location.href = "https://myaccount.microsoft.com/";
+    }
 
     return (
-        <>
-            <PersonalInfoSection
-                isEditing={isEditingPersonal}
-                personalInfo={personalInfo}
-                tempPersonalInfo={tempPersonalInfo}
-                onEdit={editPersonalInfo}
-                onCancel={cancelPersonalEdit}
-                onChange={handlePersonalInfoChange}
-                onSave={savePersonalInfo}
-            />
-            <pre>
-                <code>
-                    {JSON.stringify(graphData, null, 2)}
-                </code>
-            </pre>
-            <AddressSection
-                isEditing={isEditingAddress}
-                address={address}
-                tempAddress={tempAddress}
-                onEdit={editAddress}
-                onCancel={cancelAddressEdit}
-                onChange={handleAddressChange}
-                onSave={saveAddress}
-            />
-
-        </>
+        <div className="mb-5">
+            <div className="d-flex justify-content-between align-items-center mb-3">
+                <h3>Personal Information</h3>
+                <button
+                    className="btn btn-sm btn-outline-secondary ms-3"
+                    onClick={onClick}
+                >
+                    Edit
+                </button>
+            </div>
+            <div className="row">
+                <div className="col-md-6 mb-3">
+                    <label className="fw-bold d-block">First Name</label>
+                    <span>{graphData?.givenName}</span>
+                </div>
+                <div className="col-md-6 mb-3">
+                    <label className="fw-bold d-block">Last Name</label>
+                    <span>{graphData?.surname}</span>
+                </div>
+                <div className="col-md-6 mb-3">
+                    <label className="fw-bold d-block">Email Address</label>
+                    <span>{graphData?.mail}</span>
+                </div>
+                <div className="col-md-6 mb-3">
+                    <label className="fw-bold d-block">Phone Number</label>
+                    <span>{graphData?.mobilePhone ?? "N/A"}</span>
+                </div>
+                <div className="col-md-6 mb-3">
+                    <label className="fw-bold d-block">Address</label>
+                    <span>{graphData?.streetAddress}</span>
+                    <span>{graphData?.city}, {graphData?.state} {graphData?.postalCode} </span>
+                    <span>{graphData?.country}</span>
+                </div>
+            </div>
+        </div>
     )
 }
 

@@ -54,12 +54,13 @@ const Requests = () => {
         setLoading(true);
         console.log('Fetching RFQs...');
 
-        const account = instance.getActiveAccount();
-        if (!account) {
-          setError('Please sign in to view requests.');
+        const activeAccount = instance.getActiveAccount();
+
+        if (!activeAccount) {
+          setError('Please login to proceed.');
           return;
         }
-        console.log('Fetching RFQs with account:', account.username);
+        console.log('Fetching RFQs with account:', activeAccount.username);
 
         const rfqData = await fetchAllRFQs(instance);
         console.log('Raw RFQ data type:', typeof rfqData);

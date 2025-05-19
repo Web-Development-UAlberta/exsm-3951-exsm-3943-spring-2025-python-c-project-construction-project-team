@@ -42,6 +42,7 @@ vi.mock('../ButtonComponent/Button', async () => {
       >
         {loading && <span role="status" className="spinner-border" />}
         {label}
+        {...rest}
       </button>
     ))
   };

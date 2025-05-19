@@ -1,3 +1,4 @@
+import { useMsal } from '@azure/msal-react';
 import { useState } from 'react';
 
 interface ContactItem {
@@ -26,10 +27,18 @@ const Contacts = () => {
     sortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
   ));
 
+
+  const { instance } = useMsal();
+
+  const activeAccount = instance.getActiveAccount();
+  if (!activeAccount) {
+    return <p>Please login to proceed.</p>;
+  }
+
   return (
     <div className="container my-4">
       <h3>Contacts Dashboard</h3>
-      
+
       <div className="table-responsive">
         <table className="table table-hover">
           <thead className="table-light">

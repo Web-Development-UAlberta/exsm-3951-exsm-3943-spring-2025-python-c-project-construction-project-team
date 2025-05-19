@@ -4,14 +4,16 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Badge from 'react-bootstrap/Badge';
 import { getRequestStatusBadgeClass } from '../../../../utils/getStatusBadgeClass';
-import { RequestItem } from '../../../../types/client_types';
 import { RequestDetailSection } from './RequestDetailSection';
 import { RequestFilesSection } from './RequestFilesSection';
+import { RFQ } from '../../../../api/rfq/rfq.types';
+import { getRFQImagesByRFQId } from '../../../../api/rfq/rfq';
+import { useMsal } from '@azure/msal-react';
 
 
 interface RequestDetailsModalProps {
   show: boolean;
-  request: RequestItem | null;
+  request: RFQ | null;
   onClose: () => void;
 }
 
@@ -21,17 +23,19 @@ export const RequestDetailsModal: React.FC<RequestDetailsModalProps> = ({
   onClose
 }) => {
   if (!request) return null;
+  const { instance } = useMsal();
+  const { data: files } = getRFQImagesByRFQId(request.id, instance);
 
   return (
-    <Modal 
-      show={show} 
+    <Modal
+      show={show}
       onHide={onClose}
       size="lg"
       centered
     >
       <Modal.Header closeButton>
         <Modal.Title>
-          Request Detail <Badge className={getRequestStatusBadgeClass(request.status)}>
+          Request Detail <Badge className={getRequestStatusBadgeClass(request.status ?? "")}>
             {request.status}
           </Badge>
         </Modal.Title>
@@ -39,25 +43,16 @@ export const RequestDetailsModal: React.FC<RequestDetailsModalProps> = ({
       <Modal.Body>
         <div className="container-fluid px-0">
           <RequestDetailSection request={request} />
-          
+
           <div className="row mb-4">
             <div className="col-12">
-              <h5 className="mb-3">Description</h5>
+              <h5 className="mb-3">Additional Notes</h5>
               <p>{request.description}</p>
             </div>
           </div>
 
-          {request.message && (
-            <div className="row mb-4">
-              <div className="col-12">
-                <h5 className="mb-3">Additional Notes</h5>
-                <p>{request.message}</p>
-              </div>
-            </div>
-          )}
-
-          {request.files && request.files.length > 0 && (
-            <RequestFilesSection files={request.files} />
+          {files && files.length > 0 && (
+            <RequestFilesSection files={files} />
           )}
         </div>
       </Modal.Body>

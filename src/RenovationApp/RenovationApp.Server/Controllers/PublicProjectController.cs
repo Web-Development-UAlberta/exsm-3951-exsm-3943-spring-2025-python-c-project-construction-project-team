@@ -55,9 +55,9 @@ namespace RenovationApp.Server.Controllers
                     CostCategory = costCategory,
                     RenovationTagIds = project.RenovationTags?.Select(t => t.Id).ToList()
                 };
+                // Add to the output list
+                projectsOut.Add(publicProjectInfo);
             }
-
-
 
             return projectsOut;
         }
@@ -89,7 +89,7 @@ namespace RenovationApp.Server.Controllers
 
             foreach (var file in imageFiles)
             {
-                var url = await _storageService.GeneratePresignedDownloadUrlAsync(_projectBucket, file.FileUri);
+                var url = _storageService.GeneratePresignedDownloadUrl(_projectBucket, file.FileUri);
                 result.Add(new FileDownloadDto
                 {
                     FileName = file.FileName,

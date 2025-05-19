@@ -45,7 +45,7 @@ export const Dropdown: React.FC<DropDownProps> = ({
         };
     }, []);
 
-    const handleSelect = (_event: React.MouseEvent<HTMLLIElement>, value: string) => {
+    const handleSelect = (value: string) => {
         setSelectedValue(value);
         setIsOpen(false);
         if (onSelect) {
@@ -53,8 +53,8 @@ export const Dropdown: React.FC<DropDownProps> = ({
         }
     };
 
-    const displayValue = selectedValue !== null ? 
-        options.find(option => option.value === selectedValue)?.value || selectedValue : 
+    const displayValue = selectedValue !== null ?
+        options.find(option => option.value === selectedValue)?.value || selectedValue :
         label;
 
     return (
