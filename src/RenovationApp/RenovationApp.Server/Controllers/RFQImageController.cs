@@ -43,7 +43,7 @@ namespace RenovationApp.Server.Controllers
             }
 
             var expiry = TimeSpan.FromMinutes(10);
-            var result = await _storageService.GeneratePresignedUploadUrlAsync(_rfqBucket, "image", rfqId, dto.FileName, expiry);
+            var result = _storageService.GeneratePresignedUploadUrl(_rfqBucket, "image", rfqId, dto.FileName, expiry);
 
             var image = new RFQImage
             {
@@ -84,7 +84,7 @@ namespace RenovationApp.Server.Controllers
                 bool fileExists = true; // Replace with actual file existence check if needed
                 if (fileExists)
                 {
-                    var url = await _storageService.GeneratePresignedDownloadUrlAsync(_rfqBucket, image.ImageUri);
+                    var url = _storageService.GeneratePresignedDownloadUrl(_rfqBucket, image.ImageUri);
                     var resultDto = new GetImageDTOs
                     {
                         Id = image.Id,

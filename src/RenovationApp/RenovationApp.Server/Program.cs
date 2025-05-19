@@ -95,13 +95,28 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-
+builder.Services.AddScoped<MinioStorageService>();
 builder.Services.AddScoped<IStorageService, MinioStorageService>();
 
 var app = builder.Build();
 
 app.Logger.LogInformation($"PostgreSQL Connection String: {connectionString}");
 
+// --- Ensure S3 buckets exist before starting the app ---
+using (var scope = app.Services.CreateScope())
+{
+    var minioStorage = scope.ServiceProvider.GetService<IStorageService>() as MinioStorageService;
+    if (minioStorage != null)
+    {
+        minioStorage.EnsureBucketExistsAsync(minioStorage.RFQBucket).GetAwaiter().GetResult();
+        minioStorage.EnsureBucketExistsAsync(minioStorage.ProjectBucket).GetAwaiter().GetResult();
+    }
+    else
+    {
+        app.Logger.LogError("MinioStorageService could not be resolved. Ensure it is registered correctly.");
+    }
+}
+// -------------------------------------------------------
 app.UseDefaultFiles();
 app.UseStaticFiles();
 

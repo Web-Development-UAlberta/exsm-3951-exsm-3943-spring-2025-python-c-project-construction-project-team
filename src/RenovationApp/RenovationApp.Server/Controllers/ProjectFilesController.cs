@@ -58,7 +58,7 @@ namespace RenovationApp.Server.Controllers
 
             var expiry = TimeSpan.FromMinutes(10);
 
-            var result = await _storageService.GeneratePresignedUploadUrlAsync(_projectBucket, dto.FileType, dto.ProjectId, dto.FileName, expiry);
+            var result = _storageService.GeneratePresignedUploadUrl(_projectBucket, dto.FileType, dto.ProjectId, dto.FileName, expiry);
 
             if (!Enum.TryParse<FileType>(dto.FileType, out var fileType))
             {
@@ -122,7 +122,7 @@ namespace RenovationApp.Server.Controllers
 
             foreach (var file in files)
             {
-                var url = await _storageService.GeneratePresignedDownloadUrlAsync(_projectBucket, file.FileUri);
+                var url = _storageService.GeneratePresignedDownloadUrl(_projectBucket, file.FileUri);
                 result.Add(new FileDownloadDto
                 {
                     FileName = file.FileName,
