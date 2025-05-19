@@ -1,8 +1,5 @@
-import { IPublicClientApplication } from "@azure/msal-browser";
-import { apiClient } from '../../axios';
 import { ProjectPublicInfo, FileDownload, ProjectPublicInfoWithImages } from "../project.types";
 import publicApiClient from "../../publicAxios";
-
 
 export async function fetchPublicProjects(): Promise<ProjectPublicInfo[]> {
     const response = await publicApiClient().get(`/projects-pub`, {});

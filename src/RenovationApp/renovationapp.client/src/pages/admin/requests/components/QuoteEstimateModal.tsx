@@ -28,7 +28,6 @@ interface QuoteEstimateModalProps {
 
 export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
     show,
-    requestId,
     onClose,
 }) => {
     const [quoteDetails, setQuoteDetails] = useState<QuoteDetails>({

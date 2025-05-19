@@ -4,7 +4,6 @@
 import { describe, it, expect, afterEach, vi } from 'vitest';
 import 'vitest-dom/extend-expect';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
-import React from 'react';
 import { composeStories } from '@storybook/react';
 import * as stories from './TextInput.stories';
 
