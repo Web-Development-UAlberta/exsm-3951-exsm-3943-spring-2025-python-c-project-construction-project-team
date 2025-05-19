@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { QuoteEstimateModal } from './components/QuoteEstimateModal';
 import RequestDetailsModal from './components/RequestDetailsModal';
 import { getRequestStatusBadgeClass } from '../../../utils/getStatusBadgeClass';
+import { useMsal } from '@azure/msal-react';
 
 // Define the request type based on the columns shown in the screenshot
 interface Request {
@@ -132,6 +133,13 @@ const Requests = () => {
       )
     );
   };
+
+  const { instance } = useMsal();
+
+  const activeAccount = instance.getActiveAccount();
+  if (!activeAccount) {
+    return <p>Please login to proceed.</p>;
+  }
 
   return (
     <div className="p-4">

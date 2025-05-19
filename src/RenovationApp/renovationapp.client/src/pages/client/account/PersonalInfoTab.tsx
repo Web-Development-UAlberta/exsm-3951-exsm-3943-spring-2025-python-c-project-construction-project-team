@@ -1,121 +1,72 @@
-import { useState } from "react";
-import { Address, PersonalInformation } from "../../../types/client_types";
-import { AddressSection } from "./components/AddressSectionProps"
-import { PersonalInfoSection } from "./components/PersonalInfoSection"
 import { graphMe } from "../../../api/identity/graph.types";
-import { updateActiveUserInfo } from "../../../api/identity/graph";
-import { useMsal } from "@azure/msal-react";
-
 
 interface PersonalInfoTabProps {
     graphData: graphMe | undefined;
 }
 
 const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ graphData }) => {
-    // Personal Information state
-    const { instance } = useMsal();
-    const updateUser = updateActiveUserInfo(instance);
 
-    const [isEditingPersonal, setIsEditingPersonal] = useState(false);
-
-    const [tempPersonalInfo, setTempPersonalInfo] = useState<PersonalInformation>({
-        firstName: graphData?.givenName ?? "",
-        lastName: graphData?.surname ?? "",
-        email: graphData?.mail ?? "",
-        phone: graphData?.mobilePhone ?? "",
-    });
-
-    // Address state
-    const [isEditingAddress, setIsEditingAddress] = useState(false);
-    const [tempAddress, setTempAddress] = useState<Address>(({
-        street: graphData?.streetAddress ?? "",
-        city: graphData?.city ?? "",
-        province: graphData?.state ?? "",
-        postalCode: graphData?.postalCode ?? "",
-        country: graphData?.country ?? "",
-    }));
-
-
-    // Personal Information handlers
-    const editPersonalInfo = () => {
-        setIsEditingPersonal(true);
-    };
-
-    const handlePersonalInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setTempPersonalInfo(prev => ({ ...prev, [name]: value }));
-    };
-
-    const savePersonalInfo = async () => {
-        setIsEditingPersonal(false);
-        try {
-            await updateUser.mutateAsync({
-                givenName: tempPersonalInfo.firstName,
-                surname: tempPersonalInfo.lastName,
-                mail: tempPersonalInfo.email,
-                mobilePhone: tempPersonalInfo.phone
-            });
-        } catch (error) {
-            console.error("Profile update failed:", error);
-        }
-    };
-
-    const cancelPersonalEdit = () => {
-        setIsEditingPersonal(false);
-    };
-
-    // Address handlers
-    const editAddress = () => {
-        setIsEditingAddress(true);
-    };
-
-    const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setTempAddress(prev => ({ ...prev, [name]: value }));
-    };
-
-    const saveAddress = async () => {
-        setIsEditingAddress(false);
-        try {
-            await updateUser.mutateAsync({
-                streetAddress: tempAddress.street,
-                city: tempAddress.city,
-                state: tempAddress.province,
-                country: tempAddress.country,
-                postalCode: tempAddress.postalCode,
-            });
-        } catch (error) {
-            console.error("Address update failed:", error);
-        }
-    };
-
-    const cancelAddressEdit = () => {
-        setIsEditingAddress(false);
-    };
-
+    const onClick = () => {
+        window.location.href = "https://myaccount.microsoft.com/";
+    }
 
 
     return (
         <>
-            <PersonalInfoSection
-                isEditing={isEditingPersonal}
-                personalInfo={graphData}
-                tempPersonalInfo={tempPersonalInfo}
-                onEdit={editPersonalInfo}
-                onCancel={cancelPersonalEdit}
-                onChange={handlePersonalInfoChange}
-                onSave={savePersonalInfo}
-            />
+            <div className="mb-5">
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                    <h3 className="border-bottom w-100 pb-2">Personal Information</h3>
+                    <button
+                        className="btn btn-sm btn-outline-secondary ms-3"
+                        onClick={onClick}
+                    >
+                        Edit
+                    </button>
+                </div>
+                <div className="row">
+                    <div className="col-md-6 mb-3">
+                        <label className="fw-bold d-block">First Name</label>
+                        <span>{graphData?.givenName}</span>
+                    </div>
+                    <div className="col-md-6 mb-3">
+                        <label className="fw-bold d-block">Last Name</label>
+                        <span>{graphData?.surname}</span>
+                    </div>
+                    <div className="col-md-6 mb-3">
+                        <label className="fw-bold d-block">Email Address</label>
+                        <span>{graphData?.mail}</span>
+                    </div>
+                    <div className="col-md-6 mb-3">
+                        <label className="fw-bold d-block">Phone Number</label>
+                        <span>{graphData?.mobilePhone}</span>
+                    </div>
+                </div>
 
-            <AddressSection
-                isEditing={isEditingAddress}
-                address={graphData}
-                tempAddress={tempAddress}
-                onEdit={editAddress}
-                onCancel={cancelAddressEdit}
-                onChange={handleAddressChange}
-                onSave={saveAddress}
-            />
+            </div>
+
+            <div className="mb-4">
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                    <h3 className="border-bottom w-100 pb-2">Address</h3>
+                    <button
+                        className="btn btn-sm btn-outline-secondary ms-3"
+                        onClick={onClick}
+                    >
+                        Edit
+                    </button>
+                </div>
+
+                {/* Display address */}
+
+                <div className="p-3 mb-3">
+                    <div className="d-flex justify-content-between">
+                        <div>
+                            <div>{graphData?.streetAddress}</div>
+                            <div>{graphData?.city}, {graphData?.state} {graphData?.postalCode}</div>
+                            <div>{graphData?.country}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         </>
     )
