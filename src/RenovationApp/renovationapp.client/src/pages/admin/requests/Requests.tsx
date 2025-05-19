@@ -135,10 +135,7 @@ const Requests = () => {
   };
 
   const { instance } = useMsal();
-
   const activeAccount = instance.getActiveAccount();
-  const allAccount = instance.getAllAccounts();
-  console.log(allAccount);
 
   if (!activeAccount) {
     return <p>Please login to proceed.</p>;
