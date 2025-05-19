@@ -1,8 +1,8 @@
 export type RFQImage = {
-    Id: bigint,
-    FileName: string,
-    UploadedAt: string, // ISO string
-    ImageUri: string,
+    id: bigint,
+    fileName: string,
+    uploadedAt: string, // ISO string
+    imageUri: string,
 };
 
 export type RFQ = {
@@ -37,5 +37,6 @@ export type RFQUpdate ={
     preferredMaterial?: string,
     description?: string,
     budget?: number,
-    projectAddress?: string
+    projectAddress?: string,
+    assignedEmployeeId?: string
 }

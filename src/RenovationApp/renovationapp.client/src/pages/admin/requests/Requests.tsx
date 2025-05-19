@@ -1,5 +1,8 @@
 // components/Requests.tsx
-import { useState } from 'react';
+import { fetchAllRFQs, fetchRFQById } from '../../../api/rfq/rfqQueries';
+import { RFQ } from '../../../api/rfq/rfq.types';
+import { useMsal } from '@azure/msal-react';
+import { useState, useEffect } from 'react';
 import { QuoteEstimateModal } from './components/QuoteEstimateModal';
 import RequestDetailsModal from './components/RequestDetailsModal';
 import { getRequestStatusBadgeClass } from '../../../utils/getStatusBadgeClass';
@@ -13,34 +16,6 @@ interface Request {
   status: string;
 }
 
-// Available project managers for dropdown
-const projectManagers = ['Name', 'Mike Smith', 'Sarah Johnson', 'Alex Wong', 'Emily Davis'];
-
-// Mock data based on the screenshot
-const requests: Request[] = [
-  {
-    id: 1,
-    client: 'Client Name',
-    project_address: 'Project Address',
-    project_manager: 'Name',
-    status: 'New'
-  },
-  {
-    id: 2,
-    client: 'Client Name',
-    project_address: 'Project Address',
-    project_manager: 'Name',
-    status: 'New'
-  },
-  {
-    id: 3,
-    client: 'Client Name',
-    project_address: 'Project Address',
-    project_manager: 'Name',
-    status: 'New'
-  }
-];
-
 // Define the detailed request interface with all properties shown in the modal
 interface RequestDetail {
   id: number;
@@ -53,56 +28,104 @@ interface RequestDetail {
   files: string[];
 }
 
-// Mock detailed data for the modal
-const requestDetails: Record<number, RequestDetail> = {
-  1: {
-    id: 1,
-    client: 'John Doe',
-    project_address: '123 Main St City, Province 0AX 1A1',
-    renovation_type: 'Kitchen Remodel',
-    preferred_material: 'Nothing crazy. Just this one I found at Home Depot.',
-    budget: 10000,
-    description: 'Need new cabinets installed',
-    files: ['image0.png', 'likethisone.png']
-  },
-  2: {
-    id: 2,
-    client: 'Jane Smith',
-    project_address: '456 Oak Ave City, Province 0BX 2B2',
-    renovation_type: 'Bathroom Renovation',
-    preferred_material: 'Porcelain tile, glass shower doors',
-    budget: 15000,
-    description: 'Complete bathroom remodel with new shower',
-    files: ['bathroom_plan.png']
-  },
-  3: {
-    id: 3,
-    client: 'Alex Johnson',
-    project_address: '789 Pine Rd City, Province 0CX 3C3',
-    renovation_type: 'Basement Finishing',
-    preferred_material: 'Laminate flooring, drywall',
-    budget: 20000,
-    description: 'Convert unfinished basement to entertainment space',
-    files: ['basement_sketch.png', 'inspiration.jpg']
-  }
-};
+// Available project managers for dropdown
+const projectManagers = ['Name', 'Mike Smith', 'Sarah Johnson', 'Alex Wong', 'Emily Davis'];
 
 const Requests = () => {
+  const { instance } = useMsal();
+
   // Request Detail Modal State
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<RequestDetail | null>(null);
+
   // State for managing requests data
-  const [requestsData, setRequestsData] = useState<Request[]>(requests);
+  const [requestsData, setRequestsData] = useState<Request[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   // Quote Estimate Modal State
   const [showQuoteModal, setShowQuoteModal] = useState(false);
   const [quoteRequestId, setQuoteRequestId] = useState<number | null>(null);
 
+  // Fetch requests when the component mounts
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        setLoading(true);
+        console.log('Fetching RFQs...');
+
+        const account = instance.getActiveAccount();
+        if (!account) {
+          setError('Please sign in to view requests.');
+          return;
+        }
+        console.log('Fetching RFQs with account:', account.username);
+
+        const rfqData = await fetchAllRFQs(instance);
+        console.log('Raw RFQ data type:', typeof rfqData);
+        console.log('Raw RFQ data:', rfqData);
+
+        // Convert to array based on data structure
+        let rfqArray: RFQ[] = [];
+
+        if (typeof rfqData === 'object' && rfqData !== null) {
+          // If it's already an array, use it directly
+          if (Array.isArray(rfqData)) {
+            rfqArray = rfqData;
+          } 
+          // If it's an object, convert its values to array
+          else {
+            rfqArray = Object.values(rfqData);
+          }
+        }
+        console.log('Processed array:', rfqArray);
+
+        const formattedData = rfqArray.map((rfq: RFQ) => ({
+          id: Number(rfq.id),
+          client: rfq.clientId,
+          project_address: rfq.projectAddress || 'N/A',
+          project_manager: rfq.assignedEmployeeId || 'N/A',
+          status: rfq.status || 'Created'
+        }));
+
+        console.log('Formatted requests data:', formattedData);
+        setRequestsData(formattedData);
+      } catch (error) {
+        console.error('Error fetching requests:', error);
+        if (error instanceof Error) {
+          setError(error.message || 'Failed to load requests. Please try again later.');
+        } else {
+          setError('Failed to load requests. Please try again later.');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRequests();
+  }, [instance]);
+
   // Request detail modal handlers
-  const openRequestDetail = (requestId: number) => {
-    const requestDetail = requestDetails[requestId];
-    if (requestDetail) {
+  const openRequestDetail = async (requestId: number) => {
+    try {
+      const rfqDetail = await fetchRFQById(BigInt(requestId), instance);
+
+      const requestDetail: RequestDetail = {
+        id: Number(rfqDetail.id),
+        client: rfqDetail.clientId,
+        project_address: rfqDetail.projectAddress || 'N/A',
+        renovation_type: rfqDetail.renovationType || 'N/A',
+        preferred_material: rfqDetail.preferredMaterial || 'N/A',
+        budget: rfqDetail.budget || 0,
+        description: rfqDetail.description || 'N/A',
+        files: rfqDetail.rfqImages ? rfqDetail.rfqImages.map((image) => image.toString()) : []
+      };
+
       setSelectedRequest(requestDetail);
       setShowDetailModal(true);
+    } catch (error) {
+      console.error(`Failed to fetch details for request ${requestId}:`, error);
+      setError('Failed to load request details. Please try again later.');
     }
   };
 
@@ -123,6 +146,36 @@ const Requests = () => {
   };
 
   // Handler for changing project manager
+  // const updateRFQ = async (requestId: BigInt, data: Partial<RFQ>) => {
+  //   try {
+  //     const api = apiClient(instance);
+  //     const response = await api.put(`/rfq/${requestId}`, data);
+  //     return response.data;
+  //   } catch (error) {
+  //     console.error(`Error updating RFQ ${requestId}:`, error);
+  //     throw new Error('Failed to update RFQ. Please try again later.');
+  //   }
+  // };
+  // const handleProjectManagerChange = async (requestId: number, newManager: string) => {
+  //   try {
+  //     await updateRFQ(
+  //       BigInt(requestId),
+  //       { assignedEmployeeId: newManager }
+  //     );
+
+  //     setRequestsData(prevRequests =>
+  //       prevRequests.map(request =>
+  //         request.id === requestId
+  //           ? { ...request, project_manager: newManager }
+  //           : request
+  //       )
+  //     );
+  //   } catch (error) {
+  //     console.error(`Failed to update project manager:`, error);
+  //     setError('Failed to update project manager. Please try again later.');
+  //   }
+  // };
+
   const handleProjectManagerChange = (requestId: number, newManager: string) => {
     setRequestsData(prevRequests =>
       prevRequests.map(request =>
@@ -137,6 +190,16 @@ const Requests = () => {
     <div className="p-4">
       <h3 className="mb-3">Requests Dashboard</h3>
 
+      {loading && (
+        <div className="d-flex justify-content-center">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      )}
+      {error && <div className="alert alert-danger">{error}</div>}
+
+      {!loading && !error && (
       <div className="table-responsive">
         <table className="table table-hover">
           <thead className="table-light">
@@ -150,7 +213,7 @@ const Requests = () => {
             </tr>
           </thead>
           <tbody>
-            {requestsData.map(request => (
+            {requestsData.length > 0 ? (requestsData.map(request => (
               <tr key={request.id}>
                 <td>{request.id}</td>
                 <td>{request.client}</td>
@@ -187,11 +250,17 @@ const Requests = () => {
                   </button>
                 </td>
               </tr>
-            ))}
+            ))) : (
+              <tr>
+                <td colSpan={6} className="text-center">
+                  No requests available.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
-
+      )}
       {/* Review Request Details Modal */}
       <RequestDetailsModal
         show={showDetailModal}

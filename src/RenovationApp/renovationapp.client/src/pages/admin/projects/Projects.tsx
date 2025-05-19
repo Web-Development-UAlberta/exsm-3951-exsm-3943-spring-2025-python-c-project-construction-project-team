@@ -66,7 +66,7 @@ const allProjects: Project[] = [
 const Projects = () => {
     // State for all projects
     const [projects, setProjects] = useState<Project[]>(allProjects);
-    const [selectedProjectId, setSelectedProjectId] = useState<number>();
+    // const [selectedProjectId, setSelectedProjectId] = useState<number>();
 
     // Filter projects by status
     const ongoingProjects = projects.filter(project => project.status === ProjectStatus.InProgress);

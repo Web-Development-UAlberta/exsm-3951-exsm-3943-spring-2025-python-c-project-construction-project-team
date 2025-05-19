@@ -4,7 +4,6 @@
 import { describe, it, expect, afterEach, vi } from 'vitest';
 import 'vitest-dom/extend-expect';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
-import React from 'react';
 import { composeStory } from '@storybook/react';
 import Meta, { Primary as PrimaryStory } from './Button.stories';
 

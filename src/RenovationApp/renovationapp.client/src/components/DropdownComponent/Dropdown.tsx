@@ -45,7 +45,7 @@ export const Dropdown: React.FC<DropDownProps> = ({
         };
     }, []);
 
-    const handleSelect = (event: React.MouseEvent<HTMLLIElement>, value: string) => {
+    const handleSelect = (_event: React.MouseEvent<HTMLLIElement>, value: string) => {
         setSelectedValue(value);
         setIsOpen(false);
         if (onSelect) {
