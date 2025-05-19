@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import { Dropdown } from './Dropdown';
-import { DropDownOption } from './DropdownOption';
 
 const meta: Meta<typeof Dropdown> = {
     title: 'Components/Dropdown',

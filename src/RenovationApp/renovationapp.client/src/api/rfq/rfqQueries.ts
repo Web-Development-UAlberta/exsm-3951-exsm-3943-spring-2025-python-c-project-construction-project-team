@@ -55,10 +55,12 @@ export async function uploadRFQImage(
         { fileName: fileName },
         { headers: { 'accept': '*/*' } }
     );
-    if (!urlResponse.data || !urlResponse.data.uploadUrl) {
+    console.log("urlResponse", urlResponse)
+
+    if (urlResponse.status !== 200) {
         throw new Error(`Failed to get upload URL for RFQ with ID ${rfqId}`);
     }
-    const uploadUrl = urlResponse.data.uploadUrl;
+    const uploadUrl = urlResponse.data.url;
 
     // Step 2: Upload file to signed URL
     const uploadResp = await fetch(uploadUrl, {
@@ -68,6 +70,8 @@ export async function uploadRFQImage(
             'Content-Type': file.type,
         },
     });
+    
+    console.log("uploadResp", uploadResp);
 
     if (!uploadResp.ok) {
         throw new Error(`Failed to upload image for RFQ with ID ${rfqId}`);

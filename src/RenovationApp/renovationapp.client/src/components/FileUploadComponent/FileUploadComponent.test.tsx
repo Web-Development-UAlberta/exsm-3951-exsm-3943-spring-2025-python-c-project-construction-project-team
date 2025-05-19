@@ -4,10 +4,8 @@
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import 'vitest-dom/extend-expect';
 import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
-import React from 'react';
 import { FileUploadComponent } from './FileUploadComponent';
 import * as ButtonModule from '../ButtonComponent/Button';
-import { PublicClientApplication } from '@azure/msal-browser';
 
 afterEach(() => {
     cleanup();
@@ -16,7 +14,7 @@ afterEach(() => {
 // Mock MSAL module
 vi.mock('@azure/msal-browser', () => {
     return {
-        PublicClientApplication: vi.fn().mockImplementation((config) => ({
+        PublicClientApplication: vi.fn().mockImplementation(() => ({
             acquireTokenSilent: vi.fn().mockResolvedValue({
                 accessToken: 'mock-access-token'
             }),
@@ -43,6 +41,7 @@ vi.mock('../ButtonComponent/Button', async () => {
       >
         {loading && <span role="status" className="spinner-border" />}
         {label}
+        {...rest}
       </button>
     ))
   };

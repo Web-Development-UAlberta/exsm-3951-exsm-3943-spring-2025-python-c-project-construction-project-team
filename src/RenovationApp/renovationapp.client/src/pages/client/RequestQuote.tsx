@@ -14,20 +14,17 @@ import { useMsal } from '@azure/msal-react';
 const RequestQuote = () => {
     const { instance } = useMsal();
     const isAuthenticated = useIsAuthenticated();
+    const createRFQMutation = useCreateRFQ(instance);
+    const uploadImageMutation = uploadImageToRFQ(instance);
 
     // Form state
     const [formData, setFormData] = useState({
         projectAddress: '',
-        services: {
-            kitchenRemodel: false,
-            homeAdditions: false,
-            basementFinishing: false,
-            bathroomRenovation: false,
-        },
+        renovationType: '',
         roomSize: '',
         budget: '',
-        preferredMaterials: '',
-        message: '',
+        preferredMaterial: '',
+        description: '',
     });
 
     // File upload state
@@ -40,10 +37,10 @@ const RequestQuote = () => {
 
     // Room size options
     const roomSizeOptions = [
-        'Samll : Less than 100 sq ft',
-        'Medium: 100-200 sq ft',
-        'Large: 200-500 sq ft',
-        'Extra Spacious: More than 500 sq ft',
+        { value: "Samll", label: "Samll : Less than 100 sq ft" },
+        { value: "Medium", label: 'Medium: 100-200 sq ft' },
+        { value: "Large", label: 'Large: 200-500 sq ft' },
+        { value: "Extra Spacious", label: 'Extra Spacious: More than 500 sq ft' },
     ];
 
     // Handle form input changes
@@ -55,20 +52,16 @@ const RequestQuote = () => {
         });
     };
 
-    // Handle checkbox changes
-    const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, checked } = e.target;
+    // Handle radio changes for renovation type
+    const handleRenovationTypeChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { value } = e.target;
         setFormData({
             ...formData,
-            services: {
-                ...formData.services,
-                [name]: checked,
-            },
+            renovationType: value,
         });
     };
 
     // Handle file upload
-
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             setFiles([...files, ...Array.from(e.target.files)]);
@@ -83,7 +76,6 @@ const RequestQuote = () => {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
-        // If not authenticated, redirect to login
         if (!isAuthenticated) {
             setSubmitError('Please log in to submit a quote request');
             return;
@@ -93,85 +85,31 @@ const RequestQuote = () => {
         setSubmitError('');
 
         try {
-            // Simulate API call with timeout
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            // Get the first true service   
-            const firstService = Object.entries(formData.services).find(([_, v]) => v === true)?.[0] || '';
-
-            // Create form data to send
             const rfqCreateBody: RFQCreate = {
                 projectAddress: formData.projectAddress,
-                renovationType: firstService,
+                renovationType: formData.renovationType,
                 roomSize: formData.roomSize,
                 budget: Number(formData.budget),
-                preferredMaterial: formData.preferredMaterials,
-                description: formData.message,
-            }
+                preferredMaterial: formData.preferredMaterial,
+                description: formData.description,
+            };
 
-            // Initialize fileList as an array of RFQImage
-            const fileList = [];
-
-            // Append files if any
-            if (files) {
-                for (let i = 0; i < files.length; i++) {
-                    const fileObj = {
-                        FileName: files[i].name,
-                        File: files[i],
-                        UploadStats: 'pending'
-                    };
-                    fileList.push(fileObj);
-                }
-            }
-
-            const newRFQ = await useCreateRFQ(instance).mutateAsync(rfqCreateBody);
+            const newRFQ = await createRFQMutation.mutateAsync(rfqCreateBody);
             if (!newRFQ) {
                 throw new Error('Failed to create RFQ');
             }
-            else {
-                // Upload all files in parallel and wait for all to finish
-                await Promise.all(
-                    fileList.map(file => {
-                        const mutateObj = {
-                            rfqId: newRFQ.id,
-                            fileName: file.FileName,
-                            file: file.File,
-                        };
-                        return uploadImageToRFQ(instance).mutateAsync(mutateObj);
-                    })
-                );
-            }
 
-
-            // In a real app, you would send this data to your API
-            // const response = await fetch('/api/request-quote', {
-            //   method: 'POST',
-            //   body: requestFormData,
-            // });
-
-            // if (!response.ok) throw new Error('Failed to submit request');
+            await Promise.all(
+                files.map(file => uploadImageMutation.mutateAsync({ rfqId: newRFQ.id, fileName: file.name, file }))
+            );
 
             setSubmitSuccess(true);
-
-            // Reset form after successful submission
-            setFormData({
-                projectAddress: '',
-                services: {
-                    kitchenRemodel: false,
-                    homeAdditions: false,
-                    basementFinishing: false,
-                    bathroomRenovation: false,
-                },
-                roomSize: '',
-                budget: '',
-                preferredMaterials: '',
-                message: '',
-            });
+            setFormData({ projectAddress: '', renovationType: '', roomSize: '', budget: '', preferredMaterial: '', description: '' });
             setFiles([]);
-
-        } catch (error) {
-            console.error('Error submitting form:', error);
-            setSubmitError('Failed to submit your request. Please try again.');
+        } catch (error: any) {
+            const errorMessage = error?.response?.data?.message || error.message || 'Unexpected error occurred';
+            console.error('Error during form submission:', errorMessage);
+            setSubmitError(`Submission failed: ${errorMessage}`);
         } finally {
             setIsSubmitting(false);
         }
@@ -229,42 +167,46 @@ const RequestQuote = () => {
                                 <Row>
                                     <Col xs={6}>
                                         <Form.Check
-                                            type="checkbox"
-                                            id="kitchenRemodel"
-                                            label="Kitchen Remodel"
-                                            name="kitchenRemodel"
-                                            checked={formData.services.kitchenRemodel}
-                                            onChange={handleCheckboxChange}
+                                            type="radio"
+                                            id="KitchenRemodels"
+                                            label="Kitchen Remodels"
+                                            name="renovationType"
+                                            value="KitchenRemodels"
+                                            // checked={formData.renovationType === "Kitchen Remodels"}
+                                            onChange={handleRenovationTypeChange}
                                         />
                                     </Col>
                                     <Col xs={6}>
                                         <Form.Check
-                                            type="checkbox"
-                                            id="homeAdditions"
+                                            type="radio"
+                                            id="HomeAdditions"
                                             label="Home Additions"
-                                            name="homeAdditions"
-                                            checked={formData.services.homeAdditions}
-                                            onChange={handleCheckboxChange}
+                                            name="renovationType"
+                                            value="HomeAdditions"
+                                            // checked={formData.renovationType === "Home Additions"}
+                                            onChange={handleRenovationTypeChange}
                                         />
                                     </Col>
                                     <Col xs={6}>
                                         <Form.Check
-                                            type="checkbox"
-                                            id="basementFinishing"
+                                            type="radio"
+                                            id="BasementFinishing"
                                             label="Basement Finishing"
-                                            name="basementFinishing"
-                                            checked={formData.services.basementFinishing}
-                                            onChange={handleCheckboxChange}
+                                            name="renovationType"
+                                            value="BasementFinishing"
+                                            // checked={formData.renovationType === "Basement Finishing"}
+                                            onChange={handleRenovationTypeChange}
                                         />
                                     </Col>
                                     <Col xs={6}>
                                         <Form.Check
-                                            type="checkbox"
-                                            id="bathroomRenovation"
+                                            type="radio"
+                                            id="BathroomRenovations"
                                             label="Bathroom Renovation"
-                                            name="bathroomRenovation"
-                                            checked={formData.services.bathroomRenovation}
-                                            onChange={handleCheckboxChange}
+                                            name="renovationType"
+                                            value="BathroomRenovations"
+                                            // checked={formData.renovationType === "Bathroom Renovation"}
+                                            onChange={handleRenovationTypeChange}
                                         />
                                     </Col>
                                 </Row>
@@ -278,8 +220,8 @@ const RequestQuote = () => {
                                     onChange={handleInputChange}
                                 >
                                     <option value="">Select room size</option>
-                                    {roomSizeOptions.map((size, index) => (
-                                        <option key={index} value={size}>{size}</option>
+                                    {roomSizeOptions.map((rs, index) => (
+                                        <option key={index} value={rs.value}>{rs.label}</option>
                                     ))}
                                 </Form.Select>
                             </Form.Group>
@@ -299,19 +241,19 @@ const RequestQuote = () => {
                                 <Form.Label>Preferred Materials</Form.Label>
                                 <Form.Control
                                     type="text"
-                                    name="preferredMaterials"
-                                    value={formData.preferredMaterials}
+                                    name="preferredMaterial"
+                                    value={formData.preferredMaterial}
                                     onChange={handleInputChange}
                                 />
                             </Form.Group>
 
                             <Form.Group className="mb-3">
-                                <Form.Label>Message</Form.Label>
+                                <Form.Label>description</Form.Label>
                                 <Form.Control
                                     as="textarea"
                                     rows={4}
-                                    name="message"
-                                    value={formData.message}
+                                    name="description"
+                                    value={formData.description}
                                     onChange={handleInputChange}
                                     placeholder="Additional Notes"
                                 />

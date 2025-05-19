@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { getProjectStatusBadgeClass } from '../../../utils/getStatusBadgeClass';
 import { useNavigate } from 'react-router-dom';
+import { useMsal } from '@azure/msal-react';
 
 // Define the project type based on the columns shown in the design
 interface Project {
@@ -66,7 +67,6 @@ const allProjects: Project[] = [
 const Projects = () => {
     // State for all projects
     const [projects, setProjects] = useState<Project[]>(allProjects);
-    const [selectedProjectId, setSelectedProjectId] = useState<number>();
 
     // Filter projects by status
     const ongoingProjects = projects.filter(project => project.status === ProjectStatus.InProgress);
@@ -140,6 +140,14 @@ const Projects = () => {
             </div>
         </div>
     );
+
+    const { instance } = useMsal();
+
+    const activeAccount = instance.getActiveAccount();
+    if (!activeAccount) {
+        return <p>Please login to proceed.</p>;
+    }
+
 
     return (
         <div className="p-4">

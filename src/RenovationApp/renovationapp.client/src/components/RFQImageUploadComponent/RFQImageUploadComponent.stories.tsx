@@ -1,4 +1,3 @@
-import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import { successHandlers, networkErrorHandlers } from '../../mocks/handlers/RFQImageUploadHandler';
 import { expect, waitFor } from '@storybook/test';

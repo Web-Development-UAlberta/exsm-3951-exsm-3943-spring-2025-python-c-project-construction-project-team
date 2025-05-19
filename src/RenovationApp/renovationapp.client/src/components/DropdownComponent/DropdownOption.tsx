@@ -7,7 +7,7 @@ interface Options {
 
 export interface DropDownOptionProps {
     value: Options
-    onClick?: (event: React.MouseEvent<HTMLLIElement>, value: string) => void;
+    onClick?: any;
     isSelected?: boolean;
     className?: string;
 }

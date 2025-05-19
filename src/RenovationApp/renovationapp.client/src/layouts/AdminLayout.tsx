@@ -37,12 +37,9 @@ const AdminLayout: React.FC = () => {
     navigate('/admin/account');
   };
 
-  const activeAccount = instance.getActiveAccount();
+
   const [activeTab, setActiveTab] = useState<'requests' | 'projects' | 'contacts'>('requests');
 
-  if (!activeAccount) {
-    return <div>Please login to proceed.</div>;
-  }
 
 
   return (

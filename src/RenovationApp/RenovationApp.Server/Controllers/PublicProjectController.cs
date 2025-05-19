@@ -55,9 +55,9 @@ namespace RenovationApp.Server.Controllers
                     CostCategory = costCategory,
                     RenovationTagIds = project.RenovationTags?.Select(t => t.Id).ToList()
                 };
+                // Add to the output list
+                projectsOut.Add(publicProjectInfo);
             }
-
-
 
             return projectsOut;
         }
