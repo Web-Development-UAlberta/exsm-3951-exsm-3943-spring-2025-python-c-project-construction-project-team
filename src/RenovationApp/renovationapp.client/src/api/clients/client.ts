@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { IPublicClientApplication } from '@azure/msal-browser';
-import { fetchClientById, fetchAllClients, fetchClientContactInfoById, fetchAllClientContactInfo, fetchClientProfile, fetchRFQWithClientInfo } from './clientQueries';
-import { ClientBasicInfo, ClientContactDisplay, ClientProfile, RFQWithClientInfo } from './client.types';
+import { fetchClientById, fetchAllClients, fetchClientContactInfoById, fetchAllClientContactInfo, fetchClientDetails, fetchRFQWithClientInfo } from './clientQueries';
+import { ClientBasicInfo, ClientContactDisplay, ClientDetails, ClientDetailsResponse, RFQWithClientInfo } from './client.types';
 
 const QUERY_KEY = "client";
 
@@ -38,10 +38,10 @@ export function useClientData(instance: IPublicClientApplication) {
         });
     };
 
-    const getClientProfile = (clientId: string) => {
-        return useQuery<ClientProfile>({
-            queryKey: [QUERY_KEY, clientId, "profile"],
-            queryFn: () => fetchClientProfile(instance, clientId),
+    const getClientDetails = (clientId: string) => {
+        return useQuery<ClientDetailsResponse>({
+            queryKey: [QUERY_KEY, clientId, "details"],
+            queryFn: () => fetchClientDetails(instance, clientId),
             staleTime: 5 * 60 * 1000,
         });
     };
@@ -59,7 +59,7 @@ export function useClientData(instance: IPublicClientApplication) {
         getAllClients,
         getClientContactInfoById,
         getAllClientContactInfo,
-        getClientProfile,
+        getClientDetails,
         getRFQWithClientInfo
     };
 }
