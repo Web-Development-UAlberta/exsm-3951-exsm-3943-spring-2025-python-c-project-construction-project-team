@@ -1,5 +1,7 @@
 import { useMsal } from '@azure/msal-react';
 import { useState } from 'react';
+import { useClientData } from '../../../api/clients/client';
+import { ClientLocation } from '../../../api/clients/client.types';
 
 interface ContactItem {
   id: string;
@@ -17,28 +19,45 @@ const contacts: ContactItem[] = [
 ];
 
 const Contacts = () => {
+  const { instance } = useMsal();
+  const { getAllClientContactInfo } = useClientData(instance);
   const [sortAsc, setSortAsc] = useState(true);
+
+  const { data: contacts, isLoading, error } = getAllClientContactInfo();
+
+  const formatLocation = (location: ClientLocation): string => {
+    if (location.city && location.state) {
+      return `${location.city}, ${location.state}`;
+    }
+    return location.city || location.state || 'Unknown';
+  };
 
   const toggleSort = () => {
     setSortAsc(!sortAsc);
   };
 
-  const sortedContacts = [...contacts].sort((a, b) => (
-    sortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
-  ));
-
-
-  const { instance } = useMsal();
+  const sortedContacts = contacts ? [...contacts].sort((a, b) => (
+    sortAsc ? 
+      `${a.givenName} ${a.surname}`.localeCompare(`${b.givenName} ${b.surname}`) : 
+      `${b.givenName} ${b.surname}`.localeCompare(`${a.givenName} ${a.surname}`)
+  )) : [];
 
   const activeAccount = instance.getActiveAccount();
   if (!activeAccount) {
     return <p>Please login to proceed.</p>;
   }
 
+  if (error) return <div>Error: {error.message}</div>;
+
   return (
     <div className="container my-4">
       <h3>Contacts Dashboard</h3>
 
+      {isLoading && (
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      )}
       <div className="table-responsive">
         <table className="table table-hover">
           <thead className="table-light">
@@ -53,10 +72,10 @@ const Contacts = () => {
           <tbody>
             {sortedContacts.map(contact => (
               <tr key={contact.id}>
-                <td>{contact.name}</td>
-                <td>{contact.email}</td>
-                <td>{contact.phone}</td>
-                <td>{contact.location}</td>
+                <td>{`${contact.givenName} ${contact.surname}`}</td>
+                <td>{contact.mail || 'N/A'}</td>
+                <td>{contact.mobilePhone || 'N/A'}</td>
+                <td>{formatLocation({ city: contact.city, state: contact.state })}</td>
                 <td>
                   <button className="btn btn-outline-secondary btn-sm">View</button>
                 </td>
