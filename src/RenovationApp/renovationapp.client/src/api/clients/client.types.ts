@@ -1,5 +1,3 @@
-import { RFQ } from '../rfq/rfq.types';
-import { ProjectComment, ProjectFile, ProjectTask, Project, ProjectCommunication } from '../projects/project.types';
 // Basic Client Information
 export type ClientBasicInfo = {
     id: string,
@@ -12,12 +10,8 @@ export type ClientContactDisplay = ClientBasicInfo & {
     mail: string,
     mobilePhone: string,
     location?: ClientLocation
-}
-
-// Combine with RFQ data
-export type RFQWithClientInfo = {
-    rfqData: RFQ;
-    clientInfo: ClientBasicInfo;
+    hasProjects: boolean,
+    hasRFQs: boolean,
 }
 
 // Helper for formatting location
@@ -26,22 +20,10 @@ export type ClientLocation = {
     state?: string,
 }
 
-// Client Details
-export type ClientDetails = {
-    basicInfo: ClientBasicInfo & {
-        mail?: string;
-        mobilePhone?: string;
-        location?: ClientLocation;
-    };
-    projects?: ClientProject[];
-    communications?: ClientCommunication[];
-    files?: ClientFile[];
-    tasks?: ClientTask[];
-}
-
 // Client Project
 export type ClientProject = {
     id: number;
+    clientId: string;
     createdTimestamp: string;
     status?: string;
     renovationType?: string;
@@ -55,29 +37,16 @@ export type ClientProject = {
 export type ClientCommunication = {
     id: number;
     projectId: number;
-    projectName?: string;
     createdTimestamp: string;
     message: string;
     type: 'comment' | 'communication';
     createdBy?: string;
 }
 
-// Client File
-export type ClientFile = {
-    id: number;
-    projectId: number;
-    projectName?: string;
-    fileName: string;
-    fileUri: string;
-    type: 'image' | 'document';
-    uploadedTimestamp: string;
-}
-
 // Client Task
 export type ClientTask = {
     id: number;
     projectId: number;
-    projectName?: string;
     title?: string;
     description?: string;
     status?: string;
@@ -86,10 +55,12 @@ export type ClientTask = {
 
 // Client Details Response
 export type ClientDetailsResponse = {
-    basicInfo: ClientContactDisplay;
-    projects: Project[];
-    allComments: ProjectComment[];
-    allFiles: ProjectFile[];
-    allTasks: ProjectTask[];
-    allCommunications: ProjectCommunication[];
+    basicInfo: ClientBasicInfo & {
+        mail: string;
+        mobilePhone: string;
+        location?: ClientLocation;
+    }
+    projects: ClientProject[];
+    tasks: ClientTask[];
+    communications: ClientCommunication[];
 }
