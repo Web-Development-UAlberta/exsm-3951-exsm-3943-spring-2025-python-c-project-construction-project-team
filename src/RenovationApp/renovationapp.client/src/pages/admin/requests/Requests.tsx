@@ -1,5 +1,5 @@
 // components/Requests.tsx
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { fetchAllRFQs, fetchRFQById, updateRFQ, fetchRFQImages } from '../../../api/rfq/rfqQueries';
 import { RFQ, RFQImage } from '../../../api/rfq/rfq.types';
 import { useMsal } from '@azure/msal-react';
@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { QuoteEstimateModal } from './components/QuoteEstimateModal';
 import RequestDetailsModal from './components/RequestDetailsModal';
 import { getRequestStatusBadgeClass } from '../../../utils/getStatusBadgeClass';
+import { getProjectManagers } from '../../../api/identity/graph';
 
 // Define the request type based on the columns shown in the screenshot
 interface Request {
@@ -29,13 +30,11 @@ interface RequestDetail {
   description: string;
   files: RFQImage[];
 }
-
 // Available project managers for dropdown
 const projectManagers = ['Name', 'Mike Smith', 'Sarah Johnson', 'Alex Wong', 'Emily Davis'];
 
 const Requests = () => {
   const { instance } = useMsal();
-  const queryClient = useQueryClient();
 
   // States
   const [showDetailModal, setShowDetailModal] = useState(false);
@@ -44,6 +43,14 @@ const Requests = () => {
   const [showQuoteModal, setShowQuoteModal] = useState(false);
   const [quoteRequestId, setQuoteRequestId] = useState<number | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Fetch project managers
+  // const { data: graphProjectManagers = [], isLoading: loadingProjectManagers, error: projectManagersError } = getProjectManagers(instance);
+
+  // const projectManagerOptions = [
+  //   'Unassigned',
+  //   ...graphProjectManagers.map((manager) => `${manager.displayName}` || `${manager.mail}`),
+  // ]
 
   // RFQ list
   const { 
@@ -158,21 +165,18 @@ const Requests = () => {
     try {
       await updateRFQ(BigInt(requestId), { assignedEmployeeId: newManager }, instance);
       
-      // Invalidate queries to refetch updated data
-      queryClient.invalidateQueries({ queryKey: ['rfqs'] });
+      refetch(); // Refetch RFQs to update the list
 
     } catch (error) {
       console.error('Failed to update project manager:', error);
       setErrorMessage('Failed to update project manager. Please try again.');
-      // Refetch to ensure UI is in sync with server
-      refetch();
     }
   };
 
   return (
     <div className="p-4">
       <h3 className="mb-3">Requests Dashboard</h3>
-
+      {/* {(isLoading || loadingProjectManagers) && ( */}
       {isLoading && (
         <div className="d-flex justify-content-center">
           <div className="spinner-border text-primary" role="status">
@@ -180,10 +184,11 @@ const Requests = () => {
           </div>
         </div>
       )}
-      
+      {/* {(queryError || projectManagersError) && ( */}
       {queryError && (
         <div className="alert alert-danger">
-          {errorMessage}
+          {/* {errorMessage || queryError?.message || projectManagersError?.message || 'Failed to load data.'} */}
+          {errorMessage || queryError?.message || 'Failed to load data.'}
           <button 
             className="btn btn-sm btn-outline-danger ms-2"
             onClick={() => refetch()}
@@ -192,7 +197,7 @@ const Requests = () => {
           </button>
         </div>
       )}
-
+      {/* {!isLoading && !queryError && !loadingProjectManagers && !projectManagersError && ( */}
       {!isLoading && !queryError && (
         <div className="table-responsive">
           <table className="table table-hover">
@@ -219,6 +224,7 @@ const Requests = () => {
                         value={request.project_manager}
                         onChange={(e) => handleProjectManagerChange(request.id, e.target.value)}
                         aria-label="Project Manager selection"
+                        // disabled={loadingProjectManagers}
                       >
                         {projectManagers.map((manager, index) => (
                           <option key={index} value={manager}>{manager}</option>
