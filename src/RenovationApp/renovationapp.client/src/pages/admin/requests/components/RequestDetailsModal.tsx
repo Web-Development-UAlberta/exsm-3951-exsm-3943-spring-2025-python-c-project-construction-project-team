@@ -1,5 +1,6 @@
 // components/components/ReviewRequestDetailsModal.tsx
 import React from 'react';
+import { RFQImage } from '../../../../api/rfq/rfq.types';
 
 interface RequestDetail {
   id: number;
@@ -9,7 +10,7 @@ interface RequestDetail {
   preferred_material: string;
   budget: number;
   description: string;
-  files: string[];
+  files: RFQImage[];
 }
 
 interface RequestDetailsModalProps {
@@ -73,7 +74,14 @@ export const RequestDetailsModal: React.FC<RequestDetailsModalProps> = ({
               <div>
                 {request.files.map((file, index) => (
                   <div key={index}>
-                    <a href="#" className="text-decoration-none text-primary">{file}</a>
+                    <a
+                      href={file.imageUri || '#'}
+                      className="text-decoration-none text-primary"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {file.fileName || file.imageUri || `File ${index + 1}`}
+                    </a>
                     {index < request.files.length - 1 && <span className="mx-2"></span>}
                   </div>
                 ))}
@@ -85,7 +93,7 @@ export const RequestDetailsModal: React.FC<RequestDetailsModalProps> = ({
             <button 
               type="button" 
               className="btn btn-outline-primary px-4"
-              onClick={() => onAccept(request.id)}
+              onClick={() => onAccept(Number(request.id))}
             >
               Accept Request
             </button>
