@@ -58,7 +58,7 @@ export const apiClient = (msalInstance: IPublicClientApplication): AxiosInstance
 // Export a default function that creates the client
 export default apiClient;
 
-export const graphClient = (msalInstance: IPublicClientApplication): AxiosInstance => {
+export const graphClient = (scopes: string[],msalInstance: IPublicClientApplication): AxiosInstance => {
   const axiosInstance = axios.create({
     baseURL: "https://graph.microsoft.com/v1.0",
     headers: {},
@@ -77,7 +77,8 @@ export const graphClient = (msalInstance: IPublicClientApplication): AxiosInstan
 
       // Attempt to acquire token silently
       const response = await msalInstance.acquireTokenSilent({
-        scopes: ['user.read'],
+        // scopes: ['user.read'],
+        scopes: scopes,
         account: activeAccount
       });
       
@@ -89,7 +90,7 @@ export const graphClient = (msalInstance: IPublicClientApplication): AxiosInstan
         try{
             // Attempt to acquire token interactively if silent acquisition fails
             const response = await msalInstance.acquireTokenPopup({
-                scopes: apiScopes,
+                scopes: scopes,
                 loginHint: msalInstance.getAllAccounts()[0].username // Use the first account's username for login hint
             });
             

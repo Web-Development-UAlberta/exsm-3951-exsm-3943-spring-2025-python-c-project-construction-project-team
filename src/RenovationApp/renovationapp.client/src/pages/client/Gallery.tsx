@@ -199,9 +199,6 @@ const Gallery = () => {
                 <Col lg={9} md={8}>
                     <div className='py-3'>
                         <h1 className="text-center mb-2">Gallery</h1>
-                        <p className="text-center mb-4">
-                            Lorem ipsum dolor sit amet consectetur. Pharetra tellus lacus integer lectus adipiscing porttitor senectus amet pulvinar.
-                        </p>
                     </div>
 
                     <Row xs={1} sm={2} md={2} lg={4} className="g-4">
