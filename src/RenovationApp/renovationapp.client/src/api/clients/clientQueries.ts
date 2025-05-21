@@ -67,7 +67,7 @@ export async function fetchClientsWithProjectsRFQs(msalInstance: IPublicClientAp
 
 export async function fetchClientDetails(msalInstance: IPublicClientApplication, clientId: string): Promise<ClientDetailsResponse> {
     const response = await graphClient(msalInstance).get(
-        `/users/${clientId}?$select=id,givenName,surname,mail,mobilePhone,city,state`
+        `/users/${clientId}?$select=id,givenName,surname,mail,mobilePhone,streetAddress,city,state,postalCode`
     );
 
     if (!response.data) {
@@ -87,10 +87,10 @@ export async function fetchClientDetails(msalInstance: IPublicClientApplication,
             surname: response.data.surname,
             mail: response.data.mail,
             mobilePhone: response.data.mobilePhone,
-            location: {
-                city: response.data.city,
-                state: response.data.state
-            }
+            streetAddress: response.data.streetAddress,
+            city: response.data.city,
+            state: response.data.state,
+            postalCode: response.data.postalCode
         },
         projects,
         tasks,

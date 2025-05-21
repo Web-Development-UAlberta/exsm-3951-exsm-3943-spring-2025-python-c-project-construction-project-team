@@ -58,7 +58,10 @@ export type ClientDetailsResponse = {
     basicInfo: ClientBasicInfo & {
         mail: string;
         mobilePhone: string;
-        location?: ClientLocation;
+        streetAddress?: string;
+        city?: string;
+        state?: string;
+        postalCode?: string;
     }
     projects: ClientProject[];
     tasks: ClientTask[];
