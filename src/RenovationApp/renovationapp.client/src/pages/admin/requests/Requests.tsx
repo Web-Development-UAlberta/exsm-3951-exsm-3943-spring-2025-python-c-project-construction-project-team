@@ -138,7 +138,6 @@ const Requests = () => {
 
   const { instance } = useMsal();
   const activeAccount = instance.getActiveAccount();
-
   const { data } = getAllUserInfo(instance);
   console.log(data);
 

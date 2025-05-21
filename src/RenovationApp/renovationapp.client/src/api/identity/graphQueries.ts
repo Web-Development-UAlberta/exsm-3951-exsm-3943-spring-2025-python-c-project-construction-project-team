@@ -16,7 +16,8 @@ export async function fetchGraphMe(msalInstance: IPublicClientApplication): Prom
 
 export async function fetchAllUsers(msalInstance: IPublicClientApplication): Promise<graphMe[]> {
     try {
-        const response = await graphClient(['User.Read.All'], msalInstance).get(`/users?$select=displayName,givenName,surname,mail,mobilePhone`);
+        const response = await graphClient(['User.ReadBasic.All'], msalInstance).get(`/users/-yHTkYFqZISwyClvpIbw_6EHAD09wUjxbC_1Dw-dCag`);
+        // const response = await graphClient(['user.Read'], msalInstance).get(`/users?$select=displayName,givenName,surname,mail,mobilePhone`);
 
         if (!response.data || !response.data.value) {
             throw new Error("Failed to fetch users from Microsoft Graph");

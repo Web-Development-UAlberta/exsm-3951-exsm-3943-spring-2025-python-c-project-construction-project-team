@@ -17,7 +17,7 @@ export const apiClient = (msalInstance: IPublicClientApplication): AxiosInstance
     try {
       // Get active account (the currently signed in user)
       const activeAccount = msalInstance.getActiveAccount()
-      
+
       if (!activeAccount) {
         throw new Error('No active account! Please sign in before making API calls.');
       }
@@ -27,29 +27,29 @@ export const apiClient = (msalInstance: IPublicClientApplication): AxiosInstance
         scopes: apiScopes,
         account: activeAccount
       });
-      
+
       // Add the token to the Authorization header
       config.headers.Authorization = `Bearer ${response.accessToken}`;
-      
+
       return config;
     } catch (error) {
-        try{
-            // Attempt to acquire token interactively if silent acquisition fails
-            const response = await msalInstance.acquireTokenPopup({
-                scopes: apiScopes,
-                loginHint: msalInstance.getAllAccounts()[0].username // Use the first account's username for login hint
-            });
-            
-            // Add the token to the Authorization header
-            config.headers.Authorization = `Bearer ${response.accessToken}`;
-            
-            return config;
-        }
-        catch (popupError) {
-            // Handle the error if both silent and interactive token acquisition fail
-            console.error("Error acquiring token interactively:", popupError);
-            throw new Error('Failed to acquire token. Please sign in again.');
-        }
+      try {
+        // Attempt to acquire token interactively if silent acquisition fails
+        const response = await msalInstance.acquireTokenPopup({
+          scopes: apiScopes,
+          loginHint: msalInstance.getAllAccounts()[0].username // Use the first account's username for login hint
+        });
+
+        // Add the token to the Authorization header
+        config.headers.Authorization = `Bearer ${response.accessToken}`;
+
+        return config;
+      }
+      catch (popupError) {
+        // Handle the error if both silent and interactive token acquisition fail
+        console.error("Error acquiring token interactively:", popupError);
+        throw new Error('Failed to acquire token. Please sign in again.');
+      }
     }
   });
   return axiosInstance;
@@ -58,7 +58,7 @@ export const apiClient = (msalInstance: IPublicClientApplication): AxiosInstance
 // Export a default function that creates the client
 export default apiClient;
 
-export const graphClient = (scopes: string[],msalInstance: IPublicClientApplication): AxiosInstance => {
+export const graphClient = (scopes: string[], msalInstance: IPublicClientApplication): AxiosInstance => {
   const axiosInstance = axios.create({
     baseURL: "https://graph.microsoft.com/v1.0",
     headers: {},
@@ -70,7 +70,7 @@ export const graphClient = (scopes: string[],msalInstance: IPublicClientApplicat
     try {
       // Get active account (the currently signed in user)
       const activeAccount = msalInstance.getActiveAccount()
-      
+
       if (!activeAccount) {
         throw new Error('No active account! Please sign in before making API calls.');
       }
@@ -81,29 +81,29 @@ export const graphClient = (scopes: string[],msalInstance: IPublicClientApplicat
         scopes: scopes,
         account: activeAccount
       });
-      
+
       // Add the token to the Authorization header
       config.headers.Authorization = `Bearer ${response.accessToken}`;
-      
+
       return config;
     } catch (error) {
-        try{
-            // Attempt to acquire token interactively if silent acquisition fails
-            const response = await msalInstance.acquireTokenPopup({
-                scopes: scopes,
-                loginHint: msalInstance.getAllAccounts()[0].username // Use the first account's username for login hint
-            });
-            
-            // Add the token to the Authorization header
-            config.headers.Authorization = `Bearer ${response.accessToken}`;
-            
-            return config;
-        }
-        catch (popupError) {
-            // Handle the error if both silent and interactive token acquisition fail
-            console.error("Error acquiring token interactively:", popupError);
-            throw new Error('Failed to acquire token. Please sign in again.');
-        }
+      try {
+        // Attempt to acquire token interactively if silent acquisition fails
+        const response = await msalInstance.acquireTokenPopup({
+          scopes: scopes,
+          loginHint: msalInstance.getAllAccounts()[0].username // Use the first account's username for login hint
+        });
+
+        // Add the token to the Authorization header
+        config.headers.Authorization = `Bearer ${response.accessToken}`;
+
+        return config;
+      }
+      catch (popupError) {
+        // Handle the error if both silent and interactive token acquisition fail
+        console.error("Error acquiring token interactively:", popupError);
+        throw new Error('Failed to acquire token. Please sign in again.');
+      }
     }
   });
   return axiosInstance;
