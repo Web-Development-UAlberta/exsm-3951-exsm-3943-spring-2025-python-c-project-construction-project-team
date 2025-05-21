@@ -4,7 +4,6 @@ import { QuoteEstimateModal } from './components/QuoteEstimateModal';
 import RequestDetailsModal from './components/RequestDetailsModal';
 import { getRequestStatusBadgeClass } from '../../../utils/getStatusBadgeClass';
 import { useMsal } from '@azure/msal-react';
-import { fetchAllUsers } from '../../../api/identity/graphQueries';
 import { getAllUserInfo } from '../../../api/identity/graph';
 
 // Define the request type based on the columns shown in the screenshot

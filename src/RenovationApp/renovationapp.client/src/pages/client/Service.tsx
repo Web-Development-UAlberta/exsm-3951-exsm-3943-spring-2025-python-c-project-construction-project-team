@@ -6,9 +6,8 @@ import Button from "react-bootstrap/esm/Button";
 
 const Service = () => {
 
-    const { instance } = useMsal();
-    const projectId = 1n;
-    const uploadMutation = useUploadProjectFile(projectId, instance);
+    const { instance } = useMsal();;
+    const uploadMutation = useUploadProjectFile(instance);
     const [files, setFiles] = useState<File[]>([]);
     // Handle file upload
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -22,11 +21,12 @@ const Service = () => {
 
 
     //   uploadProjectFile(projectId, file, fileType, msalInstance),
-    const handleSubmit = async (e:any) => {
+    const handleSubmit = async (e: any) => {
         e.preventDefault();
         console.log("submit", files[0]);
         await Promise.all(
             files.map(file => uploadMutation.mutateAsync({
+                projectId: 1n,
                 file,
                 fileType: file.type.split('/')[0]
             }))
@@ -35,7 +35,7 @@ const Service = () => {
 
     return (
         <div>
-            {/* <Form onSubmit={handleSubmit}>
+            <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-4">
                     <div className="d-flex justify-content-between align-items-center">
                         <Form.Label className="mb-0">Share floorplans, inspired images, etc.</Form.Label>
@@ -79,7 +79,7 @@ const Service = () => {
                 >
                     Submit Request
                 </Button>
-            </Form> */}
+            </Form>
 
             <h1 className="gallery-title text-center mb-2">Services</h1>
             {/* Kitchen Remodels */}

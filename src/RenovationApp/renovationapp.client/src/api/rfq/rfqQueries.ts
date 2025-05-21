@@ -55,7 +55,7 @@ export async function uploadRFQImage(
         { fileName: fileName },
         { headers: { 'accept': '*/*' } }
     );
-    // console.log("urlResponse", urlResponse)
+    console.log("urlResponse", urlResponse)
 
     if (urlResponse.status !== 200) {
         throw new Error(`Failed to get upload URL for RFQ with ID ${rfqId}`);

@@ -1,7 +1,6 @@
 import { IPublicClientApplication } from "@azure/msal-browser";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { fetchAllUsers, fetchGraphMe } from "./graphQueries";
-import { graphMe } from "./graph.types";
 
 const QUERY_KEY = "identity";
 

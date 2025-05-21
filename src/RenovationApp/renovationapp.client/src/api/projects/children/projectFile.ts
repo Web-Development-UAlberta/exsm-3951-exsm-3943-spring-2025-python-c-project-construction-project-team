@@ -9,13 +9,18 @@ export function useProjectFiles(projectId: bigint, msalInstance: IPublicClientAp
     });
 }
 
-export function useUploadProjectFile(projectId: bigint, msalInstance: IPublicClientApplication) {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: ({ file, fileType }: { file: File; fileType: string }) =>
-            uploadProjectFile(projectId, file, fileType, msalInstance),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["projects", projectId, "files"] });
-        }
+export function useUploadProjectFile(msalInstance: IPublicClientApplication) {
+    // const queryClient = useQueryClient();
+    // return useMutation({
+    //     mutationFn: ({ file, fileType }: { file: File; fileType: string }) =>
+    //         uploadProjectFile(projectId, file, fileType, msalInstance),
+    //     onSuccess: () => {
+    //         queryClient.invalidateQueries({ queryKey: ["projects", projectId, "files"] });
+    //     }
+    // });
+
+    const mutation = useMutation({
+        mutationFn: ({ projectId, file, fileType }: { projectId: bigint, file: File; fileType: string }) => uploadProjectFile(projectId, file, fileType, msalInstance),
     });
+    return mutation;
 }
