@@ -70,25 +70,33 @@ export const RequestDetailsModal: React.FC<RequestDetailsModalProps> = ({
             </div>
             
             <div className="mb-3">
-              <div className="fw-bold">Files:</div>
-              <div>
-                {request.files.map((file, index) => (
-                  <div key={index}>
-                    <a
-                      href={file.imageUri || '#'}
-                      className="text-decoration-none text-primary"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {file.fileName || file.imageUri || `File ${index + 1}`}
-                    </a>
-                    {index < request.files.length - 1 && <span className="mx-2"></span>}
-                  </div>
-                ))}
-              </div>
+            <div className="fw-bold">Files:</div>
+            <div className="file-list">
+              {request.files && request.files.length > 0 ? (
+                request.files.map((file, index) => {
+                  const fileName = file.fileName || file.imageUri?.split('/').pop() || `File ${index + 1}`;
+                  const fileUrl = file.imageUri || '#';
+                  
+                  return (
+                    <div key={index} className="mb-1">
+                      <a
+                        href={fileUrl}
+                        className="text-decoration-none text-primary d-inline-flex align-items-center"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <i className="bi bi-file-earmark me-2"></i>
+                        {fileName}
+                      </a>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="text-muted">No files attached</div>
+              )}
             </div>
           </div>
-          
+          </div>
           <div className="modal-footer justify-content-center">
             <button 
               type="button" 
