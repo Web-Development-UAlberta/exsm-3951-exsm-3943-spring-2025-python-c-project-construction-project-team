@@ -105,15 +105,25 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
                 if (!success) {
                     throw new Error('Failed to generate PDF');
                 }
-            };
+
+                // Prepare email content
+                const emailContent = {
+                    to: 'buniel@ualberta.ca', // Replace with actual email if we have access to entra
+                    subject: `Quote Estimate - ${quoteNumber}`,
+                    body: `Dear Client,\n\nPlease find attached the quote estimate.\n\nBest regards,\nBob & Susan Renovations`,
+                };
+
+                // Open email client
+                window.location.href = `mailto:${emailContent.to}?subject=${encodeURIComponent(emailContent.subject)}&body=${encodeURIComponent(emailContent.body)}`;
+            }
 
             // update RFQ status to "Quoted"
-            // await updateRFQ.mutateAsync({
-            //     rfqid: BigInt(rfqId ?? 0),
-            //     rfq: {
-            //         status: 'Quoted'
-            //     }
-            // });
+            await updateRFQ.mutateAsync({
+                rfqid: BigInt(rfqId ?? 0),
+                rfq: {
+                    status: 'Quoted'
+                }
+            });
             // Create Project
             const projectData = {
                 status: 'Quoted',
@@ -153,7 +163,7 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
 
     return (
     <Modal show={show} onHide={onClose} size="lg">
-        <Modal.Header closeButton className="bg-dark text-white">
+        <Modal.Header closeButton>
             <Modal.Title>Quote Estimate</Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -300,7 +310,7 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
         variant="primary" 
         onClick={handleSubmit}
         disabled={services.length === 0}
-        label="Generate Quote & Download"
+        label="Generate and Send"
       />
     </Modal.Footer>
   </Modal>
