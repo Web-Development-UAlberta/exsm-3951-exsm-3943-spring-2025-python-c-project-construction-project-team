@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { PublicClientApplication, EventType, AuthenticationResult } from '@azure/msal-browser';
 import { msalConfig } from './config/authConfig.ts';
+import './styles/custom.scss';
 import './index.css'
 import App from './app/App.tsx'
 import 'bootstrap/dist/css/bootstrap.min.css';

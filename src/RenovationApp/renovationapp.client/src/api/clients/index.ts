@@ -12,5 +12,4 @@ export {
     fetchClientContactInfoById,
     fetchClientsWithProjectsRFQs,
     fetchClientDetails,
-    fetchRFQWithClientInfo,
 } from './clientQueries';

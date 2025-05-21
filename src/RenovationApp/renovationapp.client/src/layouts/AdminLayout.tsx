@@ -44,22 +44,22 @@ const AdminLayout: React.FC = () => {
 
   return (
     <>
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-sm">
+      <nav className="navbar navbar-expand-lg admin-navbar">
 
         <div className='d-flex justify-content-between align-items-center w-100 px-3'>
           <Link className="navbar-brand" to="/admin">
             <img src={logoPlaceholder} alt="Logo" height="40" />
           </Link>
-          <div className='text-light h4'>
+          <div className='text-light h4 mb-0'>
             Admin Portal
           </div>
           <div className="d-flex">
             {isAuthenticated ? (
               <div className="d-flex gap-2 align-items-center">
-                <button type="button" className="btn btn-sm" onClick={handleUserAccountClick}>
+                <button type="button" className="btn btn-link text-light" onClick={handleUserAccountClick}>
                   <i className="bi bi-person-circle fs-4"></i>
                 </button>
-                <button type="button" className="btn btn-outline-danger btn-sm" onClick={handleLogout}>
+                <button type="button" className="btn btn-danger btn-sm" onClick={handleLogout}>
                   Logout
                 </button>
               </div>
@@ -72,15 +72,15 @@ const AdminLayout: React.FC = () => {
 
       </nav>
 
-      <main style={{ paddingTop: "4rem" }} className="container-fluid">
-        <div className="row">
+      <main className="container-fluid">
+        <div className="row vh-100">
           {/* Sidebar */}
-          <div className="col-md-2 bg-dark text-light min-vh-100">
-            <div className="px-3 py-4">
-              <h3 className="mb-4">Dashboard</h3>
+          <div className="col-auto admin-sidebar px-0">
+            <div className="px-4 py-5">
+              <h4 className="text-light mb-3">Dashboard</h4>
               <div className="nav flex-column">
                 <button
-                  className={`nav-link text-light py-2 text-start ${activeTab === 'requests' ? 'active fw-bold' : ''}`}
+                  className={`nav-link text-light py-3 text-start ${activeTab === 'requests' ? 'active fw-bold' : ''}`}
                   onClick={() => {
                     setActiveTab("requests");
                     navigate('requests');
@@ -89,7 +89,7 @@ const AdminLayout: React.FC = () => {
                   Requests
                 </button>
                 <button
-                  className={`nav-link text-light py-2 text-start ${activeTab === 'projects' ? 'active fw-bold' : ''}`}
+                  className={`nav-link text-light py-3 text-start ${activeTab === 'projects' ? 'active fw-bold' : ''}`}
                   onClick={() => {
                     setActiveTab("projects");
                     navigate('projects');
@@ -98,7 +98,7 @@ const AdminLayout: React.FC = () => {
                   Projects
                 </button>
                 <button
-                  className={`nav-link text-light py-2 text-start ${activeTab === 'contacts' ? 'active fw-bold' : ''}`}
+                  className={`nav-link text-light py-3 text-start ${activeTab === 'contacts' ? 'active fw-bold' : ''}`}
                   onClick={() => {
                     setActiveTab("contacts");
                     navigate('contacts');
@@ -111,7 +111,7 @@ const AdminLayout: React.FC = () => {
           </div>
 
           {/* Main Content */}
-          <div className="col-md-10 bg-light">
+          <div className="col admin-content p-4">
             <Outlet />
           </div>
         </div>

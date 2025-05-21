@@ -21,10 +21,14 @@
     "axios": "^1.9.0",
     "bootstrap": "^5.3.6",
     "bootstrap-icons": "^1.13.1",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.1",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.9",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.25.1"
+    "react-router-dom": "^6.25.1",
+    "react-toastify": "^11.0.5",
+    "sass": "^1.89.0"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.6",
@@ -56,6 +60,7 @@
     "msw": "^2.8.2",
     "msw-storybook-addon": "^2.0.4",
     "playwright": "^1.52.0",
+    "sass-embedded": "^1.89.0",
     "storybook": "^8.6.12",
     "storybook-addon-designs": "^6.3.1",
     "typescript": "~5.7.2",

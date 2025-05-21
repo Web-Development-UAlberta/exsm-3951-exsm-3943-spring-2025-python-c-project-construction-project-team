@@ -1,0 +1,23 @@
+// Brand Colors - Override Bootstrap defaults
+$primary: #1C3A55;    // Prussian Blue
+$secondary: #092B49;   // Darker Prussian Blue
+$danger: #C62620;      // Fire Engine Red
+$light: #FCF9F7;       // Snow White
+$beige: #EEEBD0;        // Beige
+
+// Layout
+$navbar-height: 5rem;
+$sidebar-width: 300px;
+
+// Navgiation
+$nav-link-padding-x: 1rem;
+$nav-link-padding-y: 0.75rem;
+
+// Custom theme colors map
+$theme-colors: (
+  "primary": $primary,
+  "secondary": $secondary,
+  "danger": $danger,
+  "light": $light,
+  "beige": $beige
+);
