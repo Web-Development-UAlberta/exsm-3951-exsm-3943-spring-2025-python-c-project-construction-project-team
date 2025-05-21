@@ -142,6 +142,7 @@ export type ProjectServiceCreateDTO = {
     actualStartDate?: string;
     actualEndDate?: string;
     status?: string;
+    projectId?: number;
 };
 
 export type ProjectServiceUpdateDTO = {
@@ -215,6 +216,7 @@ export type ProjectOutTask = {
 
 export type ProjectOutputDTO = {
     id: number;
+    clientId: string;
     status?: string | null;
     renovationType?: string | null;
     rfq?: number | null;

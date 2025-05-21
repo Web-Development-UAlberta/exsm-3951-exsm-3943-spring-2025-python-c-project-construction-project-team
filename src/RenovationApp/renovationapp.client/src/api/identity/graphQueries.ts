@@ -24,16 +24,3 @@ export async function updateGraphMe(msalInstance: IPublicClientApplication, data
         throw new Error("Failed to update user profile");
     }
 }
-
-// Job title filtering
-export async function fetchProjectManagers(msalInstance: IPublicClientApplication): Promise<graphMe[]> {
-    const response = await graphClient(msalInstance).get(
-        `/users?$filter=jobTitle eq 'Project Manager'&$select=displayName,givenName,surname,mail,id`
-    );
-
-    if (!response.data?.value) {
-        throw new Error("Failed to fetch project managers from Microsoft Graph");
-    }
-
-    return response.data.value;
-}

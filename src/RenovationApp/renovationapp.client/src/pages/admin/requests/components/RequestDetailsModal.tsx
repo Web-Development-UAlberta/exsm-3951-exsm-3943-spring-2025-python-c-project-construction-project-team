@@ -1,7 +1,8 @@
 // components/components/ReviewRequestDetailsModal.tsx
 import React from 'react';
+import { Modal } from 'react-bootstrap';
+import { Button } from '../../../../components/ButtonComponent/Button';
 import { RFQImage } from '../../../../api/rfq/rfq.types';
-
 interface RequestDetail {
   id: number;
   client: string;
@@ -18,97 +19,86 @@ interface RequestDetailsModalProps {
   request: RequestDetail | null;
   onClose: () => void;
   onAccept: (id: number) => void;
+  onDeny: (id: number) => void;
 }
 
 export const RequestDetailsModal: React.FC<RequestDetailsModalProps> = ({
   show,
   request,
   onClose,
-  onAccept
+  onAccept,
+  onDeny
 }) => {
   if (!show || !request) {
     return null;
   }
 
   return (
-    <div className={`modal ${show ? 'd-block' : ''}`} tabIndex={-1} role="dialog" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-      <div className="modal-dialog" role="document">
-        <div className="modal-content">
-          <div className="modal-header bg-dark text-white">
-            <h5 className="modal-title">Review Request Details</h5>
-            <button type="button" className="btn-close btn-close-white" onClick={onClose} aria-label="Close"></button>
-          </div>
-          <div className="modal-body">
-            <div className="mb-3">
-              <div className="fw-bold">Client:</div>
-              <div>{request.client}</div>
-            </div>
-            
-            <div className="mb-3">
-              <div className="fw-bold">Project Address:</div>
-              <div>{request.project_address}</div>
-            </div>
-            
-            <div className="mb-3">
-              <div className="fw-bold">Renovation Type:</div>
-              <div>{request.renovation_type}</div>
-            </div>
-            
-            <div className="mb-3">
-              <div className="fw-bold">Preferred Material:</div>
-              <div>{request.preferred_material}</div>
-            </div>
-            
-            <div className="mb-3">
-              <div className="fw-bold">Budget:</div>
-              <div>{request.budget}</div>
-            </div>
-            
-            <div className="mb-3">
-              <div className="fw-bold">Description:</div>
-              <div>{request.description}</div>
-            </div>
-            
-            <div className="mb-3">
-            <div className="fw-bold">Files:</div>
-            <div className="file-list">
-              {request.files && request.files.length > 0 ? (
-                request.files.map((file, index) => {
-                  const fileName = file.fileName || file.imageUri?.split('/').pop() || `File ${index + 1}`;
-                  const fileUrl = file.imageUri || '#';
-                  
-                  return (
-                    <div key={index} className="mb-1">
-                      <a
-                        href={fileUrl}
-                        className="text-decoration-none text-primary d-inline-flex align-items-center"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <i className="bi bi-file-earmark me-2"></i>
-                        {fileName}
-                      </a>
-                    </div>
-                  );
-                })
-              ) : (
-                <div className="text-muted">No files attached</div>
-              )}
-            </div>
-          </div>
-          </div>
-          <div className="modal-footer justify-content-center">
-            <button 
-              type="button" 
-              className="btn btn-outline-primary px-4"
-              onClick={() => onAccept(Number(request.id))}
-            >
-              Accept Request
-            </button>
+    <Modal show={show} onHide={onClose} size="lg">
+      <Modal.Header closeButton>
+        <Modal.Title>Review Request Details</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <div className="mb-3">
+          <h6>Client</h6>
+          <p>{request.client}</p>
+        </div>
+        
+        <div className="mb-3">
+          <h6>Project Address</h6>
+          <p>{request.project_address}</p>
+        </div>
+        
+        <div className="mb-3">
+          <h6>Renovation Type</h6>
+          <p>{request.renovation_type}</p>
+        </div>
+        
+        <div className="mb-3">
+          <h6>Preferred Material</h6>
+          <p>{request.preferred_material}</p>
+        </div>
+        
+        <div className="mb-3">
+          <h6>Budget</h6>
+          <p>${request.budget.toLocaleString()}</p>
+        </div>
+        
+        <div className="mb-3">
+          <h6>Description</h6>
+          <p>{request.description}</p>
+        </div>
+        
+        <div className="mb-3">
+          <h6>Files</h6>
+          <div className="d-flex flex-wrap gap-2">
+            {request.files.map((file, index) => (
+              <a
+                key={index}
+                href={file.imageUri}
+                className="text-decoration-none"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {file.fileName || `File ${index + 1}`}
+              </a>
+            ))}
           </div>
         </div>
-      </div>
-    </div>
+      </Modal.Body>
+      
+      <Modal.Footer className="justify-content-between">
+        <Button 
+          variant="danger" 
+          onClick={() => onDeny(request.id)} label="Deny"
+        />
+        <Button 
+          variant="success" 
+          onClick={() => onAccept(request.id)}
+          label="Accept & Create Quote"
+        />
+      </Modal.Footer>
+    </Modal>
   );
 };
 

@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { IPublicClientApplication } from '@azure/msal-browser';
-import { fetchClientById, fetchAllClients, fetchClientContactInfoById, fetchClientsWithProjectsRFQs, fetchClientDetails, fetchRFQWithClientInfo } from './clientQueries';
+import { fetchClientById, fetchAllClients, fetchClientContactInfoById, fetchClientsWithProjectsRFQs, fetchClientDetails } from './clientQueries';
 import { ClientBasicInfo, ClientContactDisplay, ClientDetailsResponse } from './client.types';
-import { RFQWithClientInfo } from '../rfq/rfq.types';
+
 
 const QUERY_KEY = "client";
 
@@ -47,20 +47,11 @@ export function useClientData(instance: IPublicClientApplication) {
         });
     };
 
-    const getRFQWithClientInfo = (rfqId: bigint) => {
-        return useQuery<RFQWithClientInfo>({
-            queryKey: ['rfq', rfqId, 'withClient'],
-            queryFn: () => fetchRFQWithClientInfo(instance, rfqId),
-            staleTime: 5 * 60 * 1000
-        });
-    };
-
     return {
         getClient,
         getAllClients,
         getClientContactInfoById,
         getAllClientContactInfo,
         getClientDetails,
-        getRFQWithClientInfo
     };
 }

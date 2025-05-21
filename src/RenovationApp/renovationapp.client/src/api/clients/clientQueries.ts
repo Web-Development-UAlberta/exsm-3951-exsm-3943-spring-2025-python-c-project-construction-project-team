@@ -1,8 +1,7 @@
 import { IPublicClientApplication } from "@azure/msal-browser";
 import { graphClient } from '../axios';
 import { ClientBasicInfo, ClientContactDisplay, ClientDetailsResponse } from './client.types';
-import { RFQWithClientInfo, RFQ } from '../rfq/rfq.types';
-import { fetchRFQById } from '../rfq/rfqQueries';
+import { RFQ } from '../rfq/rfq.types';
 import { Project } from '../projects/project.types';
 
 export async function fetchClientById(msalInstance: IPublicClientApplication, clientId: string): Promise<ClientBasicInfo> {
@@ -96,17 +95,5 @@ export async function fetchClientDetails(msalInstance: IPublicClientApplication,
         projects,
         tasks,
         communications
-    };
-}
-
-export async function fetchRFQWithClientInfo(msalInstance: IPublicClientApplication, rfqId: bigint): Promise<RFQWithClientInfo> {
-    const rfq = await fetchRFQById(BigInt(rfqId), msalInstance);
-    const client = await fetchClientById(msalInstance, rfq.clientId);
-    if (!rfq || !client) {
-        throw new Error("Failed to fetch RFQ or client information");
-    }
-    return {
-        rfqData: rfq,
-        clientInfo: client
     };
 }

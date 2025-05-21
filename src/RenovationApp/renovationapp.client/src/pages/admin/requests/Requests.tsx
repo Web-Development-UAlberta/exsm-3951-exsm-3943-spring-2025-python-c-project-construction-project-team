@@ -209,7 +209,9 @@ const Requests = () => {
             </thead>
             <tbody>
               {rfqs && rfqs.length > 0 ? (
-                rfqs.map(request => (
+                rfqs
+                  .filter(request => request.status !== 'Declined')
+                  .map(request => (
                   <tr key={request.id}>
                     <td>{request.id}</td>
                     <td>{request.client}</td>
@@ -241,12 +243,6 @@ const Requests = () => {
                       >
                         Details
                       </button>
-                      <button
-                        className="btn btn-sm btn-outline-success"
-                        onClick={() => openQuoteEstimate(request.id)}
-                      >
-                        Quote
-                      </button>
                     </td>
                   </tr>
                 ))
@@ -271,13 +267,33 @@ const Requests = () => {
           closeRequestDetail();
           openQuoteEstimate(Number(id));
         }}
+        onDeny={async (id) => {
+          // Bugged: Decline button not working
+          closeRequestDetail();
+          try {
+            await updateRFQ(
+              BigInt(id),
+              { status: 'Declined' },
+              instance
+            );
+            closeRequestDetail();
+            refetch();
+          } catch (error) {
+            console.error('Error declining request:', error);
+            setErrorMessage('Failed to decline the request. Please try again.');
+          }
+        }}
       />
 
       {/* Quote Estimate Modal */}
       <QuoteEstimateModal
         show={showQuoteModal}
-        requestId={quoteRequestId}
         onClose={closeQuoteEstimate}
+        rfqId={quoteRequestId}
+        onQuoteSent={() => {
+          closeQuoteEstimate();
+          refetch();
+        }}
       />
     </div>
   );

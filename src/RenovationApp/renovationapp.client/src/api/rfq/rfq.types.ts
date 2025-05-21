@@ -1,5 +1,3 @@
-import { ClientBasicInfo } from "../clients";
-
 export type RFQImage = {
     id: bigint,
     fileName: string,
@@ -41,9 +39,4 @@ export type RFQUpdate ={
     budget?: number,
     projectAddress?: string,
     assignedEmployeeId?: string
-}
-
-export type RFQWithClientInfo = {
-    rfqData: RFQ;
-    clientInfo: ClientBasicInfo;
 }
