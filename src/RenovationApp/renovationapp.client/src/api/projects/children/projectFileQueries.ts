@@ -22,15 +22,23 @@ export async function uploadProjectFile(
     fileType: string,
     msalInstance: IPublicClientApplication
 ): Promise<boolean> {
-    // Step 1: Get signed upload URL, passing fileName and fileType in the body
+    // Step 1: Get signed upload URL, passing fileName, fileType, and projectId in the body
     const urlResponse = await apiClient(msalInstance).post(
         `/projects/${projectId}/files/upload-url`,
-        { fileName: file.name, fileType: fileType},
+        {
+            fileName: file.name,
+            fileType: fileType
+        },
+        { headers: { 'accept': '*/*' } }
     );
-    if (!urlResponse.data || !urlResponse.data.uploadUrl) {
+
+    // Check for url instead of uploadUrl based on your backend response
+    if (urlResponse.status !== 200) {
+        console.error("Upload URL response:", urlResponse.data);
         throw new Error(`Failed to get upload URL for project ${projectId}`);
     }
-    const uploadUrl = urlResponse.data.uploadUrl;
+
+    const uploadUrl = urlResponse.data.url;
 
     // Step 2: Upload file to signed URL
     const uploadResp = await fetch(uploadUrl, {
@@ -42,6 +50,9 @@ export async function uploadProjectFile(
     });
 
     if (!uploadResp.ok) {
+        console.error("Upload failed with status:", uploadResp.status);
+        const errorText = await uploadResp.text();
+        console.error("Error details:", errorText);
         throw new Error(`Failed to upload file for project ${projectId}`);
     }
 

@@ -12,7 +12,6 @@
     }
     public class UploadProjectFileRequestDto
     {
-        required public int ProjectId { get; set; }
         required public string FileType { get; set; } // "image" or "file"
         required public string FileName { get; set; }
     }

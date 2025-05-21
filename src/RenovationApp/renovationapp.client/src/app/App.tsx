@@ -25,14 +25,15 @@ function App({ instance }: { instance: IPublicClientApplication }) {
                             <Route path="gallery" element={<Gallery />} />
                             <Route path="rfq" element={<RequestQuote />} />
                             <Route path="account" element={<MyAccount />} />
-                            {/* Admin Portal */}
-                            <Route path="admin" element={<AdminLayout />}>
-                                <Route index element={<Requests />} />
-                                <Route path="requests" element={<Requests />} />
-                                <Route path="projects" element={<Projects />} />
-                                <Route path="projects/:id" element={<ProjectDetail />} />
-                                <Route path="contacts" element={<Contacts />} />
-                            </Route>
+                        </Route>
+
+                        {/* Admin Portal */}
+                        <Route path="/admin" element={<AdminLayout />}>
+                            <Route index element={<Requests />} />
+                            <Route path="requests" element={<Requests />} />
+                            <Route path="projects" element={<Projects />} />
+                            <Route path="projects/:id" element={<ProjectDetail />} />
+                            <Route path="contacts" element={<Contacts />} />
                         </Route>
 
                         {/* Redirect unmatched routes */}
