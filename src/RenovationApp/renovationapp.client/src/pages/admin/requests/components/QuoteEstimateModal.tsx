@@ -1,5 +1,5 @@
 // components/components/QuoteEstimateModal.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Modal } from 'react-bootstrap';
 import { Button } from '../../../../components/ButtonComponent/Button';
 import { useMsal } from '@azure/msal-react';
@@ -9,6 +9,7 @@ import { ProjectServiceCreateDTO } from '../../../../api/projects/project.types'
 import { useQuery } from '@tanstack/react-query';
 import { fetchRFQById } from '../../../../api/rfq/rfqQueries';
 import { useUpdateRFQ } from '../../../../api/rfq/rfq';
+import { generateAndDownloadPDF } from '../../../../utils/generatePDF';
 
 interface QuoteEstimateModalProps {
     show: boolean;
@@ -35,6 +36,9 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
 }) => {
     const { instance } = useMsal();
     const updateRFQ = useUpdateRFQ(instance);
+    const quoteRef = useRef<HTMLDivElement>(null);
+
+
     const [services, setServices] = useState<ServiceLine[]>([]);
     const [quoteNumber, setQuoteNumber] = useState('');
     const [startDate, setStartDate] = useState('');
@@ -94,13 +98,22 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
                 throw new Error('No client ID available from RFQ');
             }
 
-            // update RFQ status to "Quoted"
-            await updateRFQ.mutateAsync({
-                rfqid: BigInt(rfqId ?? 0),
-                rfq: {
-                    status: 'Quoted'
+            // Generate and download the PDF
+            if (quoteRef.current) {
+                const success = await generateAndDownloadPDF(quoteRef.current, `Quote_${quoteNumber || Date.now()}.pdf`);
+
+                if (!success) {
+                    throw new Error('Failed to generate PDF');
                 }
-            });
+            };
+
+            // update RFQ status to "Quoted"
+            // await updateRFQ.mutateAsync({
+            //     rfqid: BigInt(rfqId ?? 0),
+            //     rfq: {
+            //         status: 'Quoted'
+            //     }
+            // });
             // Create Project
             const projectData = {
                 status: 'Quoted',
@@ -134,6 +147,7 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
             }
         } catch (error) {
             console.error('Error creating project or services:', error);
+            console.error('Error generating PDF:', error);
         }
     };
 
@@ -143,7 +157,7 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
             <Modal.Title>Quote Estimate</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-            <div className="container">
+            <div className="container" ref={quoteRef}>
                 <div className="row mb-4">
                     <div className="col-md-6">
                         <div className="fw-bold">Bob & Susan Renovations</div>
@@ -202,6 +216,7 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
                     </div>
                 </div>
 
+                {/* Quote Items Table */}
                 <div className="quote-items mb-4">
                     <table className="table">
                         <thead>
@@ -258,6 +273,7 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
                     <Button variant="primary" className="outline" onClick={addItem} label="Add Item"/>
                 </div>
 
+                {/* Quote Summary */}
                 <div className="quote-summary">
                     <div className="row justify-content-end">
                         <div className="col-4">
@@ -284,7 +300,7 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
         variant="primary" 
         onClick={handleSubmit}
         disabled={services.length === 0}
-        label="Generate and Send"
+        label="Generate Quote & Download"
       />
     </Modal.Footer>
   </Modal>
