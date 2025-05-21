@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useMsal, useIsAuthenticated } from '@azure/msal-react';
 import { loginRequest } from '../config/authConfig';
-import logoPlaceholder from '../assets/logo_name.svg';
+import logoPlaceholder from '../assets/logo-no-bg-white.png';
 
 const AdminLayout: React.FC = () => {
   const { instance } = useMsal();
@@ -47,7 +47,7 @@ const AdminLayout: React.FC = () => {
       <nav className="navbar navbar-expand-lg admin-navbar">
 
         <div className='d-flex justify-content-between align-items-center w-100 px-3'>
-          <Link className="navbar-brand" to="/admin">
+          <Link className="navbar-brand" to="/admin/requests">
             <img src={logoPlaceholder} alt="Logo" height="40" />
           </Link>
           <div className='text-light h4 mb-0'>
