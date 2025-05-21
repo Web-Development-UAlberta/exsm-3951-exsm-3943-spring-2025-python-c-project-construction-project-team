@@ -15,7 +15,7 @@ export async function fetchProjects(
 
 // Fetch a single project by id (output DTO)
 export async function fetchProjectById(
-    id: number,
+    id: number | bigint,
     msalInstance: IPublicClientApplication
 ): Promise<ProjectOutputDTO> {
     const response = await apiClient(msalInstance).get(`/projects/${id}`, {});

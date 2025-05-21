@@ -37,7 +37,7 @@ const RequestQuote = () => {
 
     // Room size options
     const roomSizeOptions = [
-        { value: "Samll", label: "Samll : Less than 100 sq ft" },
+        { value: "Small", label: "Small : Less than 100 sq ft" },
         { value: "Medium", label: 'Medium: 100-200 sq ft' },
         { value: "Large", label: 'Large: 200-500 sq ft' },
         { value: "Extra Spacious", label: 'Extra Spacious: More than 500 sq ft' },

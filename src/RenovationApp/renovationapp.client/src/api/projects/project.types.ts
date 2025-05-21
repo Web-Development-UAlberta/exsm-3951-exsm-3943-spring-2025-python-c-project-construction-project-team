@@ -37,6 +37,7 @@ export type ProjectFile = {
     fileName: string;
     type: 'image' | 'document';
     projectId: number;
+    size: number;
 };
 
 export type ProjectCommunication = {
@@ -129,6 +130,7 @@ export type ProjectTaskDTO = {
     title?: string;
     description?: string;
     status?: string;
+    completed?: boolean;
 };
 
 export type ProjectServiceCreateDTO = {
@@ -197,6 +199,9 @@ export type ProjectOutCommunication = {
 export type ProjectOutClientInvoice = {
     id: number;
     paid?: string | null;
+    description: string;
+    createdTimestamp: string;
+    amount: number;
 };
 
 export type ProjectOutService = {
@@ -204,6 +209,7 @@ export type ProjectOutService = {
     status?: string | null;
     name: string;
     serviceTypeName?: string | null;
+    projectServiceInvoices: ProjectServiceInvoice[];
 };
 
 export type ProjectOutTask = {
@@ -224,6 +230,26 @@ export type ProjectOutputDTO = {
     clientInvoices?: ProjectOutClientInvoice[];
     projectServices?: ProjectOutService[];
     projectTasks?: ProjectOutTask[];
+    createdByEmployee?: string | null;
+    quoteScheduleStartOverride?: string | null;
+    quoteScheduleEndOverride?: string | null;
+    projectAddress: {
+        street: string;
+        city: string;
+        province: string;
+        postalCode: string;
+        country: string;
+    };
+    client: {
+    name: string;
+    email: string;
+    phone: string;
+    address: {
+      street: string;
+      city: string;
+      province: string;
+      postalCode: string;
+      country: string;
+    };
+  }
 };
-
-

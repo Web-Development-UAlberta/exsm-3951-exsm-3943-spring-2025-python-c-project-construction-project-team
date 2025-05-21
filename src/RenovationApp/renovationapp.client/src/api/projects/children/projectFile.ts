@@ -1,6 +1,8 @@
 import { IPublicClientApplication } from "@azure/msal-browser";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchProjectFiles, uploadProjectFile } from "./projectFileQueries";
+import { apiClient } from '../../axios';
+
 
 export function useProjectFiles(projectId: bigint, msalInstance: IPublicClientApplication) {
     return useQuery({
@@ -18,4 +20,15 @@ export function useUploadProjectFile(projectId: bigint, msalInstance: IPublicCli
             queryClient.invalidateQueries({ queryKey: ["projects", projectId, "files"] });
         }
     });
+}
+
+export function useDeleteProjectFile(projectId: bigint, msalInstance: IPublicClientApplication) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (fileId: bigint) =>
+      apiClient(msalInstance).delete(`/projects/${projectId}/files/${fileId}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["projects", projectId, "files"] });
+    },
+  });
 }
