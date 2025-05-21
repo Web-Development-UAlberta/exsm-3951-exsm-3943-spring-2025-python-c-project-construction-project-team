@@ -9,8 +9,11 @@ import Button from 'react-bootstrap/Button';
 import './Gallery.css';
 import ImagePlaceholder from "../../assets/placeholder-svg.svg";
 import { useRenovationTags } from '../../api/renotags/renotags';
-import { getPublicProjectsWithImages } from '../../api/projects/children/projectPublic';
+// import { getPublicProjectsWithImages } from '../../api/projects/children/projectPublic';
 import { ProjectPublicInfoWithImages } from '../../api/projects/project.types';
+import { gallery_mock_data } from './mockData';
+
+
 
 const renoTypes = [
     { label: 'Kitchen Remodels', value: 'KitchenRemodels' },
@@ -28,7 +31,9 @@ const Gallery = () => {
     const [budgetFilter, setBudgetFilter] = useState<string[]>([]);
     const [FilteredPP, setFilteredPP] = useState<ProjectPublicInfoWithImages[]>([]);
     const { data: renoTags } = useRenovationTags();
-    const { data: publicProjects = [] } = getPublicProjectsWithImages();
+    // const { data: publicProjects = [] } = getPublicProjectsWithImages();
+    const publicProjects: ProjectPublicInfoWithImages[] = gallery_mock_data;
+
 
     // State for fullscreen modal
     const [showModal, setShowModal] = useState(false);
@@ -207,9 +212,9 @@ const Gallery = () => {
                                 <Card className="gallery-card h-100">
                                     {pp.images && pp.images.length > 0 ? (
                                         <>
-                                            <div className="badge-cost-category">
+                                            {/* <div className="badge-cost-category">
                                                 {convertCostCategoryToString(pp.costCategory)}
-                                            </div>
+                                            </div> */}
                                             <Carousel
                                                 className="gallery-carousel"
                                                 interval={null}
@@ -224,8 +229,8 @@ const Gallery = () => {
                                                             src={image.url}
                                                             alt={image.fileName}
                                                         />
-                                                        <div className="gallery-caption">
-                                                            <h6>{pp.renovationType || 'Renovation Project'}</h6>
+                                                        <div className="gallery-caption p-2">
+                                                            <h6>{pp.renovationType?.replace(/([A-Z])/g, ' $1').trim()}</h6>
                                                             {pp.renovationTagIds && pp.renovationTagIds.length > 0 && (
                                                                 <small>{pp.renovationTagIds.join(', ')}</small>
                                                             )}
@@ -259,7 +264,7 @@ const Gallery = () => {
             >
                 <Modal.Header closeButton>
                     <Modal.Title>
-                        {selectedProject?.renovationType || 'Project Gallery'}
+                        {selectedProject?.renovationType?.replace(/([A-Z])/g, ' $1').trim()}
                         {selectedProject?.costCategory && (
                             <span className="ms-3 badge bg-secondary">
                                 {convertCostCategoryToString(selectedProject.costCategory)}

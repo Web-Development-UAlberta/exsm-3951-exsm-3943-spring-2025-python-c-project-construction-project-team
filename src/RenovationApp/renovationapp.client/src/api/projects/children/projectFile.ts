@@ -1,5 +1,5 @@
 import { IPublicClientApplication } from "@azure/msal-browser";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { fetchProjectFiles, uploadProjectFile } from "./projectFileQueries";
 
 export function useProjectFiles(projectId: bigint, msalInstance: IPublicClientApplication) {
