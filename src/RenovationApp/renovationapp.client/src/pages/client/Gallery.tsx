@@ -4,16 +4,11 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Card from 'react-bootstrap/Card';
 import Carousel from 'react-bootstrap/Carousel';
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
 import './Gallery.css';
 import ImagePlaceholder from "../../assets/placeholder-svg.svg";
 import { useRenovationTags } from '../../api/renotags/renotags';
-// import { getPublicProjectsWithImages } from '../../api/projects/children/projectPublic';
+import { getPublicProjectsWithImages } from '../../api/projects/children/projectPublic';
 import { ProjectPublicInfoWithImages } from '../../api/projects/project.types';
-import { gallery_mock_data } from './mockData';
-
-
 
 const renoTypes = [
     { label: 'Kitchen Remodels', value: 'KitchenRemodels' },
@@ -23,7 +18,6 @@ const renoTypes = [
 ];
 const renoBudgets = ['0-10k', '10k-20k', '20k-30k', '30k+'];
 
-
 const Gallery = () => {
     // State for filters
     const [roomTypeFilter, setRoomTypeFilter] = useState<string[]>([]);
@@ -31,9 +25,7 @@ const Gallery = () => {
     const [budgetFilter, setBudgetFilter] = useState<string[]>([]);
     const [FilteredPP, setFilteredPP] = useState<ProjectPublicInfoWithImages[]>([]);
     const { data: renoTags } = useRenovationTags();
-    // const { data: publicProjects = [] } = getPublicProjectsWithImages();
-    const publicProjects: ProjectPublicInfoWithImages[] = gallery_mock_data;
-
+    const { data: publicProjects = [] } = getPublicProjectsWithImages();
 
     // State for fullscreen modal
     const [showModal, setShowModal] = useState(false);
@@ -125,20 +117,36 @@ const Gallery = () => {
         setSelectedProject(project);
         setActiveIndex(initialIndex);
         setShowModal(true);
+        // Prevent scrolling when modal is open
+        document.body.style.overflow = 'hidden';
     };
 
     // Handler to close the full screen modal
     const handleCloseModal = () => {
         setShowModal(false);
         setSelectedProject(null);
+        // Restore scrolling
+        document.body.style.overflow = 'auto';
     };
 
+    // Navigate to previous image in fullscreen modal
+    const goToPrevious = () => {
+        if (!selectedProject || !selectedProject.images) return;
+        setActiveIndex((prevIndex) =>
+            prevIndex === 0 ? selectedProject.images.length - 1 : prevIndex - 1
+        );
+    };
 
+    // Navigate to next image in fullscreen modal
+    const goToNext = () => {
+        if (!selectedProject || !selectedProject.images) return;
+        setActiveIndex((prevIndex) =>
+            prevIndex === selectedProject.images.length - 1 ? 0 : prevIndex + 1
+        );
+    };
 
     return (
         <div>
-
-
             <Row>
                 {/* Filter Sidebar */}
                 <Col lg={3} md={4} className="filter-sidebar">
@@ -212,9 +220,6 @@ const Gallery = () => {
                                 <Card className="gallery-card h-100">
                                     {pp.images && pp.images.length > 0 ? (
                                         <>
-                                            {/* <div className="badge-cost-category">
-                                                {convertCostCategoryToString(pp.costCategory)}
-                                            </div> */}
                                             <Carousel
                                                 className="gallery-carousel"
                                                 interval={null}
@@ -255,54 +260,66 @@ const Gallery = () => {
             </Row>
 
             {/* Fullscreen Modal */}
-            <Modal
-                show={showModal}
-                onHide={handleCloseModal}
-                size="xl"
-                centered
-                className="fullscreen-modal"
-            >
-                <Modal.Header closeButton>
-                    <Modal.Title>
-                        {selectedProject?.renovationType?.replace(/([A-Z])/g, ' $1').trim()}
-                        {selectedProject?.costCategory && (
-                            <span className="ms-3 badge bg-secondary">
-                                {convertCostCategoryToString(selectedProject.costCategory)}
-                            </span>
-                        )}
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {selectedProject && selectedProject.images && selectedProject.images.length > 0 && (
-                        <Carousel
-                            activeIndex={activeIndex}
-                            onSelect={(index) => setActiveIndex(index)}
-                            interval={null}
+            {showModal && selectedProject && selectedProject.images && selectedProject.images.length > 0 && (
+                <div className="fullscreen-overlay">
+                    {/* Close button */}
+                    <button
+                        className="fullscreen-close-btn"
+                        onClick={handleCloseModal}
+                        aria-label="Close"
+                    >
+                        ✕
+                    </button>
+
+                    {/* Fullscreen navigation */}
+                    <div className="fullscreen-navigation-container">
+                        <button
+                            className="fullscreen-nav-btn prev"
+                            onClick={goToPrevious}
+                            aria-label="Previous image"
                         >
-                            {selectedProject.images.map((image, index) => (
-                                <Carousel.Item key={image.fileName + index}>
-                                    <img
-                                        className="d-block w-100"
-                                        src={image.url}
-                                        alt={image.fileName}
-                                    />
-                                    <Carousel.Caption>
-                                        <h5>{selectedProject.renovationType || 'Renovation Project'}</h5>
-                                        {selectedProject.renovationTagIds && selectedProject.renovationTagIds.length > 0 && (
-                                            <p>{selectedProject.renovationTagIds.join(', ')}</p>
-                                        )}
-                                    </Carousel.Caption>
-                                </Carousel.Item>
-                            ))}
-                        </Carousel>
-                    )}
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseModal}>
-                        Close
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+                            ‹
+                        </button>
+
+                        <div className="fullscreen-image-container">
+                            <img
+                                src={selectedProject.images[activeIndex].url}
+                                alt={selectedProject.images[activeIndex].fileName || 'Project image'}
+                                className="fullscreen-image"
+                            />
+                        </div>
+
+                        <button
+                            className="fullscreen-nav-btn next"
+                            onClick={goToNext}
+                            aria-label="Next image"
+                        >
+                            ›
+                        </button>
+                    </div>
+
+                    {/* Image info footer */}
+                    <div className="fullscreen-footer">
+                        <div className="fullscreen-project-info">
+                            <h3>{selectedProject.renovationType?.replace(/([A-Z])/g, ' $1').trim() || 'Renovation Project'}</h3>
+                            <div>
+                                {selectedProject.renovationTagIds && selectedProject.renovationTagIds.length > 0 && (
+                                    <span>{selectedProject.renovationTagIds.join(', ')}</span>
+                                )}
+                                {selectedProject.costCategory && (
+                                    <span className="budget-badge">
+                                        {convertCostCategoryToString(selectedProject.costCategory)}
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="fullscreen-counter">
+                            {activeIndex + 1} / {selectedProject.images.length}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

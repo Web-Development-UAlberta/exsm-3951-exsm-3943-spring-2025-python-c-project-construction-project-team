@@ -1,4 +1,6 @@
-﻿namespace RenovationApp.Server.Services.Fileservice.Dtos
+﻿using RenovationApp.Server.Models;
+
+namespace RenovationApp.Server.Services.Fileservice.Dtos
 {
     public class FileDownloadDto
     {

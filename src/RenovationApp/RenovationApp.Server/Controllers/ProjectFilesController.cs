@@ -10,7 +10,8 @@ namespace RenovationApp.Server.Controllers
 {
     [ApiController]
     [Route("projects/{projectId}/files")] // Removed the leading slash
-    [Authorize(Policy = "projectManagerOnly")]
+    [Authorize]
+    // [Authorize(Policy = "projectManagerOnly")]
     public class ProjectFilesController : ControllerBase
     {
         private readonly IStorageService _storageService;
@@ -27,68 +28,32 @@ namespace RenovationApp.Server.Controllers
         [HttpPost("upload-url")]
         public async Task<IActionResult> GetUploadUrl(int projectId, [FromBody] UploadProjectFileRequestDto dto)
         {
-            try
-            {
-            
-                // Check if the project exists
+
                 var project = await _db.Projects.FindAsync(projectId);
                 if (project == null)
                 {
-                    Console.WriteLine($"Project not found: ProjectId={projectId}");
                     return NotFound(new { error = "Project not found." });
-                }
-
-                // Check if the file type is valid
-                if (!Enum.TryParse<FileType>(dto.FileType, true, out var fileType))
-                {
-                    Console.WriteLine($"Invalid file type: {dto.FileType}");
-                    return BadRequest(new { error = "Invalid file type specified." });
                 }
 
                 // Generate presigned URL
                 var expiry = TimeSpan.FromMinutes(10);
-                Console.WriteLine($"Generating presigned URL for bucket: {_projectBucket}, fileType: {dto.FileType}, projectId: {projectId}, fileName: {dto.FileName}");
-
+               
                 var result = await _storageService.GeneratePresignedUploadUrlAsync(_projectBucket, dto.FileType, projectId, dto.FileName, expiry);
-                if (result == null)
-                {
-                    Console.WriteLine("Failed to generate presigned URL: StorageService returned null");
-                    return StatusCode(500, new { error = "Failed to generate upload URL" });
-                }
-
-                Console.WriteLine($"Generated presigned URL successfully: ObjectKey={result.ObjectKey}");
-
+             
                 // Create and save the file record
                 var file = new ProjectFile
                 {
                     ProjectId = projectId,
-                    Type = fileType,
+                    Type = Enum.Parse<FileType>(dto.FileType, ignoreCase: true),
                     FileName = dto.FileName,
                     FileUri = result.ObjectKey,
                     UploadedTimestamp = DateTime.UtcNow
                 };
 
-                Console.WriteLine("Adding file record to database");
                 _db.ProjectFiles.Add(file);
                 await _db.SaveChangesAsync();
-                Console.WriteLine($"File record saved. FileId={file.Id}");
-
                 return Ok(new { url = result.Url, key = result.ObjectKey });
-            }
-            catch (Exception ex)
-            {
-                // Log the exception details
-                Console.WriteLine($"Error in GetUploadUrl: {ex.Message}");
-                Console.WriteLine($"Stack trace: {ex.StackTrace}");
-
-                if (ex.InnerException != null)
-                {
-                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
-                    Console.WriteLine($"Inner stack trace: {ex.InnerException.StackTrace}");
-                }
-
-                return StatusCode(500, new { error = "An error occurred while processing your request", details = ex.Message });
-            }
+         
         }
         
         [HttpGet]

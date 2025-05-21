@@ -31,7 +31,7 @@ export async function uploadProjectFile(
         },
         { headers: { 'accept': '*/*' } }
     );
-
+    console.log("urlResponse", urlResponse)
     // Check for url instead of uploadUrl based on your backend response
     if (urlResponse.status !== 200) {
         console.error("Upload URL response:", urlResponse.data);
@@ -50,9 +50,6 @@ export async function uploadProjectFile(
     });
 
     if (!uploadResp.ok) {
-        console.error("Upload failed with status:", uploadResp.status);
-        const errorText = await uploadResp.text();
-        console.error("Error details:", errorText);
         throw new Error(`Failed to upload file for project ${projectId}`);
     }
 
