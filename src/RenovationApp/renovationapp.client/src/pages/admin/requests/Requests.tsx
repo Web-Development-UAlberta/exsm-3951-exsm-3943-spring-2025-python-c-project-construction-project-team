@@ -106,17 +106,19 @@ const Requests = () => {
   });
 
   useEffect(() => {
-    if (rfqDetail && selectedRFQId) {
-      setSelectedRequest({
-        id: Number(rfqDetail.id),
-        client: rfqDetail.clientId,
-        project_address: rfqDetail.projectAddress ?? 'N/A',
-        renovation_type: rfqDetail.renovationType ?? 'N/A',
-        preferred_material: rfqDetail.preferredMaterial ?? 'N/A',
-        budget: rfqDetail.budget ?? 0,
-        description: rfqDetail.description ?? 'N/A',
-        files: Array.isArray(rfqImages) ? rfqImages : []
-      });
+    if (rfqDetail && selectedRFQId && rfqImages) {
+        if (!selectedRequest || selectedRequest.id !== Number(rfqDetail.id)) {
+          setSelectedRequest({
+          id: Number(rfqDetail.id),
+          client: rfqDetail.clientId,
+          project_address: rfqDetail.projectAddress ?? 'N/A',
+          renovation_type: rfqDetail.renovationType ?? 'N/A',
+          preferred_material: rfqDetail.preferredMaterial ?? 'N/A',
+          budget: rfqDetail.budget ?? 0,
+          description: rfqDetail.description ?? 'N/A',
+          files: Array.isArray(rfqImages) ? rfqImages : []
+        });
+      }
     }
   }, [rfqDetail, rfqImages, selectedRFQId]);
 
@@ -268,20 +270,28 @@ const Requests = () => {
           openQuoteEstimate(Number(id));
         }}
         onDeny={async (id) => {
-          // Bugged: Decline button not working
-          closeRequestDetail();
           try {
-            await updateRFQ(
-              BigInt(id),
-              { status: 'Declined' },
-              instance
-            );
-            closeRequestDetail();
-            refetch();
-          } catch (error) {
-            console.error('Error declining request:', error);
-            setErrorMessage('Failed to decline the request. Please try again.');
-          }
+            // Bug: status updates to "Declined" but not reflected in UI
+            // doesn't get removed from the list
+              await updateRFQ(
+                  BigInt(id),
+                  { status: 'Declined' },
+                  instance
+              );
+              
+              // Remove request from cache
+              queryClient.setQueryData(['rfqs'], (oldData: any) => {
+                  if (!oldData) return oldData;
+                  return oldData.filter((request: any) => request.id !== id);
+              });
+
+              // Close modal and show success message
+              closeRequestDetail();
+
+            } catch (error) {
+                console.error('Error declining request:', error);
+                setErrorMessage('Failed to decline the request. Please try again.');
+            }
         }}
       />
 

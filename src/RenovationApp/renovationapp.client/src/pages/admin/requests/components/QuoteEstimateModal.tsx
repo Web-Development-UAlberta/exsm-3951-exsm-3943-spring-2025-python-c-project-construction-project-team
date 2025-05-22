@@ -6,7 +6,7 @@ import { useMsal } from '@azure/msal-react';
 import { useCreateProjectService } from '../../../../api/projects/children/projectService';
 import { useCreateProject } from '../../../../api/projects/useProjectOutput';
 import { ProjectServiceCreateDTO } from '../../../../api/projects/project.types';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchRFQById } from '../../../../api/rfq/rfqQueries';
 import { useUpdateRFQ } from '../../../../api/rfq/rfq';
 import { generateAndDownloadPDF } from '../../../../utils/generatePDF';
@@ -50,6 +50,12 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
     const createProject = useCreateProject(instance);
     const createService = useCreateProjectService(BigInt(rfqId || 0), instance);
 
+    const formatDateWithoutTimezone = (dateString: string) => {
+        const date = new Date(dateString);
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}T00:00:00`;
+    }
+
+    const queryClient = useQueryClient();
     const { data: rfqData } = useQuery({
         queryKey: ['rfq', rfqId],
         queryFn: () => rfqId ? fetchRFQById(BigInt(rfqId), instance) : null,
@@ -118,15 +124,16 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
             }
 
             // update RFQ status to "Quoted"
-            await updateRFQ.mutateAsync({
-                rfqid: BigInt(rfqId ?? 0),
-                rfq: {
-                    status: 'Quoted'
-                }
-            });
+            // await updateRFQ.mutateAsync({
+            //     rfqid: BigInt(rfqId ?? 0),
+            //     rfq: {
+            //         status: 'Quoted'
+            //     }
+            // });
+            
             // Create Project
             const projectData = {
-                status: 'Quoted',
+                status: 'Quote Complete',
                 rfqId: rfqId || undefined,
                 clientId: rfqData.clientId
             };
@@ -141,15 +148,35 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
                     projectServiceTypeId: service.projectServiceTypeId,
                     quotePrice: service.quotePrice,
                     quoteCost: service.quoteCost,
-                    quoteStartDate: new Date(startDate).toISOString(),
-                    quoteEndDate: new Date(endDate).toISOString(),
+                    quoteStartDate: formatDateWithoutTimezone(startDate),
+                    quoteEndDate: formatDateWithoutTimezone(endDate),
                     status: 'Quoted',
-                    projectId: createdProject.id,
                 };
+                console.log('Creating service for project:', createdProject.id);
+                console.log('Creating service with DTO:', serviceDTO);
                 return createService.mutateAsync(serviceDTO);
             });
 
             await Promise.all(servicePromises);
+
+            try {
+            await updateRFQ.mutateAsync({
+                rfqId: BigInt(rfqId ?? 0),
+                rfq: {
+                    status: 'Quoted'
+                }
+            });
+
+            // Update cache only after successful RFQ update
+            queryClient.setQueryData(['rfqs'], (oldData: any) => {
+                if (!oldData) return oldData;
+                return oldData.filter((request: any) => request.id !== rfqId);
+            });
+        } catch (rfqError) {
+            console.error('Error updating RFQ status:', rfqError);
+            // Project is created but RFQ update failed
+            // You might want to show a warning to the user
+        }
             onQuoteSent();
             onClose();
             } else {

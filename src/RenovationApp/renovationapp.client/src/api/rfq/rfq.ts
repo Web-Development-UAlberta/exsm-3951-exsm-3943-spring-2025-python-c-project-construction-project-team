@@ -43,7 +43,7 @@ export function useCreateRFQ(msalInstance: IPublicClientApplication) {
 export function useUpdateRFQ(msalInstance: IPublicClientApplication) {
     const queryClient = useQueryClient();
     const mutation = useMutation({
-        mutationFn: ({ rfqid, rfq }: { rfqid: bigint; rfq: RFQUpdate }) => updateRFQ(rfqid, rfq, msalInstance),
+        mutationFn: ({ rfqId, rfq }: { rfqId: bigint; rfq: RFQUpdate }) => updateRFQ(rfqId, rfq, msalInstance),
         onSuccess: (result: RFQ) => {
             queryClient.setQueryData(["rfqs", { id: result.id }], result);
         }

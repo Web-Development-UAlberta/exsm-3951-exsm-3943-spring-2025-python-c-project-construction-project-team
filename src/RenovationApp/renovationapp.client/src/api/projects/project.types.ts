@@ -142,7 +142,6 @@ export type ProjectServiceCreateDTO = {
     actualStartDate?: string;
     actualEndDate?: string;
     status?: string;
-    projectId?: number;
 };
 
 export type ProjectServiceUpdateDTO = {
