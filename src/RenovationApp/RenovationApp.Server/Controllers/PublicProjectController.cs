@@ -27,7 +27,11 @@ namespace RenovationApp.Server.Controllers
         public async Task<ActionResult<List<ProjectPublicInfo>>> GetProjectPublic()
         {
             // Check if the project exists and is public
-            var projects = await _db.Projects.Include(p => p.ClientInvoices).Where(p => p.IsPublic).ToListAsync();
+            var projects = await _db.Projects
+             .Include(p => p.ClientInvoices)
+             .Include(p => p.RenovationTags)
+             .Where(p => p.IsPublic)
+             .ToListAsync();
 
             var projectsOut = new List<ProjectPublicInfo>();
 
