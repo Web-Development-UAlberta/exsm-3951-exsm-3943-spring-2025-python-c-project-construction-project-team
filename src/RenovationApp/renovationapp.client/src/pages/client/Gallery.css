@@ -1,3 +1,83 @@
+.gallery-carousel .carousel-control-prev,
+.gallery-carousel .carousel-control-next {
+    width: 15%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.gallery-carousel:hover .carousel-control-prev,
+.gallery-carousel:hover .carousel-control-next {
+    opacity: 0.7;
+}
+
+.gallery-carousel .carousel-indicators {
+    margin-bottom: 0;
+}
+
+.gallery-carousel .carousel-indicators button {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.6);
+    margin: 0 3px;
+}
+
+.gallery-carousel .carousel-indicators button.active {
+    background-color: white;
+}
+
+.gallery-carousel {
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.gallery-card .gallery-image {
+    object-fit: cover;
+    height: 200px;
+}
+
+/* Fullscreen modal styles */
+.fullscreen-modal .modal-dialog {
+    max-width: 90vw;
+    margin: 10px auto;
+}
+
+.fullscreen-modal .carousel-item img {
+    max-height: 80vh;
+    object-fit: contain;
+    margin: 0 auto;
+}
+
+.gallery-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.gallery-carousel:hover .gallery-caption {
+    opacity: 1;
+}
+
+.badge-cost-category {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 5px 8px;
+    border-radius: 20px;
+    font-size: 12px;
+    z-index: 1;
+}
+
+
 .filter-sidebar {
     padding-top: 180px;
     background-color: #f2f2f2;
@@ -78,6 +158,9 @@
     font-size: 0.9rem;
     color: #666;
 }
+
+
+
 
 /* Make filter sidebar sticky on larger screens */
 @media (min-width: 992px) {

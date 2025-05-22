@@ -4,10 +4,12 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace RenovationApp.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class regenerateEF : Migration
+    public partial class InitialUpdate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -28,43 +30,7 @@ namespace RenovationApp.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProjectServiceTypes",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(type: "varchar(100)", nullable: true),
-                    description = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProjectServiceTypes", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RFQs",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    created_timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    client_id = table.Column<string>(type: "varchar(255)", nullable: false),
-                    status = table.Column<string>(type: "text", nullable: true),
-                    assigned_employee_id = table.Column<string>(type: "varchar(255)", nullable: true),
-                    PreferredMaterial = table.Column<string>(type: "character varying(160)", maxLength: 160, nullable: true),
-                    Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    renovation_type = table.Column<string>(type: "text", nullable: true),
-                    budget = table.Column<decimal>(type: "numeric(9,2)", nullable: true),
-                    ProjectAddress = table.Column<string>(type: "character varying(160)", maxLength: 160, nullable: true),
-                    RoomSize = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RFQs", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Users",
+                name: "AspNetUsers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -91,7 +57,43 @@ namespace RenovationApp.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProjectServiceTypes",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(type: "varchar(100)", nullable: true),
+                    description = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProjectServiceTypes", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RFQs",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    created_timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    client_id = table.Column<string>(type: "varchar(255)", nullable: false),
+                    status = table.Column<string>(type: "text", nullable: false),
+                    assigned_employee_id = table.Column<string>(type: "varchar(255)", nullable: true),
+                    PreferredMaterial = table.Column<string>(type: "character varying(160)", maxLength: 160, nullable: true),
+                    Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    renovation_type = table.Column<string>(type: "text", nullable: false),
+                    budget = table.Column<decimal>(type: "numeric(9,2)", nullable: true),
+                    ProjectAddress = table.Column<string>(type: "character varying(160)", maxLength: 160, nullable: true),
+                    RoomSize = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RFQs", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -116,27 +118,6 @@ namespace RenovationApp.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RFQImages",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UploadedTimestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ImageUri = table.Column<string>(type: "text", nullable: false),
-                    RFQId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RFQImages", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_RFQImages_RFQs_RFQId",
-                        column: x => x.RFQId,
-                        principalTable: "RFQs",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetUserClaims",
                 columns: table => new
                 {
@@ -150,9 +131,9 @@ namespace RenovationApp.Server.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUserClaims_Users_UserId",
+                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -170,9 +151,9 @@ namespace RenovationApp.Server.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
                     table.ForeignKey(
-                        name: "FK_AspNetUserLogins_Users_UserId",
+                        name: "FK_AspNetUserLogins_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -194,9 +175,9 @@ namespace RenovationApp.Server.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AspNetUserRoles_Users_UserId",
+                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -214,9 +195,9 @@ namespace RenovationApp.Server.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
                     table.ForeignKey(
-                        name: "FK_AspNetUserTokens_Users_UserId",
+                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -227,15 +208,17 @@ namespace RenovationApp.Server.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    created_timestamp = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    created_by_employee = table.Column<int>(type: "integer", nullable: true),
-                    client_id = table.Column<int>(type: "integer", nullable: false),
+                    created_timestamp = table.Column<DateTime>(type: "timestamp without time zone", nullable: true, defaultValueSql: "NOW()"),
+                    created_by_employee = table.Column<string>(type: "varchar(255)", nullable: false),
+                    client_id = table.Column<string>(type: "varchar(255)", nullable: false),
                     rfq_id = table.Column<int>(type: "int", nullable: true),
                     status = table.Column<string>(type: "text", nullable: true),
                     is_public = table.Column<bool>(type: "boolean", nullable: false),
                     quote_price_override = table.Column<decimal>(type: "numeric(10,2)", nullable: true),
                     quote_schedule_start_override = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    quote_schedule_end_override = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    quote_schedule_end_override = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    renovation_type = table.Column<int>(type: "integer", nullable: true),
+                    renovation_tags = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -246,18 +229,29 @@ namespace RenovationApp.Server.Migrations
                         principalTable: "RFQs",
                         principalColumn: "id",
                         onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RFQImages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    FileName = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    FilePath = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    UploadedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ImageUri = table.Column<string>(type: "text", nullable: false),
+                    RFQId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RFQImages", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Projects_Users_client_id",
-                        column: x => x.client_id,
-                        principalTable: "Users",
-                        principalColumn: "Id",
+                        name: "FK_RFQImages_RFQs_RFQId",
+                        column: x => x.RFQId,
+                        principalTable: "RFQs",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Projects_Users_created_by_employee",
-                        column: x => x.created_by_employee,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -266,10 +260,10 @@ namespace RenovationApp.Server.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    created_timestamp = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    created_timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     description = table.Column<string>(type: "text", nullable: true),
                     payment_instructions = table.Column<string>(type: "text", nullable: true),
-                    paid = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    paid = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     amount = table.Column<decimal>(type: "decimal", nullable: true),
                     project_id = table.Column<int>(type: "int", nullable: true)
                 },
@@ -291,8 +285,8 @@ namespace RenovationApp.Server.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     comment = table.Column<string>(type: "text", nullable: false),
-                    created_timestamp = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    created_by_employee = table.Column<int>(type: "integer", nullable: true),
+                    created_timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    created_by_employee = table.Column<string>(type: "varchar(255)", nullable: false),
                     project_id = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -304,12 +298,6 @@ namespace RenovationApp.Server.Migrations
                         principalTable: "Projects",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ProjectComments_Users_created_by_employee",
-                        column: x => x.created_by_employee,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -397,9 +385,9 @@ namespace RenovationApp.Server.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    created_timestamp = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    created_timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     project_id = table.Column<int>(type: "int", nullable: true),
-                    user_id = table.Column<int>(type: "int", nullable: true),
+                    user_id = table.Column<string>(type: "varchar(255)", nullable: true),
                     title = table.Column<string>(type: "text", maxLength: 100, nullable: true),
                     description = table.Column<string>(type: "text", nullable: true),
                     status = table.Column<string>(type: "text", maxLength: 100, nullable: true)
@@ -413,12 +401,6 @@ namespace RenovationApp.Server.Migrations
                         principalTable: "Projects",
                         principalColumn: "id",
                         onDelete: ReferentialAction.SetNull);
-                    table.ForeignKey(
-                        name: "FK_ProjectTasks_Users_user_id",
-                        column: x => x.user_id,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -427,7 +409,7 @@ namespace RenovationApp.Server.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    created_timestamp = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    created_timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     service_id = table.Column<int>(type: "int", nullable: false),
                     amount = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
                     paid_at = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
@@ -441,6 +423,39 @@ namespace RenovationApp.Server.Migrations
                         principalTable: "ProjectServices",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Projects",
+                columns: new[] { "id", "client_id", "created_by_employee", "is_public", "quote_price_override", "quote_schedule_end_override", "quote_schedule_start_override", "rfq_id", "renovation_tags", "renovation_type", "status" },
+                values: new object[,]
+                {
+                    { 1, "client-001", "employee-001", true, 12500m, null, null, null, "modern,luxury", 0, null },
+                    { 2, "client-002", "employee-002", true, 9500m, null, null, null, "rustic", 1, null },
+                    { 3, "client-003", "employee-003", true, 18000m, null, null, null, "modern,luxury", 2, null },
+                    { 4, "client-004", "employee-004", true, null, null, null, null, "rustic", 1, null },
+                    { 5, "client-005", "employee-001", true, 7600m, null, null, null, "countrstyle", 0, null },
+                    { 6, "client-006", "employee-002", true, null, null, null, null, "rustic,modern", 3, null },
+                    { 7, "client-007", "employee-001", true, 12300m, null, null, null, "rustic,modern", 3, null },
+                    { 8, "client-008", "employee-004", true, null, null, null, null, "countrstyle,luxury", 0, null },
+                    { 9, "client-009", "employee-001", true, null, null, null, null, "luxury,modern", 2, null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ClientInvoices",
+                columns: new[] { "id", "amount", "created_timestamp", "description", "paid", "payment_instructions", "project_id" },
+                values: new object[,]
+                {
+                    { 1, 5500m, new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1260), null, null, null, 1 },
+                    { 2, 3000m, new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1265), null, null, null, 1 },
+                    { 3, 6000m, new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1267), null, null, null, 2 },
+                    { 4, 9000m, new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1268), null, null, null, 3 },
+                    { 5, 8000m, new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1269), null, null, null, 4 },
+                    { 6, 8000m, new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1270), null, null, null, 5 },
+                    { 7, 8000m, new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1271), null, null, null, 6 },
+                    { 8, 4000m, new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1272), null, null, null, 7 },
+                    { 9, 5000m, new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1272), null, null, null, 8 },
+                    { 10, 3500m, new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1273), null, null, null, 9 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -470,14 +485,20 @@ namespace RenovationApp.Server.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
+                name: "EmailIndex",
+                table: "AspNetUsers",
+                column: "NormalizedEmail");
+
+            migrationBuilder.CreateIndex(
+                name: "UserNameIndex",
+                table: "AspNetUsers",
+                column: "NormalizedUserName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ClientInvoices_project_id",
                 table: "ClientInvoices",
                 column: "project_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProjectComments_created_by_employee",
-                table: "ProjectComments",
-                column: "created_by_employee");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProjectComments_project_id",
@@ -493,16 +514,6 @@ namespace RenovationApp.Server.Migrations
                 name: "IX_ProjectFiles_project_id",
                 table: "ProjectFiles",
                 column: "project_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Projects_client_id",
-                table: "Projects",
-                column: "client_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Projects_created_by_employee",
-                table: "Projects",
-                column: "created_by_employee");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Projects_rfq_id",
@@ -531,25 +542,9 @@ namespace RenovationApp.Server.Migrations
                 column: "project_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProjectTasks_user_id",
-                table: "ProjectTasks",
-                column: "user_id");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_RFQImages_RFQId",
                 table: "RFQImages",
                 column: "RFQId");
-
-            migrationBuilder.CreateIndex(
-                name: "EmailIndex",
-                table: "Users",
-                column: "NormalizedEmail");
-
-            migrationBuilder.CreateIndex(
-                name: "UserNameIndex",
-                table: "Users",
-                column: "NormalizedUserName",
-                unique: true);
         }
 
         /// <inheritdoc />
@@ -595,6 +590,9 @@ namespace RenovationApp.Server.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
                 name: "ProjectServices");
 
             migrationBuilder.DropTable(
@@ -605,9 +603,6 @@ namespace RenovationApp.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "RFQs");
-
-            migrationBuilder.DropTable(
-                name: "Users");
         }
     }
 }

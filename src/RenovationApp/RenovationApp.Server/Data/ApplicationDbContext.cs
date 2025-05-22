@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using RenovationApp.Server.Models;
 
 namespace RenovationApp.Server.Data
@@ -23,7 +24,6 @@ namespace RenovationApp.Server.Data
         public DbSet<RFQ> RFQs { get; set; }
         public DbSet<RFQImage> RFQImages { get; set; }
         public DbSet<ClientInvoice> ClientInvoices { get; set; }
-        public DbSet<RenovationTag> RenovationTags { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -76,19 +76,26 @@ namespace RenovationApp.Server.Data
                     .WithOne(pt => pt.Project)
                     .HasForeignKey(pt => pt.ProjectId)
                     .OnDelete(DeleteBehavior.SetNull);
-            });
 
-            // Many-to-many: Project <-> RenovationTag
-            modelBuilder.Entity<Project>()
-                .HasMany(p => p.RenovationTags)
-                .WithMany()
-                .UsingEntity(j => j.ToTable("ProjectRenovationTags"));
+                // configure the conversion for storing enum arrays in your database
+                entity.Property(p => p.RenovationTags)
+                    .HasConversion(
+                        v => string.Join(',', v),
+                        v => v.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                            .Select(tag => Enum.Parse<RenovationTag>(tag))
+                            .ToArray(),
+                        new ValueComparer<RenovationTag[]>(
+                            (c1, c2) => c1.SequenceEqual(c2),
+                            c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                            c => c.ToArray()
+                        )
+                    );
+                });
 
             // Configure RFQ entity
             modelBuilder.Entity<RFQ>(entity =>
             {
                 entity.ToTable("RFQs");
-
                 // Configure relationship with RFQImage
                 entity.HasMany(r => r.RFQImages)
                     .WithOne(ri => ri.RFQ)
@@ -99,24 +106,24 @@ namespace RenovationApp.Server.Data
             // Configure RFQImage entity
             modelBuilder.Entity<RFQImage>(entity =>
             {
-            entity.HasKey(e => e.Id);
+                entity.HasKey(e => e.Id);
 
-            entity.Property(e => e.FileName)
-                  .IsRequired()
-                  .HasMaxLength(255);
+                entity.Property(e => e.FileName)
+                      .IsRequired()
+                      .HasMaxLength(255);
 
-            entity.Property(e => e.FilePath)
-                  .IsRequired()
-                  .HasMaxLength(500);
+                entity.Property(e => e.FilePath)
+                      .IsRequired()
+                      .HasMaxLength(500);
 
-            entity.Property(e => e.ImageUri)
-                  .IsRequired();
+                entity.Property(e => e.ImageUri)
+                      .IsRequired();
 
-            entity.HasOne(e => e.RFQ)
-                  .WithMany(r => r.RFQImages)
-                  .HasForeignKey(e => e.RFQId)
-                  .OnDelete(DeleteBehavior.Cascade);
-        });
+                entity.HasOne(e => e.RFQ)
+                      .WithMany(r => r.RFQImages)
+                      .HasForeignKey(e => e.RFQId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
 
             // Configure ProjectService entity
             modelBuilder.Entity<ProjectService>(entity =>
@@ -157,6 +164,10 @@ namespace RenovationApp.Server.Data
                 .Property(p => p.Status)
                 .HasConversion<string>();
 
+            modelBuilder.Entity<Project>()
+                .Property(p => p.CreatedTimestamp)
+                .HasDefaultValueSql("NOW()"); // PostgreSQL function for current timestamp
+
             modelBuilder.Entity<ProjectService>()
                 .Property(ps => ps.Status)
                 .HasConversion<string>();
@@ -165,11 +176,107 @@ namespace RenovationApp.Server.Data
                 .Property(pf => pf.Type)
                 .HasConversion<string>();
 
-            // Seed sample data for RenovationTags
-            modelBuilder.Entity<RenovationTag>().HasData(
-                new RenovationTag { Id = "Modern" },
-                new RenovationTag { Id = "Rustic" },
-                new RenovationTag { Id = "Sophisticated" }
+
+            modelBuilder.Entity<Project>().HasData(
+                new Project
+                {
+                    Id = 1,
+                    CreatedByEmployee = "employee-001",
+                    ClientId = "client-001",
+                    IsPublic = true,
+                    RenovationType = RenovationType.KitchenRemodels,
+                    QuotePriceOverride = 12500m,
+                    RenovationTags = new[] { RenovationTag.modern, RenovationTag.luxury }
+                },
+                new Project
+                {
+                    Id = 2,
+                    CreatedByEmployee = "employee-002",
+                    ClientId = "client-002",
+                    IsPublic = true,
+                    RenovationType = RenovationType.BathroomRenovations,
+                    QuotePriceOverride = 9500m,
+                    RenovationTags = new[] { RenovationTag.rustic }
+                },
+                new Project
+                {
+                    Id = 3,
+                    CreatedByEmployee = "employee-003",
+                    ClientId = "client-003",
+                    IsPublic = true,
+                    RenovationType = RenovationType.BasementFinishing,
+                    QuotePriceOverride = 18000m,
+                    RenovationTags = new[] { RenovationTag.modern, RenovationTag.luxury }
+                },
+                new Project
+                {
+                    Id = 4,
+                    CreatedByEmployee = "employee-004",
+                    ClientId = "client-004",
+                    IsPublic = true,
+                    RenovationType = RenovationType.BathroomRenovations,
+                    RenovationTags = new[] { RenovationTag.rustic }
+                },
+                new Project
+                {
+                    Id = 5,
+                    CreatedByEmployee = "employee-001",
+                    ClientId = "client-005",
+                    IsPublic = true,
+                    RenovationType = RenovationType.KitchenRemodels,
+                    QuotePriceOverride = 7600m,
+                    RenovationTags = new[] { RenovationTag.countrstyle }
+                },
+                new Project
+                {
+                    Id = 6,
+                    CreatedByEmployee = "employee-002",
+                    ClientId = "client-006",
+                    IsPublic = true,
+                    RenovationType = RenovationType.HomeAdditions,
+                    RenovationTags = new[] { RenovationTag.rustic, RenovationTag.modern }
+                },
+                new Project
+                {
+                    Id = 7,
+                    CreatedByEmployee = "employee-001",
+                    ClientId = "client-007",
+                    IsPublic = true,
+                    RenovationType = RenovationType.HomeAdditions,
+                    QuotePriceOverride = 12300m,
+                    RenovationTags = new[] { RenovationTag.rustic, RenovationTag.modern }
+                },
+                new Project
+                {
+                    Id = 8,
+                    CreatedByEmployee = "employee-004",
+                    ClientId = "client-008",
+                    IsPublic = true,
+                    RenovationType = RenovationType.KitchenRemodels,
+                    RenovationTags = new[] { RenovationTag.countrstyle, RenovationTag.luxury }
+                },
+                new Project
+                {
+                    Id = 9,
+                    CreatedByEmployee = "employee-001",
+                    ClientId = "client-009",
+                    IsPublic = true,
+                    RenovationType = RenovationType.BasementFinishing,
+                    RenovationTags = new[] { RenovationTag.luxury, RenovationTag.modern }
+                }
+            );
+
+            modelBuilder.Entity<ClientInvoice>().HasData(
+                new ClientInvoice { Id = 1, ProjectId = 1, Amount = 5500 },
+                new ClientInvoice { Id = 2, ProjectId = 1, Amount = 3000 },
+                new ClientInvoice { Id = 3, ProjectId = 2, Amount = 6000 },
+                new ClientInvoice { Id = 4, ProjectId = 3, Amount = 9000 },
+                new ClientInvoice { Id = 5, ProjectId = 4, Amount = 8000 },
+                new ClientInvoice { Id = 6, ProjectId = 5, Amount = 8000 },
+                new ClientInvoice { Id = 7, ProjectId = 6, Amount = 8000 },
+                new ClientInvoice { Id = 8, ProjectId = 7, Amount = 4000 },
+                new ClientInvoice { Id = 9, ProjectId = 8, Amount = 5000 },
+                new ClientInvoice { Id = 10, ProjectId = 9, Amount = 3500 }
             );
         }
     }

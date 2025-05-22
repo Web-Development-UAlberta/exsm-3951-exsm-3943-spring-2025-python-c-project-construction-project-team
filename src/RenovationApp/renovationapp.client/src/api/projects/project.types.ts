@@ -226,5 +226,3 @@ export type ProjectOutputDTO = {
     projectServices?: ProjectOutService[];
     projectTasks?: ProjectOutTask[];
 };
-
-
