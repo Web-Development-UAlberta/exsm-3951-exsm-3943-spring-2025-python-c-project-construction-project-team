@@ -29,26 +29,46 @@ namespace RenovationApp.Server.Controllers
         public async Task<IActionResult> GetUploadUrl(int projectId, [FromBody] UploadProjectFileRequestDto dto)
         {
 
-                var project = await _db.Projects.FindAsync(projectId);
-                if (project == null)
-                {
-                    return NotFound(new { error = "Project not found." });
-                }
+            // Check if the project exists
+            var project = await _db.Projects.FindAsync(projectId);
+            if (project == null)
+            {
+                return NotFound("Project not found.");
+            }
 
-                // Generate presigned URL
-                var expiry = TimeSpan.FromMinutes(10);
-               
-                var result = await _storageService.GeneratePresignedUploadUrlAsync(_projectBucket, dto.FileType, projectId, dto.FileName, expiry);
-             
-                // Create and save the file record
-                var file = new ProjectFile
+            // Get the user's role and ID
+            var userId = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("User ID is required.");
+            }
+
+            if (!User.IsInRole("projectManager"))
+            {
+                // Check if the user is the client of the project
+                if (project.ClientId.ToString() != userId)
                 {
-                    ProjectId = projectId,
-                    Type = Enum.Parse<FileType>(dto.FileType, ignoreCase: true),
-                    FileName = dto.FileName,
-                    FileUri = result.ObjectKey,
-                    UploadedTimestamp = DateTime.UtcNow
-                };
+                    return Unauthorized("You are not authorized to upload files to this project.");
+                }
+            }
+
+            var expiry = TimeSpan.FromMinutes(10);
+
+            var result = _storageService.GeneratePresignedUploadUrl(_projectBucket, dto.FileType, projectId, dto.FileName, expiry);
+
+            if (!Enum.TryParse<FileType>(dto.FileType, out var fileType))
+            {
+                return BadRequest("Invalid file type specified.");
+            }
+
+            var file = new ProjectFile
+            {
+                ProjectId = projectId,
+                Type = fileType,
+                FileName = dto.FileName,
+                FileUri = result.ObjectKey,
+                UploadedTimestamp = DateTime.UtcNow
+            };
 
                 _db.ProjectFiles.Add(file);
                 await _db.SaveChangesAsync();
@@ -98,7 +118,7 @@ namespace RenovationApp.Server.Controllers
 
             foreach (var file in files)
             {
-                var url = await _storageService.GeneratePresignedDownloadUrlAsync(_projectBucket, file.FileUri);
+                var url = _storageService.GeneratePresignedDownloadUrl(_projectBucket, file.FileUri);
                 result.Add(new FileDownloadDto
                 {
                     FileName = file.FileName,
