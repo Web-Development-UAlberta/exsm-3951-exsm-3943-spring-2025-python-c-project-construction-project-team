@@ -63,6 +63,9 @@ const ClientLayout: React.FC = () => {
               <li className="nav-item">
                 <Link className="nav-link" to="/rfq">Request a Quote</Link>
               </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/admin">Admin</Link>
+              </li>
             </ul>
 
             <div className="d-flex mx-3">
