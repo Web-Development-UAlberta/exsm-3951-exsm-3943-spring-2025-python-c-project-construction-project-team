@@ -1,4 +1,6 @@
-﻿namespace RenovationApp.Server.Services.Fileservice.Dtos
+﻿using RenovationApp.Server.Models;
+
+namespace RenovationApp.Server.Services.Fileservice.Dtos
 {
     public class FileDownloadDto
     {
@@ -12,7 +14,6 @@
     }
     public class UploadProjectFileRequestDto
     {
-        required public int ProjectId { get; set; }
         required public string FileType { get; set; } // "image" or "file"
         required public string FileName { get; set; }
     }

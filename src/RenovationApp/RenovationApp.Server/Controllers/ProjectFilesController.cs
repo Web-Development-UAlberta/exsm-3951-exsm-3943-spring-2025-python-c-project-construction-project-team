@@ -9,8 +9,9 @@ using Microsoft.AspNetCore.Authorization;
 namespace RenovationApp.Server.Controllers
 {
     [ApiController]
-    [Route("/projects/{projectId}/files")]
-    [Authorize(Policy = "projectManagerOnly")]
+    [Route("projects/{projectId}/files")] // Removed the leading slash
+    [Authorize]
+    // [Authorize(Policy = "projectManagerOnly")]
     public class ProjectFilesController : ControllerBase
     {
         private readonly IStorageService _storageService;
@@ -27,11 +28,6 @@ namespace RenovationApp.Server.Controllers
         [HttpPost("upload-url")]
         public async Task<IActionResult> GetUploadUrl(int projectId, [FromBody] UploadProjectFileRequestDto dto)
         {
-            // Validate projectId matches dto.ProjectId
-            if (projectId != dto.ProjectId)
-            {
-                return BadRequest("Project ID in the route does not match the Project ID in the request body.");
-            }
 
             // Check if the project exists
             var project = await _db.Projects.FindAsync(projectId);
@@ -58,7 +54,7 @@ namespace RenovationApp.Server.Controllers
 
             var expiry = TimeSpan.FromMinutes(10);
 
-            var result = _storageService.GeneratePresignedUploadUrl(_projectBucket, dto.FileType, dto.ProjectId, dto.FileName, expiry);
+            var result = _storageService.GeneratePresignedUploadUrl(_projectBucket, dto.FileType, projectId, dto.FileName, expiry);
 
             if (!Enum.TryParse<FileType>(dto.FileType, out var fileType))
             {
@@ -67,19 +63,19 @@ namespace RenovationApp.Server.Controllers
 
             var file = new ProjectFile
             {
-                ProjectId = dto.ProjectId,
+                ProjectId = projectId,
                 Type = fileType,
                 FileName = dto.FileName,
                 FileUri = result.ObjectKey,
                 UploadedTimestamp = DateTime.UtcNow
             };
 
-            _db.ProjectFiles.Add(file);
-            await _db.SaveChangesAsync();
-
-            return Ok(new { url = result.Url, key = result.ObjectKey });
+                _db.ProjectFiles.Add(file);
+                await _db.SaveChangesAsync();
+                return Ok(new { url = result.Url, key = result.ObjectKey });
+         
         }
-
+        
         [HttpGet]
         public async Task<IActionResult> GetFiles(int projectId, [FromQuery] string? fileType = null)
         {

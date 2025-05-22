@@ -28,10 +28,10 @@ namespace RenovationApp.Server.Controllers
         {
             // Check if the project exists and is public
             var projects = await _db.Projects
-                .Include(p => p.ClientInvoices)
-                .Include(p => p.RenovationTags)  // Added this to load RenovationTags
-                .Where(p => p.IsPublic)
-                .ToListAsync();
+             .Include(p => p.ClientInvoices)
+             .Include(p => p.RenovationTags)
+             .Where(p => p.IsPublic)
+             .ToListAsync();
 
             var projectsOut = new List<ProjectPublicInfo>();
 

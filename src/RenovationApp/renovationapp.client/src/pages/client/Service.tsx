@@ -1,7 +1,85 @@
+// import { useMsal } from "@azure/msal-react";
+// import { useUploadProjectFile } from "../../api/projects/children/projectFile";
+// import Form from 'react-bootstrap/Form';
+// import { ChangeEvent, useState } from "react";
+// import Button from "react-bootstrap/esm/Button";
+
 const Service = () => {
-    
+
+    // const { instance } = useMsal();;
+    // const uploadMutation = useUploadProjectFile(instance);
+    // const [files, setFiles] = useState<File[]>([]);
+
+    // const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    //     if (e.target.files) {
+    //         setFiles([...files, ...Array.from(e.target.files)]);
+    //     }
+    // };
+    // const handleFileRemove = (index: number) => {
+    //     setFiles(files.filter((_, i) => i !== index));
+    // };
+
+    // const handleSubmit = async (e: any) => {
+    //     e.preventDefault();
+    //     console.log("submit", files[0]);
+    //     await Promise.all(
+    //         files.map(file => uploadMutation.mutateAsync({
+    //             projectId: 1n,
+    //             file,
+    //             fileType: file.type.includes("image") ? "image" : "document"
+    //         }))
+    //     );
+    //     setFiles([]);
+    // }
+
     return (
         <div>
+            {/* <Form onSubmit={handleSubmit}>
+                <Form.Group className="mb-4">
+                    <div className="d-flex justify-content-between align-items-center">
+                        <Form.Label className="mb-0">Share floorplans, inspired images, etc.</Form.Label>
+                        <div>
+                            <Form.Control
+                                type="file"
+                                id="fileUpload"
+                                onChange={handleFileChange}
+                                className="d-none"
+                                multiple
+                            />
+                            <label htmlFor="fileUpload" className="btn btn-outline-secondary">
+                                Upload Files
+                            </label>
+                        </div>
+                    </div>
+                    {files && files.length > 0 && (
+                        <ul className="mt-2 list-group">
+                            {files.map((file, index) => (
+                                <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+                                    {file.name}
+                                    <Button variant="outline-danger" size="sm" onClick={() => handleFileRemove(index)}>
+                                        <i className="bi bi-trash" ></i>
+                                    </Button>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                    {files && files.length > 0 && (
+                        <div className="mt-2">
+                            <small className="text-muted">
+                                {files.length} file(s) selected
+                            </small>
+                        </div>
+                    )}
+                </Form.Group>
+                <Button
+                    variant="dark"
+                    type="submit"
+                    className="py-2"
+                >
+                    Submit Request
+                </Button>
+            </Form> */}
+
             <h1 className="gallery-title text-center mb-2">Services</h1>
             {/* Kitchen Remodels */}
             <h2>Kitchen Remodels</h2>

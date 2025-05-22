@@ -24,7 +24,7 @@ export const RequestFilesSection: React.FC<Files> = ({ files }) => {
                   style={{ width: '180px', height: '180px', objectFit: 'cover', borderRadius: '4px' }}
                 />
                 <div>
-                  <strong>{file.fileName}</strong>
+                  <div>{file.fileName}</div>
                   <small>Uploaded: {new Date(file.uploadedAt).toLocaleString()}</small>
                 </div>
               </li>

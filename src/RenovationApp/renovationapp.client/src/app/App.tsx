@@ -11,7 +11,7 @@ import {
   } from '@tanstack/react-query';
 import AuthComponent from '../components/Auth';
 
-  const queryClient = new QueryClient()
+const queryClient = new QueryClient()
 
 function App({ instance }: { instance: IPublicClientApplication }) {
     return (

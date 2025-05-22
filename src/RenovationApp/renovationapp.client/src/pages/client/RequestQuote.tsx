@@ -6,7 +6,7 @@ import Card from 'react-bootstrap/Card';
 import { useIsAuthenticated } from '@azure/msal-react';
 import Container from 'react-bootstrap/esm/Container';
 import Button from 'react-bootstrap/esm/Button';
-import ImagePlaceholder from "../../assets/placeholder-svg.svg";
+import ConstructionImage from "../../assets/construction.png";
 import { RFQCreate } from '../../api/rfq/rfq.types';
 import { useCreateRFQ, uploadImageToRFQ } from '../../api/rfq/rfq';
 import { useMsal } from '@azure/msal-react';
@@ -120,14 +120,10 @@ const RequestQuote = () => {
             <Row>
                 <Col lg={6}>
                     <h1 className="mb-3">Request A Quote</h1>
-                    <p className="text-muted mb-4">
-                        Lorem ipsum dolor sit amet consectetur. Phasellus tellus lacus integer lectus adipiscing porttitor senectus amet pulvinar.
-                    </p>
-
                     <Card className="bg-light border-0 mb-4">
                         <Card.Body className="p-0">
                             <img
-                                src={ImagePlaceholder}
+                                src={ConstructionImage}
                                 alt="Renovation"
                                 className="img-fluid w-100"
                                 style={{ objectFit: 'cover' }}

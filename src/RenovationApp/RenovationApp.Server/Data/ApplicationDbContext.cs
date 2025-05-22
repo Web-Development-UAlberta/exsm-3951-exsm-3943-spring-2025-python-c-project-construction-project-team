@@ -165,8 +165,8 @@ namespace RenovationApp.Server.Data
                 .HasConversion<string>();
 
             modelBuilder.Entity<Project>()
-                .Property(p => p.CreatedTimestamp)
-                .HasDefaultValueSql("NOW()"); // PostgreSQL function for current timestamp
+                .Property(p => p.RenovationType)
+                .HasConversion<string>(); 
 
             modelBuilder.Entity<ProjectService>()
                 .Property(ps => ps.Status)
