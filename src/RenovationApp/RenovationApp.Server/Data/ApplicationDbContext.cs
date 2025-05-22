@@ -29,7 +29,6 @@ namespace RenovationApp.Server.Data
         {
             base.OnModelCreating(modelBuilder);
 
-
             // Configure Project entity
             modelBuilder.Entity<Project>(entity =>
             {
@@ -82,7 +81,20 @@ namespace RenovationApp.Server.Data
             modelBuilder.Entity<Project>()
                 .HasMany(p => p.RenovationTags)
                 .WithMany()
-                .UsingEntity(j => j.ToTable("ProjectRenovationTags"));
+                .UsingEntity<ProjectRenovationTag>(
+                    j => j
+                        .HasOne<RenovationTag>()
+                        .WithMany()
+                        .HasForeignKey(prt => prt.RenovationTagsId),
+                    j => j
+                        .HasOne<Project>()
+                        .WithMany()
+                        .HasForeignKey(prt => prt.ProjectId),
+                    j =>
+                    {
+                        j.ToTable("ProjectRenovationTags");
+                        j.HasKey(prt => new { prt.ProjectId, prt.RenovationTagsId });
+                    });
 
             // Configure RFQ entity
             modelBuilder.Entity<RFQ>(entity =>
@@ -159,7 +171,7 @@ namespace RenovationApp.Server.Data
 
             modelBuilder.Entity<Project>()
                 .Property(p => p.RenovationType)
-                .HasConversion<string>(); 
+                .HasConversion<string>();
 
             modelBuilder.Entity<ProjectService>()
                 .Property(ps => ps.Status)
@@ -174,6 +186,110 @@ namespace RenovationApp.Server.Data
                 new RenovationTag { Id = "Modern" },
                 new RenovationTag { Id = "Rustic" },
                 new RenovationTag { Id = "Sophisticated" }
+            );
+
+            // Seed sample data for Projects
+            var seedDate = DateTime.SpecifyKind(new DateTime(2025, 5, 21), DateTimeKind.Utc);
+
+            modelBuilder.Entity<Project>().HasData(
+                new Project
+                {
+                    Id = 1,
+                    CreatedTimestamp = seedDate,
+                    CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
+                    ClientId = "2025-05-19T17:37:40.401185Z",
+                    IsPublic = true,
+                    RenovationType = RenovationType.KitchenRemodels,
+                    QuotePriceOverride = 15000.00m
+                },
+                new Project
+                {
+                    Id = 2,
+                    CreatedTimestamp = seedDate,
+                    CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
+                    ClientId = "2025-05-19T17:37:40.401185Z",
+                    IsPublic = true,
+                    RenovationType = RenovationType.BathroomRenovations,
+                    QuotePriceOverride = 9800.50m
+                },
+                new Project
+                {
+                    Id = 3,
+                    CreatedTimestamp = seedDate,
+                    CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
+                    ClientId = "2025-05-19T17:37:40.401185Z",
+                    IsPublic = true,
+                    RenovationType = RenovationType.BasementFinishing,
+                    QuotePriceOverride = 20000.00m
+                },
+                new Project
+                {
+                    Id = 4,
+                    CreatedTimestamp = seedDate,
+                    CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
+                    ClientId = "2025-05-19T17:37:40.401185Z",
+                    IsPublic = true,
+                    RenovationType = RenovationType.HomeAdditions,
+                    QuotePriceOverride = 45000.00m
+                },
+                new Project
+                {
+                    Id = 5,
+                    CreatedTimestamp = seedDate,
+                    CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
+                    ClientId = "2025-05-19T17:37:40.401185Z",
+                    IsPublic = true,
+                    RenovationType = RenovationType.KitchenRemodels,
+                    QuotePriceOverride = 12300.00m
+                },
+                new Project
+                {
+                    Id = 6,
+                    CreatedTimestamp = seedDate,
+                    CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
+                    ClientId = "2025-05-19T17:37:40.401185Z",
+                    IsPublic = true,
+                    RenovationType = RenovationType.BathroomRenovations,
+                    QuotePriceOverride = 8700.75m
+                },
+                new Project
+                {
+                    Id = 7,
+                    CreatedTimestamp = seedDate,
+                    CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
+                    ClientId = "2025-05-19T17:37:40.401185Z",
+                    IsPublic = true,
+                    RenovationType = RenovationType.BasementFinishing,
+                    QuotePriceOverride = 17450.20m
+                },
+                new Project
+                {
+                    Id = 8,
+                    CreatedTimestamp = seedDate,
+                    CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
+                    ClientId = "2025-05-19T17:37:40.401185Z",
+                    IsPublic = true,
+                    RenovationType = RenovationType.HomeAdditions,
+                    QuotePriceOverride = 39999.99m
+                }
+            );
+
+            // Seed sample data for the ProjectRenovationTags join table
+            modelBuilder.Entity<ProjectRenovationTag>().HasData(
+                new ProjectRenovationTag { ProjectId = 1, RenovationTagsId = "Modern" },
+                new ProjectRenovationTag { ProjectId = 2, RenovationTagsId = "Modern" },
+                new ProjectRenovationTag { ProjectId = 2, RenovationTagsId = "Rustic" },
+                new ProjectRenovationTag { ProjectId = 3, RenovationTagsId = "Rustic" },
+                new ProjectRenovationTag { ProjectId = 3, RenovationTagsId = "Sophisticated" },
+                new ProjectRenovationTag { ProjectId = 4, RenovationTagsId = "Modern" },
+                new ProjectRenovationTag { ProjectId = 4, RenovationTagsId = "Sophisticated" },
+                new ProjectRenovationTag { ProjectId = 5, RenovationTagsId = "Rustic" },
+                new ProjectRenovationTag { ProjectId = 6, RenovationTagsId = "Modern" },
+                new ProjectRenovationTag { ProjectId = 6, RenovationTagsId = "Rustic" },
+                new ProjectRenovationTag { ProjectId = 6, RenovationTagsId = "Sophisticated" },
+                new ProjectRenovationTag { ProjectId = 7, RenovationTagsId = "Sophisticated" },
+                new ProjectRenovationTag { ProjectId = 8, RenovationTagsId = "Modern" },
+                new ProjectRenovationTag { ProjectId = 8, RenovationTagsId = "Rustic" }
             );
         }
     }
