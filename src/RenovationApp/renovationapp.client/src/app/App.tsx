@@ -8,9 +8,9 @@ import { MsalProvider } from '@azure/msal-react';
 import {
     QueryClient,
     QueryClientProvider,
-  } from '@tanstack/react-query';
+} from '@tanstack/react-query';
 
-  const queryClient = new QueryClient()
+const queryClient = new QueryClient()
 
 function App({ instance }: { instance: IPublicClientApplication }) {
     return (

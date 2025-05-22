@@ -99,24 +99,24 @@ namespace RenovationApp.Server.Data
             // Configure RFQImage entity
             modelBuilder.Entity<RFQImage>(entity =>
             {
-            entity.HasKey(e => e.Id);
+                entity.HasKey(e => e.Id);
 
-            entity.Property(e => e.FileName)
-                  .IsRequired()
-                  .HasMaxLength(255);
+                entity.Property(e => e.FileName)
+                      .IsRequired()
+                      .HasMaxLength(255);
 
-            entity.Property(e => e.FilePath)
-                  .IsRequired()
-                  .HasMaxLength(500);
+                entity.Property(e => e.FilePath)
+                      .IsRequired()
+                      .HasMaxLength(500);
 
-            entity.Property(e => e.ImageUri)
-                  .IsRequired();
+                entity.Property(e => e.ImageUri)
+                      .IsRequired();
 
-            entity.HasOne(e => e.RFQ)
-                  .WithMany(r => r.RFQImages)
-                  .HasForeignKey(e => e.RFQId)
-                  .OnDelete(DeleteBehavior.Cascade);
-        });
+                entity.HasOne(e => e.RFQ)
+                      .WithMany(r => r.RFQImages)
+                      .HasForeignKey(e => e.RFQId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
 
             // Configure ProjectService entity
             modelBuilder.Entity<ProjectService>(entity =>
@@ -156,6 +156,10 @@ namespace RenovationApp.Server.Data
             modelBuilder.Entity<Project>()
                 .Property(p => p.Status)
                 .HasConversion<string>();
+
+            modelBuilder.Entity<Project>()
+                .Property(p => p.RenovationType)
+                .HasConversion<string>(); 
 
             modelBuilder.Entity<ProjectService>()
                 .Property(ps => ps.Status)

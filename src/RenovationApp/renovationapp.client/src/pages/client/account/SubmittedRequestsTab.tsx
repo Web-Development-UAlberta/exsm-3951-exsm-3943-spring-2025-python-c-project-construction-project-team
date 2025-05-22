@@ -9,7 +9,7 @@ const SubmittedRequestsTab = () => {
 
   // Request Detail Modal State
   const { instance } = useMsal();
-  const { data: submittedRequests=[] } = getAllRFQs(instance);
+  const { data: submittedRequests } = getAllRFQs(instance);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<RFQ | null>(null);
   // Request detail modal handlers
@@ -26,7 +26,7 @@ const SubmittedRequestsTab = () => {
   return (
     <div className="table-responsive">
 
-      {submittedRequests.length === 0 ? (
+      {submittedRequests && submittedRequests.length === 0 ? (
         <div className="alert alert-info">
           You haven't submitted any renovation requests yet.
         </div>
@@ -42,7 +42,7 @@ const SubmittedRequestsTab = () => {
             </tr>
           </thead>
           <tbody>
-            {submittedRequests.map(request => (
+            {submittedRequests && submittedRequests.map(request => (
               <tr key={request.id}>
                 <td>{request.id}</td>
                 <td>{new Date(request.createdTimestamp).toLocaleDateString()}</td>
