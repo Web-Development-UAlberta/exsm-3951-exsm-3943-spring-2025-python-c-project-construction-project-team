@@ -38,6 +38,7 @@ vi.mock('../ButtonComponent/Button', async () => {
         disabled={disabled} 
         data-testid={testId || 'custom-button'}
         aria-busy={loading ? 'true' : 'false'}
+        {...rest}
       >
         {loading && <span role="status" className="spinner-border" />}
         {label}

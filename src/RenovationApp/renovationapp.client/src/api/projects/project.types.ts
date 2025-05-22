@@ -221,6 +221,7 @@ export type ProjectOutTask = {
 
 export type ProjectOutputDTO = {
     id: number;
+    clientId: string;
     status?: string | null;
     renovationType?: string | null;
     rfq?: number | null;

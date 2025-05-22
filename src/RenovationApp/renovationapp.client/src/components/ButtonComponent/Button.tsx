@@ -1,6 +1,6 @@
 import React from 'react';
 import { Spinner } from 'react-bootstrap';
-import '../../styles/Button.css';
+import './Button.css';
 
 interface ButtonProps {
   label?: string;

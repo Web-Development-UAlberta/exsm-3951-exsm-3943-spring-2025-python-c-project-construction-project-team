@@ -6,16 +6,11 @@ import Card from 'react-bootstrap/Card';
 import Carousel from 'react-bootstrap/Carousel';
 import './Gallery.css';
 import ImagePlaceholder from "../../assets/placeholder-svg.svg";
-import { useRenovationTags } from '../../api/renotags/renotags';
-import { getPublicProjectsWithImages } from '../../api/projects/children/projectPublic';
+import { getRenovationTags } from '../../api/renotag/renotag';
+import { getPublicProjectsWithImages } from '../../api/projects/projectPublic';
 import { ProjectPublicInfoWithImages } from '../../api/projects/project.types';
 
-const renoTypes = [
-    { label: 'Kitchen Remodels', value: 'KitchenRemodels' },
-    { label: 'Home Additions', value: "HomeAdditions" },
-    { label: 'Basement Finishings', value: "BasementFinishings" },
-    { label: 'Bathroom Renovations', value: 'BathroomRenovations' }
-];
+const renoTypes = ['Kitchen Remodels', 'Home Additions', 'Basement Finishings', 'Bathroom Renovations'];
 const renoBudgets = ['0-10k', '10k-20k', '20k-30k', '30k+'];
 
 const Gallery = () => {
@@ -24,7 +19,7 @@ const Gallery = () => {
     const [styleFilter, setStyleFilter] = useState<string[]>([]);
     const [budgetFilter, setBudgetFilter] = useState<string[]>([]);
     const [FilteredPP, setFilteredPP] = useState<ProjectPublicInfoWithImages[]>([]);
-    const { data: renoTags } = useRenovationTags();
+    const { data: renoTags } = getRenovationTags();
     const { data: publicProjects = [] } = getPublicProjectsWithImages();
 
     // State for fullscreen modal
@@ -156,15 +151,14 @@ const Gallery = () => {
                     <div className="filter-section mb-4">
                         <h6 className="filter-subheading">Room Type</h6>
                         <Form>
-                            {renoTypes.map((rt, index) => (
+                            {renoTypes.map((type) => (
                                 <Form.Check
-                                    key={index}
+                                    key={type}
                                     type="checkbox"
-                                    id={`room-${rt.value}`}
-                                    label={rt.label}
-                                    value={rt.value}
-                                    checked={roomTypeFilter.includes(rt.value)}
-                                    onChange={() => handleRoomTypeChange(rt.value)}
+                                    id={`room-${type}`}
+                                    label={type}
+                                    checked={roomTypeFilter.includes(type)}
+                                    onChange={() => handleRoomTypeChange(type)}
                                     className="mb-2"
                                 />
                             ))}
