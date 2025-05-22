@@ -16,7 +16,7 @@ const Home = () => {
                     <div className="col-md-8 p-5 d-flex flex-column justify-content-center">
                         <h1 className="display-4 fw-bold mb-4">Your home transformation begins here</h1>
                         <p className="lead mb-4">
-                            Step into the world of possibility and imagination. With an eye for detail, a passion for expression, and the talent of a hundred home renovations companies in Calgary, Bon & Susan Renovations has been the top choice of homeowners in Calgary since 2008. 
+                            Step into the world of possibility and imagination. With an eye for detail, a passion for expression, and the talent of a hundred home renovations companies in Calgary, Bob & Susan Renovations has been the top choice of homeowners in Calgary since 2008. 
                         </p>
                         <div>
                             <Link to="/rfq" className="btn btn-dark px-4 py-2 rounded-1">
