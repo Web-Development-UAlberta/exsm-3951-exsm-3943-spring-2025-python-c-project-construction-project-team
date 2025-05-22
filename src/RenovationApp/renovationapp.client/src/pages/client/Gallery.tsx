@@ -140,13 +140,12 @@ const Gallery = () => {
                         <Form>
                             {renoTypes.map((type) => (
                                 <Form.Check
-                                    key={index}
+                                    key={type}
                                     type="checkbox"
-                                    id={`room-${rt.value}`}
-                                    label={rt.label}
-                                    value={rt.value}
-                                    checked={roomTypeFilter.includes(rt.value)}
-                                    onChange={() => handleRoomTypeChange(rt.value)}
+                                    id={`room-${type}`}
+                                    label={type}
+                                    checked={roomTypeFilter.includes(type)}
+                                    onChange={() => handleRoomTypeChange(type)}
                                     className="mb-2"
                                 />
                             ))}
