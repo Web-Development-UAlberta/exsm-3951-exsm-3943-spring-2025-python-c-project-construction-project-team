@@ -1,22 +1,11 @@
 // components/Requests.tsx
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { fetchAllRFQs, fetchRFQById, updateRFQ, fetchRFQImages } from '../../../api/rfq/rfqQueries';
-import { RFQ, RFQImage } from '../../../api/rfq/rfq.types';
+import { useUpdateRFQ, getAllRFQs, getRFQById, getRFQImagesByRFQId } from '../../../api/rfq/rfq';
+import { RFQImage, RFQStatus } from '../../../api/rfq/rfq.types';
 import { useMsal } from '@azure/msal-react';
 import { useState, useEffect } from 'react';
 import { QuoteEstimateModal } from './components/QuoteEstimateModal';
 import RequestDetailsModal from './components/RequestDetailsModal';
 import { getRequestStatusBadgeClass } from '../../../utils/getStatusBadgeClass';
-
-interface Request {
-  id: number;
-  clientId: string;
-  client: string;
-  project_address: string;
-  project_manager: string;
-  status: string;
-}
-
 interface RequestDetail {
   id: number;
   client: string;
@@ -27,7 +16,6 @@ interface RequestDetail {
   description: string;
   files: RFQImage[];
 }
-
 interface ProjectManager {
   id: string;
   name: string;
@@ -54,100 +42,54 @@ const projectManagers: ProjectManager[] = [
 
 const Requests = () => {
   const { instance } = useMsal();
-  const queryClient = useQueryClient();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const updateRFQMutation = useUpdateRFQ(instance);
+
   const [showDetailModal, setShowDetailModal] = useState(false);
-  const [selectedRFQId, setSelectedRFQId] = useState<number | null>(null);
+  const [selectedRFQId, setSelectedRFQId] = useState<bigint | null>(null);
   const [selectedRequest, setSelectedRequest] = useState<RequestDetail | null>(null);
   const [showQuoteModal, setShowQuoteModal] = useState(false);
   const [quoteRequestId, setQuoteRequestId] = useState<number | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    const accounts = instance.getAllAccounts();
-    setIsAuthenticated(accounts.length > 0);
-    if (accounts.length === 0) {
-      instance.loginRedirect();
-    }
-  }, [instance]);
+  const { data: rfqs, isLoading, error: queryError, refetch } = getAllRFQs(instance);
 
-  const { data: rfqs, isLoading, error: queryError, refetch } = useQuery<Request[]>({
-    queryKey: ['rfqs'],
-    queryFn: async () => {
-      const rfqData = await fetchAllRFQs(instance);
-      return rfqData.map((rfq: RFQ) => ({
-        id: Number(rfq.id),
-        clientId: rfq.clientId,
-        client: rfq.clientId,
-        project_address: rfq.projectAddress ?? 'N/A',
-        project_manager: rfq.assignedEmployeeId ?? 'N/A',
-        status: rfq.status ?? 'Created'
-      }));
-    },
-    enabled: isAuthenticated
-  });
+  const { data: rfqDetail, error: detailError } = getRFQById(
+    selectedRFQId ?? BigInt(0),
+    instance
+  );
 
-  const { data: rfqDetail, error: detailError } = useQuery({
-    queryKey: ['rfq-detail', selectedRFQId],
-    queryFn: () => {
-      if (!selectedRFQId) return null;
-      return fetchRFQById(BigInt(selectedRFQId), instance);
-    },
-    enabled: !!selectedRFQId
-  });
-
-  const { data: rfqImages = [], error: imagesError } = useQuery<RFQImage[], Error>({
-    queryKey: ['rfq-images', selectedRFQId],
-    queryFn: async () => {
-      if (!selectedRFQId) return [];
-      return await fetchRFQImages(BigInt(selectedRFQId), instance);
-    },
-    enabled: !!selectedRFQId
-  });
+  const { data: rfqImages = [], error: imagesError } = getRFQImagesByRFQId(
+    selectedRFQId ?? BigInt(0),
+    instance
+  );
 
   useEffect(() => {
-    if (rfqDetail && selectedRFQId && rfqImages) {
-        if (!selectedRequest || selectedRequest.id !== Number(rfqDetail.id)) {
-          setSelectedRequest({
-          id: Number(rfqDetail.id),
-          client: rfqDetail.clientId,
-          project_address: rfqDetail.projectAddress ?? 'N/A',
-          renovation_type: rfqDetail.renovationType ?? 'N/A',
-          preferred_material: rfqDetail.preferredMaterial ?? 'N/A',
-          budget: rfqDetail.budget ?? 0,
-          description: rfqDetail.description ?? 'N/A',
-          files: Array.isArray(rfqImages) ? rfqImages : []
-        });
-      }
+    if (rfqDetail && selectedRFQId) {
+      setSelectedRequest({
+        id: Number(rfqDetail.id),
+        client: rfqDetail.clientId,
+        project_address: rfqDetail.projectAddress ?? 'N/A',
+        renovation_type: rfqDetail.renovationType ?? 'N/A',
+        preferred_material: rfqDetail.preferredMaterial ?? 'N/A',
+        budget: rfqDetail.budget ?? 0,
+        description: rfqDetail.description ?? 'N/A',
+        files: Array.isArray(rfqImages) ? rfqImages : []
+      });
     }
   }, [rfqDetail, rfqImages, selectedRFQId]);
 
   useEffect(() => {
-    if (detailError || imagesError) {
-      setErrorMessage(detailError?.message || imagesError?.message || 'Failed to load request details');
-    } else {
-      setErrorMessage(null);
-    }
-  }, [detailError, imagesError]);
+    const error = detailError?.message || imagesError?.message || queryError?.message
+    setErrorMessage(error ? error : null);
+  }, [detailError, imagesError, queryError]);
 
   const handleProjectManagerChange = async (requestId: number, managerId: string) => {
     setErrorMessage(null);
-
-    queryClient.setQueryData(['rfqs'], (oldData: Request[] | undefined) => {
-      if (!oldData) return oldData;
-      return oldData.map(request => 
-        request.id === requestId 
-          ? { ...request, project_manager: managerId }
-          : request
-      );
-    });
-
     try {
-      await updateRFQ(
-        BigInt(requestId), 
-        { assignedEmployeeId: managerId }, 
-        instance
-      );
+      await updateRFQMutation.mutateAsync({
+          rfqId: BigInt(requestId),
+          rfq: { assignedEmployeeId: managerId }
+      });
     } catch (error) {
       console.error('Failed to update project manager:', error);
       setErrorMessage('Failed to update project manager. Please try again.');
@@ -155,7 +97,7 @@ const Requests = () => {
   };
 
   const openRequestDetail = (requestId: number) => {
-    setSelectedRFQId(requestId);
+    setSelectedRFQId(BigInt(requestId));
     setShowDetailModal(true);
   };
 
@@ -187,7 +129,7 @@ const Requests = () => {
       )}
       {queryError && (
         <div className="alert alert-danger">
-          {errorMessage || queryError?.message || 'Failed to load data.'}
+          {errorMessage}
           <button 
             className="btn btn-sm btn-outline-danger ms-2"
             onClick={() => refetch()}
@@ -216,13 +158,13 @@ const Requests = () => {
                   .map(request => (
                   <tr key={request.id}>
                     <td>{request.id}</td>
-                    <td>{request.client}</td>
-                    <td>{request.project_address}</td>
+                    <td>{request.clientId}</td>
+                    <td>{request.projectAddress}</td>
                     <td>
                       <select
                         className="form-select form-select-sm"
-                        value={request.project_manager}
-                        onChange={(e) => handleProjectManagerChange(request.id, e.target.value)}
+                        value={request.assignedEmployeeId || ''}
+                        onChange={(e) => handleProjectManagerChange(Number(request.id), e.target.value)}
                         aria-label="Select Project Manager"
                       >
                         <option value="">Select Project Manager</option>
@@ -234,14 +176,14 @@ const Requests = () => {
                       </select>
                     </td>
                     <td>
-                      <span className={`badge ${getRequestStatusBadgeClass(request.status)}`}>
+                      <span className={`badge ${getRequestStatusBadgeClass(request.status ?? "")}`}>
                         {request.status}
                       </span>
                     </td>
                     <td>
                       <button
                         className="btn btn-sm btn-outline-secondary me-2"
-                        onClick={() => openRequestDetail(request.id)}
+                        onClick={() => openRequestDetail(Number(request.id))}
                       >
                         Details
                       </button>
@@ -270,29 +212,18 @@ const Requests = () => {
           openQuoteEstimate(Number(id));
         }}
         onDeny={async (id) => {
-          try {
-            // Bug: status updates to "Declined" but not reflected in UI
-            // doesn't get removed from the list
-              await updateRFQ(
-                  BigInt(id),
-                  { status: 'Declined' },
-                  instance
-              );
-              
-              // Remove request from cache
-              queryClient.setQueryData(['rfqs'], (oldData: any) => {
-                  if (!oldData) return oldData;
-                  return oldData.filter((request: any) => request.id !== id);
-              });
-
-              // Close modal and show success message
-              closeRequestDetail();
-
-            } catch (error) {
-                console.error('Error declining request:', error);
-                setErrorMessage('Failed to decline the request. Please try again.');
+          closeRequestDetail();
+          updateRFQMutation.mutate({
+            rfqId: BigInt(id),
+            rfq: { status: RFQStatus.Declined }
+          }, 
+          {
+            onError: (error) => {
+              console.error('Failed to update request status:', error);
+              setErrorMessage('Failed to update request status. Please try again.');
             }
-        }}
+          });
+        }} 
       />
 
       {/* Quote Estimate Modal */}

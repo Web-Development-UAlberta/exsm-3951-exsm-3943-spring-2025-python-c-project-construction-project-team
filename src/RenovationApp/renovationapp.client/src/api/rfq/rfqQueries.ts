@@ -1,13 +1,18 @@
 import { apiClient } from '../axios';
 import { IPublicClientApplication } from "@azure/msal-browser";
 import { RFQ, RFQCreate, RFQUpdate, RFQImage } from "./rfq.types";
+import { bigIntConverter } from '../../utils/bigIntConvert';
 
 export async function fetchRFQById(rfqId: bigint, msalInstance: IPublicClientApplication): Promise<RFQ> {
-    const response = await apiClient(msalInstance).get(`/rfq/${rfqId}`, {});
+    const response = await apiClient(msalInstance).get(`/rfq/${bigIntConverter.toAPI(rfqId)}`, {});
     if (!response.data) {
         throw new Error(`Failed to fetch RFQ with ID ${rfqId}`);
     }
-    return response.data;
+    return {
+        ...response.data,
+        id: bigIntConverter.fromAPI(response.data.id),
+        rfqImages: response.data.rfqImages ? bigIntConverter.arrayFromAPI(response.data.rfqImages) : null
+    };
 }
 
 export async function fetchAllRFQs(msalInstance: IPublicClientApplication): Promise<RFQ[]> {
@@ -15,7 +20,11 @@ export async function fetchAllRFQs(msalInstance: IPublicClientApplication): Prom
     if (!response.data) {
         throw new Error(`Failed to fetch all RFQs`);
     }
-    return response.data;
+    return response.data.map((rfq: any) => ({
+        ...rfq,
+        id: bigIntConverter.fromAPI(rfq.id),
+        rfqImages: rfq.rfqImages ? bigIntConverter.arrayFromAPI(rfq.rfqImages) : null
+    }));
 }
 
 export async function createRFQ(rfq: RFQCreate, msalInstance: IPublicClientApplication): Promise<RFQ> {
@@ -27,20 +36,27 @@ export async function createRFQ(rfq: RFQCreate, msalInstance: IPublicClientAppli
 }
 
 export async function updateRFQ(rfqId: bigint, rfq: RFQUpdate, msalInstance: IPublicClientApplication): Promise<RFQ> {
-    const response = await apiClient(msalInstance).put(`/rfq/${rfqId}`, rfq, {});
+    const response = await apiClient(msalInstance).put(`/rfq/${bigIntConverter.toAPI(rfqId)}`, rfq, {});
     if (!response.data) {
         throw new Error(`Failed to update RFQ with ID ${rfqId}`);
     }
-    return response.data;
+    return {
+        ...response.data,
+        id: bigIntConverter.fromAPI(response.data.id),
+        rfqImages: response.data.rfqImages ? bigIntConverter.arrayFromAPI(response.data.rfqImages) : null
+    };
 }
 
 
 export async function fetchRFQImages(rfqId: bigint, msalInstance: IPublicClientApplication): Promise<RFQImage[]> {
-    const response = await apiClient(msalInstance).get(`/rfq/${rfqId}/images`, {});
+    const response = await apiClient(msalInstance).get(`/rfq/${bigIntConverter.toAPI(rfqId)}/images`, {});
     if (!response.data) {
         throw new Error(`Failed to fetch RFQ images for RFQ with ID ${rfqId}`);
     }
-    return response.data;
+    return response.data.map((image: RFQImage) => ({
+        ...image,
+        id: bigIntConverter.fromAPI(image.id)
+    }));
 }
 
 export async function uploadRFQImage(
@@ -51,7 +67,7 @@ export async function uploadRFQImage(
 ): Promise<boolean> {
     // Step 1: Get signed upload URL, passing fileName in the body
     const urlResponse = await apiClient(msalInstance).post(
-        `/rfq/${rfqId}/images/upload-url`,
+        `/rfq/${bigIntConverter.toAPI(rfqId)}/images/upload-url`,
         { fileName: fileName },
         { headers: { 'accept': '*/*' } }
     );

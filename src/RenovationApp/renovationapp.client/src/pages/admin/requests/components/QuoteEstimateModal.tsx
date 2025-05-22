@@ -5,15 +5,14 @@ import { Button } from '../../../../components/ButtonComponent/Button';
 import { useMsal } from '@azure/msal-react';
 import { useCreateProjectService } from '../../../../api/projects/children/projectService';
 import { useCreateProject } from '../../../../api/projects/useProjectOutput';
-import { ProjectServiceCreateDTO } from '../../../../api/projects/project.types';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { fetchRFQById } from '../../../../api/rfq/rfqQueries';
-import { useUpdateRFQ } from '../../../../api/rfq/rfq';
+import { useUpdateRFQ, getRFQById } from '../../../../api/rfq/rfq';
+import { RFQStatus } from '../../../../api/rfq/rfq.types';
 import { generateAndDownloadPDF } from '../../../../utils/generatePDF';
+import { bigIntConverter } from '../../../../utils/bigIntConvert';
 
 interface QuoteEstimateModalProps {
     show: boolean;
-    rfqId: number | null;
+    rfqId: string | number | null;
     onClose: () => void;
     onQuoteSent: () => void;
 }
@@ -38,7 +37,6 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
     const updateRFQ = useUpdateRFQ(instance);
     const quoteRef = useRef<HTMLDivElement>(null);
 
-
     const [services, setServices] = useState<ServiceLine[]>([]);
     const [quoteNumber, setQuoteNumber] = useState('');
     const [startDate, setStartDate] = useState('');
@@ -48,19 +46,20 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
     const [total, setTotal] = useState(0);
 
     const createProject = useCreateProject(instance);
-    const createService = useCreateProjectService(BigInt(rfqId || 0), instance);
+    const createService = useCreateProjectService(rfqId ? BigInt(rfqId) : BigInt(0),
+    instance
+);
 
+    // Format without timezone based on Model
     const formatDateWithoutTimezone = (dateString: string) => {
         const date = new Date(dateString);
         return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}T00:00:00`;
     }
 
-    const queryClient = useQueryClient();
-    const { data: rfqData } = useQuery({
-        queryKey: ['rfq', rfqId],
-        queryFn: () => rfqId ? fetchRFQById(BigInt(rfqId), instance) : null,
-        enabled: !!rfqId
-    });
+    const { data: rfqData } = getRFQById(
+        rfqId ? BigInt(rfqId) : BigInt(0),
+        instance
+    );
 
     useEffect(() => {
         // Calculate totals whenever services change
@@ -79,8 +78,8 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
                 description: '',
                 quotePrice: 0,
                 quoteCost: 0,
-                quoteStartDate: startDate,
-                quoteEndDate: endDate
+                quoteStartDate: startDate || formatDateWithoutTimezone(new Date().toISOString()),
+                quoteEndDate: endDate || formatDateWithoutTimezone(new Date().toISOString())
             }
         ]);
     };
@@ -89,7 +88,8 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
         const updatedServices = [...services];
         updatedServices[index] = {
             ...updatedServices[index],
-            [field]: value
+            [field]: field === 'quotePrice' || field === 'quoteCost' ? 
+                Number(value) || 0 : value
         };
         setServices(updatedServices);
     };
@@ -98,6 +98,7 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
         setServices(services.filter((item => item !== services[index])));
     };
 
+    // TODO: Reset form after submission
     const handleSubmit = async () => {
         try {
             if (!rfqData?.clientId) {
@@ -114,7 +115,7 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
 
                 // Prepare email content
                 const emailContent = {
-                    to: 'buniel@ualberta.ca', // Replace with actual email if we have access to entra
+                    to: '', 
                     subject: `Quote Estimate - ${quoteNumber}`,
                     body: `Dear Client,\n\nPlease find attached the quote estimate.\n\nBest regards,\nBob & Susan Renovations`,
                 };
@@ -123,70 +124,52 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
                 window.location.href = `mailto:${emailContent.to}?subject=${encodeURIComponent(emailContent.subject)}&body=${encodeURIComponent(emailContent.body)}`;
             }
 
-            // update RFQ status to "Quoted"
-            // await updateRFQ.mutateAsync({
-            //     rfqid: BigInt(rfqId ?? 0),
-            //     rfq: {
-            //         status: 'Quoted'
-            //     }
-            // });
-            
             // Create Project
             const projectData = {
+                // TODO: change to enum like RFQStatus
+                // TODO: Add quoteprice, quoteCost, quoteStartDate, quoteEndDate
+                // TODO: Push RFQ data to project
                 status: 'Quote Complete',
-                rfqId: rfqId || undefined,
+                rfqId: rfqId ? bigIntConverter.toAPI(BigInt(rfqId)) : undefined,
                 clientId: rfqData.clientId
             };
 
             const createdProject = await createProject.mutateAsync(projectData);
+            if (!createdProject?.id) {
+                throw new Error('Project creation failed: No ID returned');
+            }
 
-            if (createdProject?.id) {
-                const servicePromises = services.map(service => {
-                const serviceDTO: ProjectServiceCreateDTO = {
-                    name: service.name,
-                    description: service.description,
-                    projectServiceTypeId: service.projectServiceTypeId,
-                    quotePrice: service.quotePrice,
-                    quoteCost: service.quoteCost,
-                    quoteStartDate: formatDateWithoutTimezone(startDate),
-                    quoteEndDate: formatDateWithoutTimezone(endDate),
-                    status: 'Quoted',
-                };
-                console.log('Creating service for project:', createdProject.id);
-                console.log('Creating service with DTO:', serviceDTO);
-                return createService.mutateAsync(serviceDTO);
-            });
+            await Promise.all(
+                services.map(service => 
+                    createService.mutateAsync({
+                        ...service,
+                        quoteStartDate: formatDateWithoutTimezone(startDate),
+                        quoteEndDate: formatDateWithoutTimezone(endDate),
+                        quoteCost: Number(service.quoteCost),
+                        quotePrice: Number(service.quotePrice),
+                        status: 'Quoted'
+                    })
+                )
+            );
+            // TODO: Update project with project services
 
-            await Promise.all(servicePromises);
-
-            try {
+            // Update RFQ status to "Quoted"
             await updateRFQ.mutateAsync({
                 rfqId: BigInt(rfqId ?? 0),
                 rfq: {
-                    status: 'Quoted'
+                    status: RFQStatus.Quoted,
                 }
             });
-
-            // Update cache only after successful RFQ update
-            queryClient.setQueryData(['rfqs'], (oldData: any) => {
-                if (!oldData) return oldData;
-                return oldData.filter((request: any) => request.id !== rfqId);
-            });
-        } catch (rfqError) {
-            console.error('Error updating RFQ status:', rfqError);
-            // Project is created but RFQ update failed
-            // You might want to show a warning to the user
-        }
             onQuoteSent();
             onClose();
-            } else {
-                throw new Error('Project creation failed: No ID returned');
-            }
         } catch (error) {
             console.error('Error creating project or services:', error);
             console.error('Error generating PDF:', error);
         }
     };
+
+    // TODO: Make issue date and valid until date default to today and 30 days from today, but allow user to change
+    // TODO: Make quote number auto-generate, unique, and not editable
 
     return (
     <Modal show={show} onHide={onClose} size="lg">
