@@ -1,5 +1,9 @@
-import Image1 from "../../assets/kitchen-modern-1.jpg";
-import Image2 from "../../assets/bathroom-2.jpg";
+import Image11 from "../../assets/kitchen-modern-1-1.jpg";
+import Image12 from "../../assets/kitchen-modern-1-2.jpg";
+import Image13 from "../../assets/kitchen-modern-1-3.jpg";
+import Image21 from "../../assets/bathroom-2-1.jpg";
+import Image22 from "../../assets/bathroom-2-2.jpg";
+import Image23 from "../../assets/bathroom-2-3.jpg";
 import Image3 from "../../assets/basement-rustic-3.jpg";
 import Image4 from "../../assets/home-additions-4.jpg";
 import Image5 from "../../assets/kitchen-rustic-5.jpg";
@@ -16,7 +20,11 @@ export const gallery_mock_data: ProjectPublicInfoWithImages[] = [
         "renovationTagIds": [
             "Modern"
         ],
-        "images": [{ "url": Image1, fileName:"", fileType:"image" }]
+        "images": [
+            { "url": Image11, fileName: "", fileType: "image" },
+            { "url": Image12, fileName: "", fileType: "image" },
+            { "url": Image13, fileName: "", fileType: "image" },
+        ]
     },
     {
         "id": 2n,
@@ -26,7 +34,11 @@ export const gallery_mock_data: ProjectPublicInfoWithImages[] = [
             "Modern",
             "Rustic"
         ],
-        "images": [{ "url": Image2, fileName:"", fileType:"image" }]
+        "images": [
+            { "url": Image21, fileName: "", fileType: "image" },
+            { "url": Image22, fileName: "", fileType: "image" },
+            { "url": Image23, fileName: "", fileType: "image" },
+        ]
     },
     {
         "id": 3n,
@@ -36,7 +48,7 @@ export const gallery_mock_data: ProjectPublicInfoWithImages[] = [
             "Rustic",
             "Sophisticated"
         ],
-        "images": [{ "url": Image3, fileName:"", fileType:"image" }]
+        "images": [{ "url": Image3, fileName: "", fileType: "image" }]
     },
     {
         "id": 4n,
@@ -46,7 +58,7 @@ export const gallery_mock_data: ProjectPublicInfoWithImages[] = [
             "Modern",
             "Sophisticated"
         ],
-        "images": [{ "url": Image4, fileName:"", fileType:"image" }]
+        "images": [{ "url": Image4, fileName: "", fileType: "image" }]
     },
     {
         "id": 5n,
@@ -55,7 +67,7 @@ export const gallery_mock_data: ProjectPublicInfoWithImages[] = [
         "renovationTagIds": [
             "Rustic"
         ],
-        "images": [{ "url": Image5, fileName:"", fileType:"image" }]
+        "images": [{ "url": Image5, fileName: "", fileType: "image" }]
     },
     {
         "id": 6n,
@@ -66,7 +78,7 @@ export const gallery_mock_data: ProjectPublicInfoWithImages[] = [
             "Rustic",
             "Sophisticated"
         ],
-        "images": [{ "url": Image6, fileName:"", fileType:"image" }]
+        "images": [{ "url": Image6, fileName: "", fileType: "image" }]
     },
     {
         "id": 7n,
@@ -75,7 +87,7 @@ export const gallery_mock_data: ProjectPublicInfoWithImages[] = [
         "renovationTagIds": [
             "Sophisticated"
         ],
-        "images": [{ "url": Image7, fileName:"", fileType:"image" }]
+        "images": [{ "url": Image7, fileName: "", fileType: "image" }]
     },
     {
         "id": 8n,
@@ -85,15 +97,6 @@ export const gallery_mock_data: ProjectPublicInfoWithImages[] = [
             "Modern",
             "Rustic"
         ],
-        "images": [{ "url": Image8, fileName:"", fileType:"image" }]
-    },
-    //   {
-    //     "id": 9,
-    //     "renovationType": "KitchenRemodels",
-    //     "costCategory": 11,
-    //     "renovationTagIds": [
-    //       "Sophisticated"
-    //     ],
-    //     "images":[{"url":Image1}]
-    //   }
+        "images": [{ "url": Image8, fileName: "", fileType: "image" }]
+    }
 ]

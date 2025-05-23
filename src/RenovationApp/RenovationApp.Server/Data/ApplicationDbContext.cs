@@ -29,7 +29,6 @@ namespace RenovationApp.Server.Data
         {
             base.OnModelCreating(modelBuilder);
 
-
             // Configure Project entity
             modelBuilder.Entity<Project>(entity =>
             {
@@ -76,21 +75,26 @@ namespace RenovationApp.Server.Data
                     .WithOne(pt => pt.Project)
                     .HasForeignKey(pt => pt.ProjectId)
                     .OnDelete(DeleteBehavior.SetNull);
+            });
 
-                // configure the conversion for storing enum arrays in your database
-                entity.Property(p => p.RenovationTags)
-                    .HasConversion(
-                        v => string.Join(',', v),
-                        v => v.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                            .Select(tag => Enum.Parse<RenovationTag>(tag))
-                            .ToArray(),
-                        new ValueComparer<RenovationTag[]>(
-                            (c1, c2) => c1.SequenceEqual(c2),
-                            c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-                            c => c.ToArray()
-                        )
-                    );
-                });
+            // Many-to-many: Project <-> RenovationTag
+            modelBuilder.Entity<Project>()
+                .HasMany(p => p.RenovationTags)
+                .WithMany()
+                .UsingEntity<ProjectRenovationTag>(
+                    j => j
+                        .HasOne<RenovationTag>()
+                        .WithMany()
+                        .HasForeignKey(prt => prt.RenovationTagsId),
+                    j => j
+                        .HasOne<Project>()
+                        .WithMany()
+                        .HasForeignKey(prt => prt.ProjectId),
+                    j =>
+                    {
+                        j.ToTable("ProjectRenovationTags");
+                        j.HasKey(prt => new { prt.ProjectId, prt.RenovationTagsId });
+                    });
 
             // Configure RFQ entity
             modelBuilder.Entity<RFQ>(entity =>
@@ -166,7 +170,7 @@ namespace RenovationApp.Server.Data
 
             modelBuilder.Entity<Project>()
                 .Property(p => p.RenovationType)
-                .HasConversion<string>(); 
+                .HasConversion<string>();
 
             modelBuilder.Entity<ProjectService>()
                 .Property(ps => ps.Status)
@@ -176,107 +180,228 @@ namespace RenovationApp.Server.Data
                 .Property(pf => pf.Type)
                 .HasConversion<string>();
 
+            // Seed sample data for RenovationTags
+            modelBuilder.Entity<RenovationTag>().HasData(
+                new RenovationTag { Id = "Modern" },
+                new RenovationTag { Id = "Rustic" },
+                new RenovationTag { Id = "Sophisticated" }
+            );
+
+            // Seed sample data for Projects
+            var seedDate = DateTime.SpecifyKind(new DateTime(2025, 5, 21), DateTimeKind.Utc);
 
             modelBuilder.Entity<Project>().HasData(
                 new Project
                 {
                     Id = 1,
-                    CreatedByEmployee = "employee-001",
-                    ClientId = "client-001",
+                    CreatedTimestamp = seedDate,
+                    CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
+                    ClientId = "2025-05-19T17:37:40.401185Z",
                     IsPublic = true,
                     RenovationType = RenovationType.KitchenRemodels,
-                    QuotePriceOverride = 12500m,
-                    RenovationTags = new[] { RenovationTag.modern, RenovationTag.luxury }
+                    QuotePriceOverride = 15000.00m
                 },
                 new Project
                 {
                     Id = 2,
-                    CreatedByEmployee = "employee-002",
-                    ClientId = "client-002",
+                    CreatedTimestamp = seedDate,
+                    CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
+                    ClientId = "2025-05-19T17:37:40.401185Z",
                     IsPublic = true,
                     RenovationType = RenovationType.BathroomRenovations,
-                    QuotePriceOverride = 9500m,
-                    RenovationTags = new[] { RenovationTag.rustic }
+                    QuotePriceOverride = 9800.50m
                 },
                 new Project
                 {
                     Id = 3,
-                    CreatedByEmployee = "employee-003",
-                    ClientId = "client-003",
+                    CreatedTimestamp = seedDate,
+                    CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
+                    ClientId = "2025-05-19T17:37:40.401185Z",
                     IsPublic = true,
                     RenovationType = RenovationType.BasementFinishing,
-                    QuotePriceOverride = 18000m,
-                    RenovationTags = new[] { RenovationTag.modern, RenovationTag.luxury }
+                    QuotePriceOverride = 20000.00m
                 },
                 new Project
                 {
                     Id = 4,
-                    CreatedByEmployee = "employee-004",
-                    ClientId = "client-004",
+                    CreatedTimestamp = seedDate,
+                    CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
+                    ClientId = "2025-05-19T17:37:40.401185Z",
                     IsPublic = true,
-                    RenovationType = RenovationType.BathroomRenovations,
-                    RenovationTags = new[] { RenovationTag.rustic }
+                    RenovationType = RenovationType.HomeAdditions,
+                    QuotePriceOverride = 45000.00m
                 },
                 new Project
                 {
                     Id = 5,
-                    CreatedByEmployee = "employee-001",
-                    ClientId = "client-005",
+                    CreatedTimestamp = seedDate,
+                    CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
+                    ClientId = "2025-05-19T17:37:40.401185Z",
                     IsPublic = true,
                     RenovationType = RenovationType.KitchenRemodels,
-                    QuotePriceOverride = 7600m,
-                    RenovationTags = new[] { RenovationTag.countrstyle }
+                    QuotePriceOverride = 12300.00m
                 },
                 new Project
                 {
                     Id = 6,
-                    CreatedByEmployee = "employee-002",
-                    ClientId = "client-006",
+                    CreatedTimestamp = seedDate,
+                    CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
+                    ClientId = "2025-05-19T17:37:40.401185Z",
                     IsPublic = true,
-                    RenovationType = RenovationType.HomeAdditions,
-                    RenovationTags = new[] { RenovationTag.rustic, RenovationTag.modern }
+                    RenovationType = RenovationType.BathroomRenovations,
+                    QuotePriceOverride = 8700.75m
                 },
                 new Project
                 {
                     Id = 7,
-                    CreatedByEmployee = "employee-001",
-                    ClientId = "client-007",
+                    CreatedTimestamp = seedDate,
+                    CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
+                    ClientId = "2025-05-19T17:37:40.401185Z",
                     IsPublic = true,
-                    RenovationType = RenovationType.HomeAdditions,
-                    QuotePriceOverride = 12300m,
-                    RenovationTags = new[] { RenovationTag.rustic, RenovationTag.modern }
+                    RenovationType = RenovationType.BasementFinishing,
+                    QuotePriceOverride = 17450.20m
                 },
                 new Project
                 {
                     Id = 8,
-                    CreatedByEmployee = "employee-004",
-                    ClientId = "client-008",
+                    CreatedTimestamp = seedDate,
+                    CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
+                    ClientId = "2025-05-19T17:37:40.401185Z",
                     IsPublic = true,
-                    RenovationType = RenovationType.KitchenRemodels,
-                    RenovationTags = new[] { RenovationTag.countrstyle, RenovationTag.luxury }
-                },
-                new Project
-                {
-                    Id = 9,
-                    CreatedByEmployee = "employee-001",
-                    ClientId = "client-009",
-                    IsPublic = true,
-                    RenovationType = RenovationType.BasementFinishing,
-                    RenovationTags = new[] { RenovationTag.luxury, RenovationTag.modern }
+                    RenovationType = RenovationType.HomeAdditions,
+                    QuotePriceOverride = 39999.99m
                 }
             );
 
-            modelBuilder.Entity<ClientInvoice>().HasData(
-                new ClientInvoice { Id = 1, ProjectId = 1, Amount = 5500 },
-                new ClientInvoice { Id = 2, ProjectId = 1, Amount = 3000 },
-                new ClientInvoice { Id = 3, ProjectId = 2, Amount = 6000 },
-                new ClientInvoice { Id = 4, ProjectId = 3, Amount = 9000 },
-                new ClientInvoice { Id = 5, ProjectId = 4, Amount = 8000 },
-                new ClientInvoice { Id = 6, ProjectId = 5, Amount = 8000 },
-                new ClientInvoice { Id = 7, ProjectId = 6, Amount = 8000 },
-                new ClientInvoice { Id = 8, ProjectId = 7, Amount = 4000 },
-                new ClientInvoice { Id = 9, ProjectId = 8, Amount = 5000 },
-                new ClientInvoice { Id = 10, ProjectId = 9, Amount = 3500 }
+            // Seed sample data for the ProjectRenovationTags join table
+            modelBuilder.Entity<ProjectRenovationTag>().HasData(
+                new ProjectRenovationTag { ProjectId = 1, RenovationTagsId = "Modern" },
+                new ProjectRenovationTag { ProjectId = 2, RenovationTagsId = "Modern" },
+                new ProjectRenovationTag { ProjectId = 2, RenovationTagsId = "Rustic" },
+                new ProjectRenovationTag { ProjectId = 3, RenovationTagsId = "Rustic" },
+                new ProjectRenovationTag { ProjectId = 3, RenovationTagsId = "Sophisticated" },
+                new ProjectRenovationTag { ProjectId = 4, RenovationTagsId = "Modern" },
+                new ProjectRenovationTag { ProjectId = 4, RenovationTagsId = "Sophisticated" },
+                new ProjectRenovationTag { ProjectId = 5, RenovationTagsId = "Rustic" },
+                new ProjectRenovationTag { ProjectId = 6, RenovationTagsId = "Modern" },
+                new ProjectRenovationTag { ProjectId = 6, RenovationTagsId = "Rustic" },
+                new ProjectRenovationTag { ProjectId = 6, RenovationTagsId = "Sophisticated" },
+                new ProjectRenovationTag { ProjectId = 7, RenovationTagsId = "Sophisticated" },
+                new ProjectRenovationTag { ProjectId = 8, RenovationTagsId = "Modern" },
+                new ProjectRenovationTag { ProjectId = 8, RenovationTagsId = "Rustic" }
+            );
+
+
+            // Seed sample data for ProjectFiles
+            modelBuilder.Entity<ProjectFile>().HasData(
+                new ProjectFile
+                {
+                    Id = 1,
+                    UploadedTimestamp = DateTime.SpecifyKind(new DateTime(2025, 5, 23, 19, 7, 6, 196).AddTicks(7680), DateTimeKind.Utc),
+                    FileUri = "1/image/aa050bf6-11ea-4159-a7a0-c7fb988153fd_kitchen-modern-1-2.jpg",
+                    FileName = "kitchen-modern-1-2.jpg",
+                    Type = FileType.image,
+                    ProjectId = 1
+                },
+                new ProjectFile
+                {
+                    Id = 2,
+                    UploadedTimestamp = DateTime.SpecifyKind(new DateTime(2025, 5, 23, 19, 7, 6, 327).AddTicks(1310), DateTimeKind.Utc),
+                    FileUri = "1/image/de55d569-d39d-4eae-a213-d2c38944bcc3_kitchen-modern-1-3.jpg",
+                    FileName = "kitchen-modern-1-3.jpg",
+                    Type = FileType.image,
+                    ProjectId = 1
+                },
+                new ProjectFile
+                {
+                    Id = 3,
+                    UploadedTimestamp = DateTime.SpecifyKind(new DateTime(2025, 5, 23, 19, 7, 6, 394).AddTicks(8360), DateTimeKind.Utc),
+                    FileUri = "1/image/dfc7aac0-cba0-4ab3-90a5-76535629cd09_kitchen-modern-1-1.jpg",
+                    FileName = "kitchen-modern-1-1.jpg",
+                    Type = FileType.image,
+                    ProjectId = 1
+                },
+                new ProjectFile
+                {
+                    Id = 4,
+                    UploadedTimestamp = DateTime.SpecifyKind(new DateTime(2025, 5, 23, 19, 7, 37, 32).AddTicks(8650), DateTimeKind.Utc),
+                    FileUri = "2/image/14031773-ce2c-4084-81ad-083e48787a06_bathroom-2-1.jpg",
+                    FileName = "bathroom-2-1.jpg",
+                    Type = FileType.image,
+                    ProjectId = 2
+                },
+                new ProjectFile
+                {
+                    Id = 5,
+                    UploadedTimestamp = DateTime.SpecifyKind(new DateTime(2025, 5, 23, 19, 7, 37, 132).AddTicks(1750), DateTimeKind.Utc),
+                    FileUri = "2/image/81b25b05-7a18-46a3-bfca-a3223a3f2154_bathroom-2-2.jpg",
+                    FileName = "bathroom-2-2.jpg",
+                    Type = FileType.image,
+                    ProjectId = 2
+                },
+                new ProjectFile
+                {
+                    Id = 6,
+                    UploadedTimestamp = DateTime.SpecifyKind(new DateTime(2025, 5, 23, 19, 7, 37, 277).AddTicks(3010), DateTimeKind.Utc),
+                    FileUri = "2/image/309fb788-836a-4a36-8f47-805096eb663e_bathroom-2-3.jpg",
+                    FileName = "bathroom-2-3.jpg",
+                    Type = FileType.image,
+                    ProjectId = 2
+                },
+                new ProjectFile
+                {
+                    Id = 7,
+                    UploadedTimestamp = DateTime.SpecifyKind(new DateTime(2025, 5, 23, 19, 8, 5, 117).AddTicks(4110), DateTimeKind.Utc),
+                    FileUri = "3/image/5ad494f2-edc1-4662-a342-4ffb3f880b66_basement-rustic-3.jpg",
+                    FileName = "basement-rustic-3.jpg",
+                    Type = FileType.image,
+                    ProjectId = 3
+                },
+                new ProjectFile
+                {
+                    Id = 8,
+                    UploadedTimestamp = DateTime.SpecifyKind(new DateTime(2025, 5, 23, 19, 8, 18, 138).AddTicks(5180), DateTimeKind.Utc),
+                    FileUri = "4/image/9313909c-00e2-4b84-aa88-973d3ee59720_home-additions-4.jpg",
+                    FileName = "home-additions-4.jpg",
+                    Type = FileType.image,
+                    ProjectId = 4
+                },
+                new ProjectFile
+                {
+                    Id = 9,
+                    UploadedTimestamp = DateTime.SpecifyKind(new DateTime(2025, 5, 23, 19, 8, 40, 418).AddTicks(8500), DateTimeKind.Utc),
+                    FileUri = "5/image/f2c9ef54-fad9-4782-9ce2-13d44393a1d7_kitchen-rustic-5.jpg",
+                    FileName = "kitchen-rustic-5.jpg",
+                    Type = FileType.image,
+                    ProjectId = 5
+                },
+                new ProjectFile
+                {
+                    Id = 10,
+                    UploadedTimestamp = DateTime.SpecifyKind(new DateTime(2025, 5, 23, 19, 9, 8, 519).AddTicks(7940), DateTimeKind.Utc),
+                    FileUri = "6/image/41ffa27f-06ec-412b-a9d3-336ab2b29744_bathroom-6.jpg",
+                    FileName = "bathroom-6.jpg",
+                    Type = FileType.image,
+                    ProjectId = 6
+                },
+                new ProjectFile
+                {
+                    Id = 11,
+                    UploadedTimestamp = DateTime.SpecifyKind(new DateTime(2025, 5, 23, 19, 9, 32, 121).AddTicks(3790), DateTimeKind.Utc),
+                    FileUri = "7/image/cafd4a1b-0614-4606-9af3-81d8e9927dfb_basements-shpisticated-7.jpg",
+                    FileName = "basements-shpisticated-7.jpg",
+                    Type = FileType.image,
+                    ProjectId = 7
+                },
+                new ProjectFile
+                {
+                    Id = 12,
+                    UploadedTimestamp = DateTime.SpecifyKind(new DateTime(2025, 5, 23, 19, 9, 52, 246).AddTicks(4560), DateTimeKind.Utc),
+                    FileUri = "8/image/6d7e9224-7054-419d-b6c2-f96d6db032c9_home-additions-8.jpg",
+                    FileName = "home-additions-8.jpg",
+                    Type = FileType.image,
+                    ProjectId = 8
+                }
             );
         }
     }

@@ -17,7 +17,7 @@ A full-stack web application developed for **Bob & Susan Renovations**, designed
 ## 📁 Project Structure
 
 ```
-project-root/
+src/RenovationApp/
 ├── RenovationApp.Server/     # Backend API (.NET Core)
 ├── renovationapp.client/     # Frontend (React)
 ├── docker-compose.yml        # Docker configuration
@@ -38,25 +38,20 @@ Ensure you have the following installed:
 * [PostgreSQL](https://www.postgresql.org/)
 * [Docker & Docker Compose](https://docs.docker.com/desktop/)
 
-Also, configure your environment variables as described below.
-
-### Environment Variables
-
-Create a `.env` file in the project root and include:
-
-```env
-POSTGRES_USER=your_db_user
-POSTGRES_PASSWORD=your_db_password
-POSTGRES_DB=your_db_name
-```
-
 ### Running the Application
 
 1. **Clone the repository**
 
 2. **Start Docker Desktop**
 
-3. **Launch the project**
+3. **Generate and export a developer https certificate**
+
+Under src\RenovationApp, do
+
+* dotnet dev-certs https --export-path ./certs/devLocalCert.pem --format PEM -p AStrongPassword --trust
+* echo AStrongPassword > .\certs\devLocalCert.pw
+
+4. **Launch the project**
 
    * Open `RenovationApp.sln` in Visual Studio.
    * Select `docker-compose` as the startup item and run.
@@ -67,7 +62,7 @@ This will:
 * Build and run the backend and frontend
 * Start the NGINX reverse proxy
 
-4. **Access the App**
+5. **Access the App**
 
    * Frontend: [http://localhost](http://localhost)
    * Backend API: [http://localhost/api](http://localhost/api)

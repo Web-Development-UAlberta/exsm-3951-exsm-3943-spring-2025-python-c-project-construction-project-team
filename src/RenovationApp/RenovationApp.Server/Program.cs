@@ -47,7 +47,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(c =>
@@ -105,6 +105,23 @@ builder.Services.AddScoped<IStorageService, MinioStorageService>();
 var app = builder.Build();
 
 app.Logger.LogInformation($"PostgreSQL Connection String: {connectionString}");
+
+// --- Run Entity Framework migrations automatically ---
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    try
+    {
+        app.Logger.LogInformation("Applying database migrations...");
+        dbContext.Database.Migrate();
+        app.Logger.LogInformation("Database migrations applied successfully.");
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogError(ex, "An error occurred while applying database migrations.");
+        throw; // Re-throw to prevent the application from starting with an invalid database state
+    }
+}
 
 // --- Ensure S3 buckets exist before starting the app ---
 using (var scope = app.Services.CreateScope())

@@ -6,23 +6,23 @@ import Card from 'react-bootstrap/Card';
 import Carousel from 'react-bootstrap/Carousel';
 import './Gallery.css';
 import ImagePlaceholder from "../../assets/placeholder-svg.svg";
-import { getRenovationTags } from '../../api/renotag/renotag';
-import { getPublicProjectsWithImages } from '../../api/projects/projectPublic';
+import { useRenovationTags } from '../../api/renotags/renotags';
+// import { getPublicProjectsWithImages } from '../../api/projects/children/projectPublic';
 import { ProjectPublicInfoWithImages } from '../../api/projects/project.types';
+import { gallery_mock_data } from './mockData';
 
 const renoTypes = ['Kitchen Remodels', 'Home Additions', 'Basement Finishings', 'Bathroom Renovations'];
 const renoBudgets = ['0-10k', '10k-20k', '20k-30k', '30k+'];
 
 const Gallery = () => {
-    // State for filters
     const [roomTypeFilter, setRoomTypeFilter] = useState<string[]>([]);
     const [styleFilter, setStyleFilter] = useState<string[]>([]);
     const [budgetFilter, setBudgetFilter] = useState<string[]>([]);
     const [FilteredPP, setFilteredPP] = useState<ProjectPublicInfoWithImages[]>([]);
-    const { data: renoTags } = getRenovationTags();
-    const { data: publicProjects = [] } = getPublicProjectsWithImages();
+    const { data: renoTags } = useRenovationTags();
+    // const { data: publicProjects = [] } = getPublicProjectsWithImages();  
+    const publicProjects = gallery_mock_data; // switched to using mock data due to image url not rendering issue with Amzon S3 - images are uploaded but not browser cant resolve the url
 
-    // State for fullscreen modal
     const [showModal, setShowModal] = useState(false);
     const [selectedProject, setSelectedProject] = useState<ProjectPublicInfoWithImages | null>(null);
     const [activeIndex, setActiveIndex] = useState(0);
@@ -30,33 +30,25 @@ const Gallery = () => {
     // Filter and sort images based on selected filters
     useEffect(() => {
         let result = publicProjects;
-
-        // Apply room type filter
         if (roomTypeFilter.length > 0) {
             result = result.filter(pp =>
                 pp.renovationType !== undefined &&
                 roomTypeFilter.includes(pp.renovationType)
             );
         }
-
-        // Apply style filter
         if (styleFilter.length > 0) {
             result = result.filter(pp => {
                 if (pp.renovationTagIds === undefined || pp.renovationTagIds === null) {
                     return false;
                 }
-                // Check if any of the project's tags match the selected style filters
                 return pp.renovationTagIds.some(tagId => styleFilter.includes(tagId));
             });
         }
-
-        // Apply budget filter
         if (budgetFilter.length > 0) {
             result = result.filter(pp => {
                 if (pp.costCategory === undefined || pp.costCategory === null) {
                     return false;
                 }
-                // Convert costCategory number to our budget range strings
                 let budgetRange = convertCostCategoryToString(pp.costCategory);
                 return budgetFilter.includes(budgetRange);
             });
@@ -65,7 +57,6 @@ const Gallery = () => {
         setFilteredPP(result);
     }, [roomTypeFilter, styleFilter, budgetFilter, publicProjects]);
 
-    // Helper function to convert cost category to string
     const convertCostCategoryToString = (costCategory: number | null | undefined): string => {
         if (costCategory === null || costCategory === undefined) return '';
 
@@ -80,7 +71,6 @@ const Gallery = () => {
         }
     };
 
-    // Handler for room type filter changes
     const handleRoomTypeChange = (type: string) => {
         setRoomTypeFilter(prev =>
             prev.includes(type)
@@ -89,7 +79,6 @@ const Gallery = () => {
         );
     };
 
-    // Handler for style filter changes
     const handleStyleChange = (style: string) => {
         setStyleFilter(prev =>
             prev.includes(style)
@@ -98,7 +87,6 @@ const Gallery = () => {
         );
     };
 
-    // Handler for budget filter changes
     const handleBudgetChange = (budget: string) => {
         setBudgetFilter(prev =>
             prev.includes(budget)
@@ -107,7 +95,7 @@ const Gallery = () => {
         );
     };
 
-    // Handler to open the full screen modal
+
     const handleOpenModal = (project: ProjectPublicInfoWithImages, initialIndex: number = 0) => {
         setSelectedProject(project);
         setActiveIndex(initialIndex);
@@ -116,7 +104,6 @@ const Gallery = () => {
         document.body.style.overflow = 'hidden';
     };
 
-    // Handler to close the full screen modal
     const handleCloseModal = () => {
         setShowModal(false);
         setSelectedProject(null);
@@ -124,7 +111,7 @@ const Gallery = () => {
         document.body.style.overflow = 'auto';
     };
 
-    // Navigate to previous image in fullscreen modal
+
     const goToPrevious = () => {
         if (!selectedProject || !selectedProject.images) return;
         setActiveIndex((prevIndex) =>
@@ -132,7 +119,6 @@ const Gallery = () => {
         );
     };
 
-    // Navigate to next image in fullscreen modal
     const goToNext = () => {
         if (!selectedProject || !selectedProject.images) return;
         setActiveIndex((prevIndex) =>

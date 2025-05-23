@@ -12,8 +12,13 @@ using RenovationApp.Server.Data;
 namespace RenovationApp.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
+<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.Designer.cs
     [Migration("20250516161357_InitialUpdate")]
     partial class InitialUpdate
+========
+    [Migration("20250522030931_SeedProjectData")]
+    partial class SeedProjectData
+>>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -314,12 +319,17 @@ namespace RenovationApp.Server.Migrations
                         .HasColumnType("int")
                         .HasColumnName("rfq_id");
 
+<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.Designer.cs
                     b.Property<string>("RenovationTags")
                         .HasColumnType("text")
                         .HasColumnName("renovation_tags");
 
                     b.Property<int?>("RenovationType")
                         .HasColumnType("integer")
+========
+                    b.Property<string>("RenovationType")
+                        .HasColumnType("text")
+>>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.Designer.cs
                         .HasColumnName("renovation_type");
 
                     b.Property<string>("Status")
@@ -337,74 +347,138 @@ namespace RenovationApp.Server.Migrations
                         new
                         {
                             Id = 1,
+<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.Designer.cs
                             ClientId = "client-001",
                             CreatedByEmployee = "employee-001",
                             IsPublic = true,
                             QuotePriceOverride = 12500m,
                             RenovationTags = "modern,luxury",
                             RenovationType = 0
+========
+                            ClientId = "2025-05-19T17:37:40.401185Z",
+                            CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
+                            CreatedTimestamp = new DateTime(2025, 5, 21, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsPublic = true,
+                            QuotePriceOverride = 15000.00m,
+                            RenovationType = "KitchenRemodels"
+>>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.Designer.cs
                         },
                         new
                         {
                             Id = 2,
+<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.Designer.cs
                             ClientId = "client-002",
                             CreatedByEmployee = "employee-002",
                             IsPublic = true,
                             QuotePriceOverride = 9500m,
                             RenovationTags = "rustic",
                             RenovationType = 1
+========
+                            ClientId = "2025-05-19T17:37:40.401185Z",
+                            CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
+                            CreatedTimestamp = new DateTime(2025, 5, 21, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsPublic = true,
+                            QuotePriceOverride = 9800.50m,
+                            RenovationType = "BathroomRenovations"
+>>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.Designer.cs
                         },
                         new
                         {
                             Id = 3,
+<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.Designer.cs
                             ClientId = "client-003",
                             CreatedByEmployee = "employee-003",
                             IsPublic = true,
                             QuotePriceOverride = 18000m,
                             RenovationTags = "modern,luxury",
                             RenovationType = 2
+========
+                            ClientId = "2025-05-19T17:37:40.401185Z",
+                            CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
+                            CreatedTimestamp = new DateTime(2025, 5, 21, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsPublic = true,
+                            QuotePriceOverride = 20000.00m,
+                            RenovationType = "BasementFinishing"
+>>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.Designer.cs
                         },
                         new
                         {
                             Id = 4,
+<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.Designer.cs
                             ClientId = "client-004",
                             CreatedByEmployee = "employee-004",
                             IsPublic = true,
                             RenovationTags = "rustic",
                             RenovationType = 1
+========
+                            ClientId = "2025-05-19T17:37:40.401185Z",
+                            CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
+                            CreatedTimestamp = new DateTime(2025, 5, 21, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsPublic = true,
+                            QuotePriceOverride = 45000.00m,
+                            RenovationType = "HomeAdditions"
+>>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.Designer.cs
                         },
                         new
                         {
                             Id = 5,
+<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.Designer.cs
                             ClientId = "client-005",
                             CreatedByEmployee = "employee-001",
                             IsPublic = true,
                             QuotePriceOverride = 7600m,
                             RenovationTags = "countrstyle",
                             RenovationType = 0
+========
+                            ClientId = "2025-05-19T17:37:40.401185Z",
+                            CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
+                            CreatedTimestamp = new DateTime(2025, 5, 21, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsPublic = true,
+                            QuotePriceOverride = 12300.00m,
+                            RenovationType = "KitchenRemodels"
+>>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.Designer.cs
                         },
                         new
                         {
                             Id = 6,
+<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.Designer.cs
                             ClientId = "client-006",
                             CreatedByEmployee = "employee-002",
                             IsPublic = true,
                             RenovationTags = "rustic,modern",
                             RenovationType = 3
+========
+                            ClientId = "2025-05-19T17:37:40.401185Z",
+                            CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
+                            CreatedTimestamp = new DateTime(2025, 5, 21, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsPublic = true,
+                            QuotePriceOverride = 8700.75m,
+                            RenovationType = "BathroomRenovations"
+>>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.Designer.cs
                         },
                         new
                         {
                             Id = 7,
+<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.Designer.cs
                             ClientId = "client-007",
                             CreatedByEmployee = "employee-001",
                             IsPublic = true,
                             QuotePriceOverride = 12300m,
                             RenovationTags = "rustic,modern",
                             RenovationType = 3
+========
+                            ClientId = "2025-05-19T17:37:40.401185Z",
+                            CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
+                            CreatedTimestamp = new DateTime(2025, 5, 21, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsPublic = true,
+                            QuotePriceOverride = 17450.20m,
+                            RenovationType = "BasementFinishing"
+>>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.Designer.cs
                         },
                         new
                         {
                             Id = 8,
+<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.Designer.cs
                             ClientId = "client-008",
                             CreatedByEmployee = "employee-004",
                             IsPublic = true,
@@ -419,6 +493,14 @@ namespace RenovationApp.Server.Migrations
                             IsPublic = true,
                             RenovationTags = "luxury,modern",
                             RenovationType = 2
+========
+                            ClientId = "2025-05-19T17:37:40.401185Z",
+                            CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
+                            CreatedTimestamp = new DateTime(2025, 5, 21, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsPublic = true,
+                            QuotePriceOverride = 39999.99m,
+                            RenovationType = "HomeAdditions"
+>>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.Designer.cs
                         });
                 });
 
@@ -522,6 +604,93 @@ namespace RenovationApp.Server.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("ProjectFiles");
+                });
+
+            modelBuilder.Entity("RenovationApp.Server.Models.ProjectRenovationTag", b =>
+                {
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RenovationTagsId")
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("ProjectId", "RenovationTagsId");
+
+                    b.HasIndex("RenovationTagsId");
+
+                    b.ToTable("ProjectRenovationTags", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            ProjectId = 1,
+                            RenovationTagsId = "Modern"
+                        },
+                        new
+                        {
+                            ProjectId = 2,
+                            RenovationTagsId = "Modern"
+                        },
+                        new
+                        {
+                            ProjectId = 2,
+                            RenovationTagsId = "Rustic"
+                        },
+                        new
+                        {
+                            ProjectId = 3,
+                            RenovationTagsId = "Rustic"
+                        },
+                        new
+                        {
+                            ProjectId = 3,
+                            RenovationTagsId = "Sophisticated"
+                        },
+                        new
+                        {
+                            ProjectId = 4,
+                            RenovationTagsId = "Modern"
+                        },
+                        new
+                        {
+                            ProjectId = 4,
+                            RenovationTagsId = "Sophisticated"
+                        },
+                        new
+                        {
+                            ProjectId = 5,
+                            RenovationTagsId = "Rustic"
+                        },
+                        new
+                        {
+                            ProjectId = 6,
+                            RenovationTagsId = "Modern"
+                        },
+                        new
+                        {
+                            ProjectId = 6,
+                            RenovationTagsId = "Rustic"
+                        },
+                        new
+                        {
+                            ProjectId = 6,
+                            RenovationTagsId = "Sophisticated"
+                        },
+                        new
+                        {
+                            ProjectId = 7,
+                            RenovationTagsId = "Sophisticated"
+                        },
+                        new
+                        {
+                            ProjectId = 8,
+                            RenovationTagsId = "Modern"
+                        },
+                        new
+                        {
+                            ProjectId = 8,
+                            RenovationTagsId = "Rustic"
+                        });
                 });
 
             modelBuilder.Entity("RenovationApp.Server.Models.ProjectService", b =>
@@ -776,6 +945,35 @@ namespace RenovationApp.Server.Migrations
                     b.ToTable("RFQImages");
                 });
 
+<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.Designer.cs
+========
+            modelBuilder.Entity("RenovationApp.Server.Models.RenovationTag", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("id");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RenovationTags");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "Modern"
+                        },
+                        new
+                        {
+                            Id = "Rustic"
+                        },
+                        new
+                        {
+                            Id = "Sophisticated"
+                        });
+                });
+
+>>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.Designer.cs
             modelBuilder.Entity("RenovationApp.Server.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -967,6 +1165,21 @@ namespace RenovationApp.Server.Migrations
                         .IsRequired();
 
                     b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("RenovationApp.Server.Models.ProjectRenovationTag", b =>
+                {
+                    b.HasOne("RenovationApp.Server.Models.Project", null)
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RenovationApp.Server.Models.RenovationTag", null)
+                        .WithMany()
+                        .HasForeignKey("RenovationTagsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("RenovationApp.Server.Models.ProjectService", b =>

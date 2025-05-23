@@ -168,9 +168,6 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
         }
     };
 
-    // TODO: Make issue date and valid until date default to today and 30 days from today, but allow user to change
-    // TODO: Make quote number auto-generate, unique, and not editable
-
     return (
     <Modal show={show} onHide={onClose} size="lg">
         <Modal.Header closeButton>
