@@ -44,7 +44,14 @@ Ensure you have the following installed:
 
 2. **Start Docker Desktop**
 
-3. **Launch the project**
+3. **Generate and export a developer https certificate**
+
+Under src\RenovationApp, do
+
+* dotnet dev-certs https --export-path ./certs/devLocalCert.pem --format PEM -p AStrongPassword --trust
+* echo AStrongPassword > .\certs\devLocalCert.pw
+
+4. **Launch the project**
 
    * Open `RenovationApp.sln` in Visual Studio.
    * Select `docker-compose` as the startup item and run.
@@ -55,8 +62,7 @@ This will:
 * Build and run the backend and frontend
 * Start the NGINX reverse proxy
 
-
-4. **Access the App**
+5. **Access the App**
 
    * Frontend: [http://localhost](http://localhost)
    * Backend API: [http://localhost/api](http://localhost/api)
