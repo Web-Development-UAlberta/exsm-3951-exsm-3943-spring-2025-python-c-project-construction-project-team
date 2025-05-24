@@ -1,4 +1,3 @@
-import { IPublicClientApplication } from "@azure/msal-browser";
 import { useQuery } from "@tanstack/react-query";
 import { fetchPublicProjects, fetchPublicProjectImageURLs, fetchPublicProjectsWithImages } from "./projectpublicQueries";
 

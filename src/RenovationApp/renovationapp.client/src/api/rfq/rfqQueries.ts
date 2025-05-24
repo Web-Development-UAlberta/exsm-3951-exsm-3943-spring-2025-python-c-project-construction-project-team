@@ -10,7 +10,7 @@ export async function fetchRFQById(rfqId: bigint, msalInstance: IPublicClientApp
     }
     return {
         ...response.data,
-        id: bigIntConverter.fromAPI(response.data.id),
+        rfqId: bigIntConverter.fromAPI(response.data.id),
         rfqImages: response.data.rfqImages ? bigIntConverter.arrayFromAPI(response.data.rfqImages) : null
     };
 }
@@ -22,7 +22,7 @@ export async function fetchAllRFQs(msalInstance: IPublicClientApplication): Prom
     }
     return response.data.map((rfq: any) => ({
         ...rfq,
-        id: bigIntConverter.fromAPI(rfq.id),
+        rfqId: bigIntConverter.fromAPI(rfq.id),
         rfqImages: rfq.rfqImages ? bigIntConverter.arrayFromAPI(rfq.rfqImages) : null
     }));
 }
@@ -42,7 +42,7 @@ export async function updateRFQ(rfqId: bigint, rfq: RFQUpdate, msalInstance: IPu
     }
     return {
         ...response.data,
-        id: bigIntConverter.fromAPI(response.data.id),
+        rfqId: bigIntConverter.fromAPI(response.data.id),
         rfqImages: response.data.rfqImages ? bigIntConverter.arrayFromAPI(response.data.rfqImages) : null
     };
 }
@@ -55,7 +55,7 @@ export async function fetchRFQImages(rfqId: bigint, msalInstance: IPublicClientA
     }
     return response.data.map((image: RFQImage) => ({
         ...image,
-        id: bigIntConverter.fromAPI(image.id)
+        rfqId: bigIntConverter.fromAPI(image.id)
     }));
 }
 
@@ -76,7 +76,8 @@ export async function uploadRFQImage(
     if (urlResponse.status !== 200) {
         throw new Error(`Failed to get upload URL for RFQ with ID ${rfqId}`);
     }
-    const uploadUrl = urlResponse.data.url;
+    const serverUrl = new URL(urlResponse.data.url);
+    const uploadUrl = `http://localhost:9000${serverUrl.pathname}${serverUrl.search}`;
 
     // Step 2: Upload file to signed URL
     const uploadResp = await fetch(uploadUrl, {

@@ -144,6 +144,7 @@ export type ProjectServiceCreateDTO = {
     actualStartDate?: string;
     actualEndDate?: string;
     status?: string;
+    projectId?: number;
 };
 
 export type ProjectServiceUpdateDTO = {
@@ -224,7 +225,7 @@ export type ProjectOutputDTO = {
     clientId: string;
     status?: string | null;
     renovationType?: string | null;
-    rfq?: number | null;
+    rfqId?: number | null;
     comments?: ProjectOutComment[];
     files?: ProjectOutFile[];
     communications?: ProjectOutCommunication[];

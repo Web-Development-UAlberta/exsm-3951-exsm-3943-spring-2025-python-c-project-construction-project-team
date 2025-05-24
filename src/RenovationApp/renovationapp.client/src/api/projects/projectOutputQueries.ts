@@ -1,6 +1,7 @@
 import { apiClient } from '../axios';
 import { IPublicClientApplication } from "@azure/msal-browser";
 import { ProjectOutputDTO } from "./project.types";
+import { bigIntConverter } from '../../utils/bigIntConvert';
 
 // Fetch all projects (output DTO)
 export async function fetchProjects(
@@ -10,7 +11,11 @@ export async function fetchProjects(
     if (!response.data) {
         throw new Error(`Failed to fetch projects`);
     }
-    return response.data;
+    return response.data.map((project: any) => ({
+        ...project,
+        id: bigIntConverter.fromAPI(project.id),
+        rfqId: project.rfqId ? bigIntConverter.fromAPI(project.rfqId) : null
+    }));
 }
 
 // Fetch a single project by id (output DTO)
@@ -18,11 +23,15 @@ export async function fetchProjectById(
     id: number | bigint,
     msalInstance: IPublicClientApplication
 ): Promise<ProjectOutputDTO> {
-    const response = await apiClient(msalInstance).get(`/projects/${id}`, {});
+    const response = await apiClient(msalInstance).get(`/projects/${bigIntConverter.toAPI(id)}`, {});
     if (!response.data) {
         throw new Error(`Failed to fetch project ${id}`);
     }
-    return response.data;
+    return {
+        ...response.data,
+        id: bigIntConverter.fromAPI(response.data.id),
+        rfqId: response.data.rfqId ? bigIntConverter.fromAPI(response.data.rfqId) : null
+    };
 }
 
 // Create a new project (output DTO)
@@ -34,7 +43,13 @@ export async function createProject(
     if (!response.data) {
         throw new Error(`Failed to create project`);
     }
-    return response.data;
+    return {
+        ...data,
+        ...response.data,
+        id: bigIntConverter.fromAPI(response.data.id),
+        rfqId: response.data.rfqId ? bigIntConverter.fromAPI(response.data.rfqId) : null,
+        renovationType: response.data.renovationType || data.renovationType
+    };
 }
 
 // Update a project (special PUT endpoint)
@@ -43,11 +58,16 @@ export async function updateProject(
     data: Partial<ProjectOutputDTO>,
     msalInstance: IPublicClientApplication
 ): Promise<ProjectOutputDTO> {
-    const response = await apiClient(msalInstance).put(`/projects/${id}`, data, {});
+    const response = await apiClient(msalInstance).put(`/projects/${bigIntConverter.toAPI(id)}`,
+        data, {});
     if (!response.data) {
         throw new Error(`Failed to update project ${id}`);
     }
-    return response.data;
+    return {
+        ...response.data,
+        id: bigIntConverter.fromAPI(response.data.id),
+        rfqId: response.data.rfqId ? bigIntConverter.fromAPI(response.data.rfqId) : null
+    };
 }
 
 // Delete a project

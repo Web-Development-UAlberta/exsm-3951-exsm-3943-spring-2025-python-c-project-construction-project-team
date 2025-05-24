@@ -10,9 +10,9 @@ export function useProjects(msalInstance: IPublicClientApplication) {
     });
 }
 
-export function useProject(id: number | bigint, msalInstance: IPublicClientApplication) {
+export function useProject(id: number, msalInstance: IPublicClientApplication) {
     return useQuery({
-        queryKey: ["projects", "output", id],
+        queryKey: ["projects", "output", String(id)],
         queryFn: () => fetchProjectById(id, msalInstance),
     });
 }
@@ -20,11 +20,11 @@ export function useProject(id: number | bigint, msalInstance: IPublicClientAppli
 export function useUpdateProject(msalInstance: IPublicClientApplication) {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: ({ id, data }: { id: bigint, data: Partial<ProjectOutputDTO> }) =>
-            updateProject(Number(id), data, msalInstance),
+        mutationFn: ({ id, data }: { id: number, data: Partial<ProjectOutputDTO> }) =>
+            updateProject(id, data, msalInstance),
         onSuccess: (_result, variables) => {
             queryClient.invalidateQueries({ queryKey: ["projects", "output"] });
-            queryClient.invalidateQueries({ queryKey: ["projects", "output", variables.id] });
+            queryClient.invalidateQueries({ queryKey: ["projects", "output", String(variables.id)] });
         }
     });
 }
@@ -58,7 +58,7 @@ export function useApproveProjectQuote(msalInstance: IPublicClientApplication) {
             approveProjectQuote(id, msalInstance),
         onSuccess: (_result, id) => {
             queryClient.invalidateQueries({ queryKey: ["projects", "output"] });
-            queryClient.invalidateQueries({ queryKey: ["projects", "output", id] });
+            queryClient.invalidateQueries({ queryKey: ["projects", "output", String(id)] });
         }
     });
 }
