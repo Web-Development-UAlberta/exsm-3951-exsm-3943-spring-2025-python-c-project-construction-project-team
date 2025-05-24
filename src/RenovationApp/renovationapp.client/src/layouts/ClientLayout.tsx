@@ -3,6 +3,7 @@ import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useMsal, useIsAuthenticated } from '@azure/msal-react';
 import { loginRequest } from '../config/authConfig';
 import logoPlaceholder from '../assets/logo_name.svg';
+import { Button } from '../components/ButtonComponent/Button';
 
 const ClientLayout: React.FC = () => {
   const { instance } = useMsal();
@@ -44,10 +45,9 @@ const ClientLayout: React.FC = () => {
           <Link className="navbar-brand" to="/">
             <img src={logoPlaceholder} alt="Logo" height="40" />
           </Link>
-
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#clientNavbar">
+          <Button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#clientNavbar">
             <span className="navbar-toggler-icon"></span>
-          </button>
+          </Button>
 
           <div className="collapse navbar-collapse" id="clientNavbar">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
@@ -71,15 +71,15 @@ const ClientLayout: React.FC = () => {
             <div className="d-flex mx-3">
               {isAuthenticated ? (
                 <div className="d-flex gap-2 align-items-center">
-                  <button type="button" className="btn btn-sm" onClick={handleUserAccountClick}>
+                  <Button variant="transparent" onClick={handleUserAccountClick} iconOnly>
                     <i className="bi bi-person-circle fs-4"></i>
-                  </button>
-                  <button type="button" className="btn btn-outline-danger btn-sm" onClick={handleLogout}>
+                  </Button>
+                  <Button type="button" variant="danger" onClick={handleLogout}>
                     Logout
-                  </button>
+                  </Button>
                 </div>
               ) : (
-                <button type="button" className="btn btn-outline-primary btn-sm" onClick={handleLogin}>Login</button>
+                <Button type="button" variant="primary" onClick={handleLogin}>Login</Button>
               )}
             </div>
 

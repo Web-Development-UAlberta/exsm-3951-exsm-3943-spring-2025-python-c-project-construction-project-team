@@ -86,17 +86,21 @@ export const RequestDetailsModal: React.FC<RequestDetailsModalProps> = ({
           </div>
         </div>
       </Modal.Body>
-      
+
       <Modal.Footer className="justify-content-between">
+        <Button
+          variant="danger"
+          outline={true}
+          onClick={() => onDeny(request.id)}
+        >
+          Deny
+        </Button>
         <Button 
-          variant="danger" 
-          onClick={() => onDeny(request.id)} label="Deny"
-        />
-        <Button 
-          variant="success" 
+          variant="success"
           onClick={() => onAccept(request.id)}
-          label="Accept & Create Quote"
-        />
+        >
+          Accept & Create Quote
+        </Button>
       </Modal.Footer>
     </Modal>
   );

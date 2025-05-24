@@ -108,13 +108,14 @@ const ContactDetailsModal = ({ show, onHide, contactId }: ContactDetailsModalPro
                             <td>
                                 <Button
                                     variant="primary"
-                                    size="small"
+                                    size="sm"
                                     onClick={() => {
                                         onHide();
                                         navigate(`/admin/projects/${project.id}`);
                                     }}
-                                    label="View Project"
-                                />
+                                >
+                                    View Project
+                                </Button>
                             </td>
                         </tr>
                     ))}

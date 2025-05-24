@@ -32,17 +32,17 @@ vi.mock('../ButtonComponent/Button', async () => {
   const actual = await vi.importActual<typeof ButtonModule>('../ButtonComponent/Button');
   return {
     ...actual,
-    Button: vi.fn(({ label, onClick, loading, disabled, 'data-testid': testId, ...rest }) => (
-      <button 
-        onClick={onClick} 
-        disabled={disabled} 
+    Button: vi.fn(({ children, onClick, loading, disabled, 'data-testid': testId, variant = 'primary', ...rest }) => (
+      <button
+        onClick={onClick}
+        disabled={disabled || loading}
         data-testid={testId || 'custom-button'}
-        aria-busy={loading ? 'true' : 'false'}
+        aria-disabled={disabled || loading}
+        className={`btn btn-custom-${variant}`}
         {...rest}
       >
         {loading && <span role="status" className="spinner-border" />}
-        {label}
-        {...rest}
+        {children || ''}
       </button>
     ))
   };

@@ -10,6 +10,7 @@ import { useRenovationTags } from '../../api/renotags/renotags';
 // import { getPublicProjectsWithImages } from '../../api/projects/children/projectPublic';
 import { ProjectPublicInfoWithImages } from '../../api/projects/project.types';
 import { gallery_mock_data } from './mockData';
+import { Button } from '../../components/ButtonComponent/Button';
 
 const renoTypes = ['Kitchen Remodels', 'Home Additions', 'Basement Finishings', 'Bathroom Renovations'];
 const renoBudgets = ['0-10k', '10k-20k', '20k-30k', '30k+'];
@@ -243,23 +244,27 @@ const Gallery = () => {
             {showModal && selectedProject && selectedProject.images && selectedProject.images.length > 0 && (
                 <div className="fullscreen-overlay">
                     {/* Close button */}
-                    <button
+                    <Button
+                        variant="transparent"
+                        iconOnly
                         className="fullscreen-close-btn"
                         onClick={handleCloseModal}
                         aria-label="Close"
                     >
-                        ✕
-                    </button>
+                        <i className="bi bi-x-lg"></i>
+                    </Button>
 
                     {/* Fullscreen navigation */}
                     <div className="fullscreen-navigation-container">
-                        <button
+                        <Button
+                            variant="transparent"
+                            iconOnly
                             className="fullscreen-nav-btn prev"
                             onClick={goToPrevious}
                             aria-label="Previous image"
                         >
-                            ‹
-                        </button>
+                            <i className="bi bi-chevron-left"></i>
+                        </Button>
 
                         <div className="fullscreen-image-container">
                             <img
@@ -269,13 +274,15 @@ const Gallery = () => {
                             />
                         </div>
 
-                        <button
+                        <Button
+                            variant="transparent"
+                            iconOnly
                             className="fullscreen-nav-btn next"
                             onClick={goToNext}
                             aria-label="Next image"
                         >
-                            ›
-                        </button>
+                            <i className="bi bi-chevron-right"></i>
+                        </Button>
                     </div>
 
                     {/* Image info footer */}

@@ -202,7 +202,7 @@
     height: 40px;
     background-color: transparent;
     border: none;
-    color: white;
+    color: white !important;
     font-size: 24px;
     cursor: pointer;
     z-index: 10001;
@@ -214,7 +214,7 @@
 }
 
 .fullscreen-close-btn:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.2) !important;
 }
 
 .fullscreen-navigation-container {
@@ -229,7 +229,7 @@
 .fullscreen-nav-btn {
     background-color: transparent;
     border: none;
-    color: white;
+    color: white !important;
     font-size: 60px;
     cursor: pointer;
     padding: 0 30px;
@@ -241,7 +241,7 @@
 }
 
 .fullscreen-nav-btn:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 .fullscreen-image-container {

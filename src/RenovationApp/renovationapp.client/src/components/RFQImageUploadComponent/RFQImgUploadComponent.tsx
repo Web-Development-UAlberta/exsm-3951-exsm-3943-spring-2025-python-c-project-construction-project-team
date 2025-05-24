@@ -125,12 +125,13 @@ export const RFQImageUploadComponent: React.FC<RFQImageUploadComponentProps> = (
                 />
             </div>
             <Button
-                label="Upload"
                 onClick={handleUpload}
                 loading={isLoading}
                 disabled={isLoading}
                 data-testid='rfq-upload-button'
-            />
+            >
+                Upload
+            </Button>
             {uploadStatus && <p data-testid="rfq-status-message">{uploadStatus}</p>}
         </div>
     );

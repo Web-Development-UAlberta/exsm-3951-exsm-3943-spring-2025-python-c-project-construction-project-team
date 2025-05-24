@@ -6,6 +6,8 @@ import { useState, useEffect } from 'react';
 import { QuoteEstimateModal } from './components/QuoteEstimateModal';
 import RequestDetailsModal from './components/RequestDetailsModal';
 import { getRequestStatusBadgeClass } from '../../../utils/getStatusBadgeClass';
+import { Button } from '../../../components/ButtonComponent/Button';
+
 interface RequestDetail {
   id: number;
   client: string;
@@ -130,12 +132,15 @@ const Requests = () => {
       {queryError && (
         <div className="alert alert-danger">
           {errorMessage}
-          <button 
-            className="btn btn-sm btn-outline-danger ms-2"
+          <Button
+            variant="danger"
+            size="sm"
+            outline
+            className="ms-2"
             onClick={() => refetch()}
           >
             Retry
-          </button>
+          </Button>
         </div>
       )}
       {!isLoading && !queryError && (
@@ -181,12 +186,14 @@ const Requests = () => {
                       </span>
                     </td>
                     <td>
-                      <button
-                        className="btn btn-sm btn-outline-secondary me-2"
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        className="me-2"
                         onClick={() => openRequestDetail(Number(request.id))}
                       >
                         Details
-                      </button>
+                      </Button>
                     </td>
                   </tr>
                 ))

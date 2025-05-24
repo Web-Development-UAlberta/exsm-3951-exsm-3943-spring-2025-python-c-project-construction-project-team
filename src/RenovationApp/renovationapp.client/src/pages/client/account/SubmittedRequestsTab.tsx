@@ -4,6 +4,7 @@ import { RequestDetailsModal } from './components/RequestDetailsModal';
 import { useMsal } from '@azure/msal-react';
 import { getAllRFQs } from '../../../api/rfq/rfq';
 import { RFQ } from '../../../api/rfq/rfq.types';
+import { Button } from '../../../components/ButtonComponent/Button';
 
 const SubmittedRequestsTab = () => {
 
@@ -53,13 +54,16 @@ const SubmittedRequestsTab = () => {
                   </span>
                 </td>
                 <td>
-                  <button
-                    className="btn btn-sm btn-outline-primary me-2"
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="me-2"
                     title="View Details"
                     onClick={() => openRequestDetail(request)}
+                    iconOnly
                   >
                     <i className="bi bi-eye"></i>
-                  </button>
+                  </Button>
                 </td>
               </tr>
             ))}

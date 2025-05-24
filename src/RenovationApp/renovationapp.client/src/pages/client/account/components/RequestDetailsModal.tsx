@@ -1,7 +1,7 @@
 // components/RequestDetailsModal.tsx
 import React from 'react';
 import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
+import { Button } from '../../../../components/ButtonComponent/Button';
 import Badge from 'react-bootstrap/Badge';
 import { getRequestStatusBadgeClass } from '../../../../utils/getStatusBadgeClass';
 import { RequestDetailSection } from './RequestDetailSection';
@@ -57,7 +57,7 @@ export const RequestDetailsModal: React.FC<RequestDetailsModalProps> = ({
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onClose}>
+        <Button variant="primary" onClick={onClose}>
           Close
         </Button>
       </Modal.Footer>

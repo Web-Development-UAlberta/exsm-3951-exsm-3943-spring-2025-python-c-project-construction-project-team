@@ -1,51 +1,27 @@
 import React, { useState } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
-import { useMsal, useIsAuthenticated } from '@azure/msal-react';
-import { loginRequest } from '../config/authConfig';
+import { useAuth } from '../hooks/auth/useAuth';
 import logoPlaceholder from '../assets/logo-no-bg-white.png';
+import { Button } from '../components/ButtonComponent/Button';
 
 const AdminLayout: React.FC = () => {
-  const { instance } = useMsal();
-  const isAuthenticated = useIsAuthenticated();
+  const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<'requests' | 'projects' | 'contacts'>('requests');
 
-  const handleLogin = (event: React.MouseEvent) => {
+  const handleLogout = async (event: React.MouseEvent) => {
     event.preventDefault();
-    instance
-      .loginRedirect({
-        ...loginRequest,
-        prompt: 'login',
-      })
-      .catch((error) => console.log(error));
-  };
-
-  const handleLogout = (event: React.MouseEvent) => {
-    event.preventDefault();
-    // First, logout from MSAL (this won't redirect)
-    instance.logout({
-      onRedirectNavigate: () => {
-        // Prevent MSAL from redirecting
-        return false;
-      }
-    }).then(() => {
-      // Then, navigate to the home page or admin home
-      navigate('/admin');
-    }).catch((error) => console.log(error));
+    await logout();
+    navigate('/');
   };
 
   const handleUserAccountClick = () => {
     navigate('/admin/account');
   };
 
-
-  const [activeTab, setActiveTab] = useState<'requests' | 'projects' | 'contacts'>('requests');
-
-
-
   return (
     <>
       <nav className="navbar navbar-expand-lg admin-navbar">
-
         <div className='d-flex justify-content-between align-items-center w-100 px-3'>
           <Link className="navbar-brand" to="/admin/requests">
             <img src={logoPlaceholder} alt="Logo" height="40" />
@@ -54,32 +30,38 @@ const AdminLayout: React.FC = () => {
             Admin Portal
           </div>
           <div className="d-flex">
-            {isAuthenticated ? (
+            {isAuthenticated && (
               <div className="d-flex gap-2 align-items-center">
-                <button type="button" className="btn btn-link text-light" onClick={handleUserAccountClick}>
-                  <i className="bi bi-person-circle fs-4"></i>
-                </button>
-                <button type="button" className="btn btn-danger btn-sm" onClick={handleLogout}>
+                <div className="dropdown">
+                  <Button
+                    className="btn btn-link text-light d-flex align-items-center gap-2 text-decoration-none"
+                    onClick={handleUserAccountClick}
+                  >
+                    <div className="d-flex align-items-center gap-2">
+                        <i className="bi bi-person-circle fs-4"></i>
+                        <div className="d-none d-md-block text-start">
+                          <div>{user?.name || 'User'}</div>
+                        </div>
+                      </div>
+                  </Button>
+                </div>
+                <Button type="button" variant="danger" onClick={handleLogout}>
                   Logout
-                </button>
+                </Button>
               </div>
-            ) : (
-              <button type="button" className="btn btn-outline-light btn-sm" onClick={handleLogin}>Login</button>
             )}
           </div>
-
         </div>
-
       </nav>
 
       <main className="container-fluid">
         <div className="row vh-100">
           {/* Sidebar */}
-          <div className="col-auto admin-sidebar px-0">
+          <div className="col-auto admin-sidebar px-0 d-flex flex-column justify-content-between">
             <div className="px-4 py-5">
               <h4 className="text-light mb-3">Dashboard</h4>
               <div className="nav flex-column">
-                <button
+                <Button
                   className={`nav-link text-light py-3 text-start ${activeTab === 'requests' ? 'active fw-bold' : ''}`}
                   onClick={() => {
                     setActiveTab("requests");
@@ -87,8 +69,8 @@ const AdminLayout: React.FC = () => {
                   }}
                 >
                   Requests
-                </button>
-                <button
+                </Button>
+                <Button
                   className={`nav-link text-light py-3 text-start ${activeTab === 'projects' ? 'active fw-bold' : ''}`}
                   onClick={() => {
                     setActiveTab("projects");
@@ -96,8 +78,8 @@ const AdminLayout: React.FC = () => {
                   }}
                 >
                   Projects
-                </button>
-                <button
+                </Button>
+                <Button
                   className={`nav-link text-light py-3 text-start ${activeTab === 'contacts' ? 'active fw-bold' : ''}`}
                   onClick={() => {
                     setActiveTab("contacts");
@@ -105,7 +87,7 @@ const AdminLayout: React.FC = () => {
                   }}
                 >
                   Contacts
-                </button>
+                </Button>
               </div>
             </div>
           </div>

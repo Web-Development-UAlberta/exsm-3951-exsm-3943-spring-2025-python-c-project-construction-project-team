@@ -277,9 +277,10 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
                                     <td>
                                         <Button
                                             variant='danger'
-                                            size="small"
+                                            size="sm"
                                             onClick={() => removeItem(index)}
-                                            iconOnly={true}>
+                                            iconOnly
+                                        >
                                             <i className="bi bi-trash"></i>
                                         </Button>
                                     </td>
@@ -287,7 +288,11 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
                             ))}
                         </tbody>
                     </table>
-                    <Button variant="primary" className="outline" onClick={addItem} label="Add Item"/>
+                    <div className="d-flex justify-content-end">
+                        <Button variant="primary" size="sm" outline={true} onClick={addItem}>
+                            Add Item
+                        </Button>
+                    </div>
                 </div>
 
                 {/* Quote Summary */}
@@ -312,13 +317,16 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
             </div>
     </Modal.Body>
     <Modal.Footer>
-      <Button variant="secondary" onClick={onClose} label="Close"/>
+      <Button variant="danger" outline={true} onClick={onClose}>
+        Close
+      </Button>
       <Button 
         variant="primary" 
         onClick={handleSubmit}
         disabled={services.length === 0}
-        label="Generate and Send"
-      />
+      >
+        Generate and Send
+      </Button>
     </Modal.Footer>
   </Modal>
     );
