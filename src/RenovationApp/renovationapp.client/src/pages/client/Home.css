@@ -1,0 +1,36 @@
+/* Home Page Styles */
+
+.hero-section {
+  min-height: 450px;
+  overflow: hidden;
+  position: relative;
+}
+
+.hero-section h1 {
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.service-card {
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .hero-section {
+    text-align: center;
+  }
+  
+  .hero-section .btn {
+    margin: 0 auto;
+  }
+}

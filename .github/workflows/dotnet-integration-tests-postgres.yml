@@ -1,0 +1,74 @@
+name: .NET Integration Tests with PostgreSQL
+
+# on:
+#  push:
+#    branches: [ "main", "dev" ]
+#  pull_request:
+#    branches: [ "main", "dev" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Username=testuser;Password=testpass;Database=testdb" #//** Edit Credentials as needed
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Cache NuGet packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.nuget/packages
+        key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          nuget-${{ runner.os }}-
+
+    - name: Install PostgreSQL client
+      run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        until pg_isready -h localhost -p 5432 -U testuser; do
+          echo "Waiting for PostgreSQL..."
+          sleep 2
+        done
+
+    - name: Restore .NET dependencies
+      run: dotnet restore src/RenovationApp.Server/RenovationApp.Server.csproj
+
+    - name: Build the server project
+      run: dotnet build src/RenovationApp.Server/RenovationApp.Server.csproj --configuration Release --no-restore
+
+    - name: Restore EF Core CLI tools
+      run: dotnet tool install --global dotnet-ef
+
+    - name: Add dotnet tools to PATH
+      run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
+    - name: Apply EF Core migrations
+      run: dotnet ef database update --project src/RenovationApp.Server/RenovationApp.Server.csproj
+
+    - name: Run backend integration tests
+      run: dotnet test src/RenovationApp.Tests/BackEnd.Tests/RenovationApp.BackEnd.Tests.csproj --no-build --configuration Release --filter Category=Integration

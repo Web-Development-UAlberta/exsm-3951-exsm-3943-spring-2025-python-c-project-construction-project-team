@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "name": "Docker + Vite",
+            "type": "node", // Changed to a valid debug type
+            "request": "launch",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run", "dev"],
+            "cwd": "${workspaceFolder}/src/RenovationApp/renovationapp.client",
+            "preLaunchTask": "compose-up-dev", // Ensure Docker container starts first
+            "sourceMaps": true,
+            "outFiles": ["${workspaceFolder}/src/RenovationApp/renovationapp.client/**/*.js"]
+        },
+        {
+            "name": "Chrome - Vite Only",
+            "type":"chrome",
+            "request":"launch",
+            "url":"https://localhost:63027",
+            "webRoot":"${workspaceFolder}/src/RenovationApp/renovationapp.client/src",
+            "preLaunchTask": "vite-start-dev"
+        }
+    ]
+}

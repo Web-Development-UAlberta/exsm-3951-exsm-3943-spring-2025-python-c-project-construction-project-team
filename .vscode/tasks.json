@@ -1,0 +1,47 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "compose-up-dev",
+            "command": "docker-compose -f docker-compose.yml up -d",
+            "options": {
+                "cwd": "${workspaceFolder}/src/RenovationApp"
+            },
+            "presentation": {
+              "reveal": "always",
+              "panel": "new"
+            }
+        },
+        {
+            "type": "npm",
+            "label": "vite-start-dev",
+            "script": "dev",
+            "isBackground": true,
+            "problemMatcher": [
+                {
+                    "pattern": [
+                        {
+                            "regexp": ".",
+                            "file": 1,
+                            "location": 2,
+                            "message": 3
+                        }
+                    ],
+                    "background": {
+                        "activeOnStart": true,
+                        "beginsPattern": ".",
+                        "endsPattern": "."
+                    }
+                }
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/src/RenovationApp/renovationapp.client"
+            },
+            "presentation": {
+              "reveal": "always",
+              "panel": "new"
+            }
+        }
+    ]
+}

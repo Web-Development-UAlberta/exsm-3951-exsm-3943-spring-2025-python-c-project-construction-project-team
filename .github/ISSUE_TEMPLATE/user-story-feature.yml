@@ -1,0 +1,58 @@
+name: User Story Feature
+description: Suggest a user story feature
+title: " [FEATURE] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: Please fill out the sections below to describe the new feature.
+  - type: textarea
+    id: description
+    attributes:
+      label: User Story
+      description: What is your new feature suggestion?
+      value: |
+        As a [role],
+        I want [an action or feature],
+        So that [a reason or benefit].
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: What do we want this feature to do? This is something that can be verified to show that this user story is satisfied.
+      value: |
+        - [ ] Criteria 1: Describe the first acceptance criterion here.
+        - [ ] Criteria 2: Describe the second acceptance criterion here.
+        - [ ] Criteria 3: Describe additional criteria as needed.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checkboxes
+    attributes:
+      label: Sprint Ready Checklist
+      options:
+        - label: Acceptance criteria defined.
+        - label: Team understands acceptance criteria.
+        - label: Team has defined solution / steps to satisfy acceptance criteria.
+        - label: Acceptance criteria is verifiable / testable.
+        - label: Documentation is updated, if applicable.
+    validations:
+      required: false
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Extra fields
+      options:
+        - label: I want to work on this issue
+    validations:
+      required: false
+  - type: markdown
+    attributes:
+      value: Make sure to assign yourself if you want to work on this issue!
+  - type: textarea
+    id: extras
+    attributes:
+      label: Add additional information
+      description: Copy/paste any relevant items for this feature.
