@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using RenovationApp.Server.Models;
 
 namespace RenovationApp.Server.Data
@@ -24,6 +23,7 @@ namespace RenovationApp.Server.Data
         public DbSet<RFQ> RFQs { get; set; }
         public DbSet<RFQImage> RFQImages { get; set; }
         public DbSet<ClientInvoice> ClientInvoices { get; set; }
+        public DbSet<RenovationTag> RenovationTags { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -100,6 +100,7 @@ namespace RenovationApp.Server.Data
             modelBuilder.Entity<RFQ>(entity =>
             {
                 entity.ToTable("RFQs");
+
                 // Configure relationship with RFQImage
                 entity.HasMany(r => r.RFQImages)
                     .WithOne(ri => ri.RFQ)
