@@ -43,14 +43,14 @@ namespace RenovationApp.Server.Controllers
                 return BadRequest("User ID is required.");
             }
 
-            if (!User.IsInRole("projectManager"))
-            {
-                // Check if the user is the client of the project
-                if (project.ClientId.ToString() != userId)
-                {
-                    return Unauthorized("You are not authorized to upload files to this project.");
-                }
-            }
+            // if (!User.IsInRole("projectManager"))
+            // {
+            //     // Check if the user is the client of the project
+            //     if (project.ClientId.ToString() != userId)
+            //     {
+            //         return Unauthorized("You are not authorized to upload files to this project.");
+            //     }
+            // }
 
             var expiry = TimeSpan.FromMinutes(10);
 
@@ -90,19 +90,19 @@ namespace RenovationApp.Server.Controllers
             var userId = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
             var userRole = User.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
 
-            if (string.IsNullOrEmpty(userId))
-            {
-                return BadRequest("User ID is required.");
-            }
+            // if (string.IsNullOrEmpty(userId))
+            // {
+            //     return BadRequest("User ID is required.");
+            // }
 
-            if (User.IsInRole("projectmanager"))
-            {
-                // Allow access only if the user is the client of the project
-                if (project.ClientId.ToString() != userId)
-                {
-                    return Unauthorized("You are not authorized to access files for this project.");
-                }
-            }
+            // if (User.IsInRole("projectmanager"))
+            // {
+            //     // Allow access only if the user is the client of the project
+            //     if (project.ClientId.ToString() != userId)
+            //     {
+            //         return Unauthorized("You are not authorized to access files for this project.");
+            //     }
+            // }
 
             var query = _db.ProjectFiles.Where(f => f.ProjectId == projectId);
 
