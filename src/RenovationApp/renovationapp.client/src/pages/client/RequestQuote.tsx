@@ -146,7 +146,7 @@ const RequestQuote = () => {
         } catch (error: any) {
             const errorMessage = error?.response?.data?.message || error.message || 'Unexpected error occurred';
             console.error('Error during form submission:', errorMessage);
-            setSubmitError(`Submission failed: ${errorMessage}`);
+            setSubmitError(`Submission error: ${errorMessage}. Form was submitted but images were not uploaded.`);
         } finally {
             setIsSubmitting(false);
         }

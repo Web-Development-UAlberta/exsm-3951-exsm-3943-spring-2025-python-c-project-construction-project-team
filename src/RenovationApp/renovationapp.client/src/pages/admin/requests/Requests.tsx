@@ -159,10 +159,10 @@ const Requests = () => {
             <tbody>
               {rfqs && rfqs.length > 0 ? (
                 rfqs
-                  .filter(request => request.status !== 'Declined')
+                  .filter(request => request.status === "Created")
                   .map(request => (
-                  <tr key={request.id}>
-                    <td>{request.id}</td>
+                  <tr key={request.id.toString()}>
+                    <td>{request.id.toString()}</td>
                     <td>{request.clientId}</td>
                     <td>{request.projectAddress}</td>
                     <td>
@@ -238,6 +238,12 @@ const Requests = () => {
         show={showQuoteModal}
         onClose={closeQuoteEstimate}
         rfqId={quoteRequestId}
+        assignedEmployeeId={
+          (() => {
+            const id = rfqs?.find(rfq => rfq.id === BigInt(quoteRequestId || 0))?.assignedEmployeeId;
+            return id === null ? undefined : id;
+          })()
+        }
         onQuoteSent={() => {
           closeQuoteEstimate();
           refetch();

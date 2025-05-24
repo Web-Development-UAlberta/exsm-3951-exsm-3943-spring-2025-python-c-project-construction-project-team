@@ -54,7 +54,7 @@ const ProjectDetail = () => {
 
        {/* Overview tab content */}
       {activeTab === 'overview' && id && (
-        <Overview projectId={BigInt(id)} instance={instance} />
+        <Overview projectId={Number(id)} instance={instance} />
       )}
 
       {/* Files tab content */}

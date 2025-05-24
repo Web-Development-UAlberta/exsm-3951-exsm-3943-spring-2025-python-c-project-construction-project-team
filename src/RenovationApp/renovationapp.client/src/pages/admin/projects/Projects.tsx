@@ -1,29 +1,44 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMsal } from '@azure/msal-react';
-import { getProjectStatusBadgeClass } from '../../../utils/getStatusBadgeClass';
 import { useProjects } from '../../../api/projects/useProjectOutput';
-import { ProjectOutputDTO } from '../../../api/projects/project.types';
+import { useUpdateProject } from '../../../api/projects/useProjectOutput';
+import { ProjectTable } from './components/ProjectTable';
 
-const projectManagers = ['Name', 'Mike Smith', 'Sarah Johnson', 'Alex Wong', 'Emily Davis'];
+interface ProjectManager {
+  id: string;
+  name: string;
+  email: string;
+}
+
+export const projectManagers: ProjectManager[] = [
+  {
+    id: '2caf9d13-45db-4960-8a81-a4ffb48dc8f3',
+    name: 'Clarisse Buniel',
+    email: 'buniel@ualberta.ca'
+  },
+  {
+    id: '3a40d159-f5b2-4740-9fd2-c7da499d5daa',
+    name: 'David Rochefort',
+    email: 'drochefo+bob@ualberta.ca'
+  },
+  {
+    id: 'c701d842-5da1-44b2-8783-eb6d9696b314',
+    name: 'Nina Shi',
+    email: 'sxjdehj@163.com'
+  }
+];
 
 const Projects = () => {
   const { instance } = useMsal();
   const navigate = useNavigate();
   const { data: projects = [], isLoading, isError, error } = useProjects(instance);
-  const [localProjects, setLocalProjects] = useState<ProjectOutputDTO[]>([]);
+  const updateProject = useUpdateProject(instance);
 
-  // Update localProjects only after API fetch
-  useState(() => {
-    if (projects.length > 0) setLocalProjects(projects);
-  });
-
-  const handleProjectManagerChange = (projectId: number, newManager: string) => {
-    setLocalProjects(prev =>
-      prev.map(project =>
-        project.id === projectId ? { ...project, createdByEmployee: newManager } : project
-      )
-    );
+  const handleProjectManagerChange = (projectId: number, managerId: string) => {
+    updateProject.mutate({
+      id: projectId,
+      data: { createdByEmployee: managerId }
+    });
   };
 
   if (isLoading) return <p>Loading projects...</p>;
@@ -40,62 +55,9 @@ const Projects = () => {
       </div>
     );
 
-  const ongoing = localProjects.filter(p => p.status === 'In Progress');
-  const completed = localProjects.filter(p => p.status === 'Completed');
-  const cancelled = localProjects.filter(p => p.status === 'Cancelled');
-
-  const renderTable = (rows: ProjectOutputDTO[], title: string) => (
-    <div className="mt-4">
-      <h5 className="mb-3">{title}</h5>
-      <div className="table-responsive">
-        <table className="table table-hover">
-          <thead className="table-light">
-            <tr>
-              <th>ID</th>
-              <th>Project</th>
-              <th>Client</th>
-              <th>Project Manager</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map(project => (
-              <tr key={project.id}>
-                <td>{project.id}</td>
-                <td>{project.renovationType ?? 'Untitled'}</td>
-                <td>{project.client?.name ?? 'Unknown'}</td>
-                <td>
-                  <select
-                    className="form-select form-select-sm"
-                    value={project.createdByEmployee ?? ''}
-                    onChange={e => handleProjectManagerChange(project.id, e.target.value)}
-                  >
-                    {projectManagers.map((manager, i) => (
-                      <option key={i} value={manager}>{manager}</option>
-                    ))}
-                  </select>
-                </td>
-                <td>
-                  <span className={`badge ${getProjectStatusBadgeClass(project.status ?? '')}`}>
-                    {project.status}
-                  </span>
-                </td>
-                <td>
-                  <button
-                    className="btn btn-sm btn-outline-secondary"
-                    onClick={() => navigate(`/admin/projects/${project.id}`)}
-                  >
-                    View
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+  const ongoing = projects.filter(p => p.status === 'In Progress');
+  const completed = projects.filter(p => p.status === 'Completed');
+  const cancelled = projects.filter(p => p.status === 'Cancelled');
 
   return (
     <div className="p-4">
@@ -104,7 +66,7 @@ const Projects = () => {
       <div className="row mb-4">
         <div className="col-md-3">
           <div className="card"><div className="card-body text-center">
-            <h2>{localProjects.length}</h2>
+            <h2>{projects.length}</h2>
             <p>Total Projects</p>
           </div></div>
         </div>
@@ -128,8 +90,19 @@ const Projects = () => {
         </div>
       </div>
 
-      {renderTable(ongoing, 'Ongoing Projects')}
-      {renderTable(localProjects, 'All Projects')}
+      <ProjectTable 
+        rows={ongoing} 
+        title="Ongoing Projects" 
+        onProjectManagerChange={handleProjectManagerChange}
+        onView={(projectId) => navigate(`/admin/projects/${projectId}`)}
+      />
+      
+      <ProjectTable 
+        rows={projects} 
+        title="All Projects" 
+        onProjectManagerChange={handleProjectManagerChange}
+        onView={(projectId) => navigate(`/admin/projects/${projectId}`)}
+      />
     </div>
   );
 };

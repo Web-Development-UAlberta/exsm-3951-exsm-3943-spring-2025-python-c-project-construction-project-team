@@ -15,9 +15,10 @@ import {
 } from "../../../../api/projects/useProjectOutput";
 import "react-toastify/dist/ReactToastify.css";
 import { ProjectOutputDTO } from "../../../../api/projects/project.types";
+import { bigIntConverter } from "../../../../utils/bigIntConvert";
 
 type Props = {
-  projectId: bigint;
+  projectId: number;
   instance: IPublicClientApplication;
 };
 
@@ -29,14 +30,16 @@ const Overview = ({ projectId, instance }: Props) => {
   const [showNoteInput, setShowNoteInput] = useState(false);
   const [status, setStatus] = useState('');
 
+  const projectIdBigInt = bigIntConverter.fromAPI(projectId) ?? BigInt(projectId);
+
   const { data: projectData, isLoading: projectLoading } = useProject(projectId, instance);
   const project: ProjectOutputDTO | undefined = projectData;
 
   const updateProject = useUpdateProject(instance);
-  const { data: notes = [], isLoading: notesLoading } = useProjectComments(BigInt(projectId), instance);
-  const createNote = useCreateProjectComment(BigInt(projectId), instance);
-  const { data: tasks = [], isLoading: tasksLoading } = useProjectTasks(BigInt(projectId), instance);
-  const createTask = useCreateProjectTask(BigInt(projectId), instance);
+  const { data: notes = [], isLoading: notesLoading } = useProjectComments(projectIdBigInt, instance);
+  const createNote = useCreateProjectComment(projectIdBigInt, instance);
+  const { data: tasks = [], isLoading: tasksLoading } = useProjectTasks(projectIdBigInt, instance);
+  const createTask = useCreateProjectTask(projectIdBigInt, instance);
   const updateTask = useUpdateProjectTask(instance);
 
   useEffect(() => {
@@ -56,7 +59,9 @@ const Overview = ({ projectId, instance }: Props) => {
   const handleAddTask = () => {
     if (taskLabel.trim()) {
       createTask.mutate({
+        title: taskLabel.trim(),
         description: taskDescription.trim(),
+        status: "Pending",
         completed: false,
       });
       setTaskLabel('');
@@ -65,12 +70,18 @@ const Overview = ({ projectId, instance }: Props) => {
     }
   };
 
-  const handleToggleTaskCompletion = (taskId: bigint, currentStatus: boolean) => {
+  const handleToggleTaskCompletion = (taskId: number, currentStatus: boolean) => {
+    const taskIdBigInt = bigIntConverter.fromAPI(taskId);
+    if (taskIdBigInt === null) {
+      return;
+    }
     updateTask.mutate({
-      projectId: BigInt(projectId),
-      taskId,
+      projectId: projectIdBigInt,
+      taskId: taskIdBigInt,
       task: {
-        status: currentStatus ? "Pending" : "Completed"}    });
+        status: currentStatus ? "Pending" : "Completed"
+      }
+    });
   };
 
   const handleStatusSave = () => {
@@ -250,7 +261,7 @@ const Overview = ({ projectId, instance }: Props) => {
                       className="form-check-input"
                       type="checkbox"
                       checked={task.status === "Completed"}
-                      onChange={() => handleToggleTaskCompletion(BigInt(task.id), task.status === "Completed")}
+                      onChange={() => handleToggleTaskCompletion(task.id, task.status === "Completed")}
                     />
                     <label className="form-check-label">
                       <div>

@@ -8,11 +8,11 @@ import { useCreateProject } from '../../../../api/projects/useProjectOutput';
 import { useUpdateRFQ, getRFQById } from '../../../../api/rfq/rfq';
 import { RFQStatus } from '../../../../api/rfq/rfq.types';
 import { generateAndDownloadPDF } from '../../../../utils/generatePDF';
-import { bigIntConverter } from '../../../../utils/bigIntConvert';
 
 interface QuoteEstimateModalProps {
     show: boolean;
     rfqId: string | number | null;
+    assignedEmployeeId?: string;
     onClose: () => void;
     onQuoteSent: () => void;
 }
@@ -30,6 +30,7 @@ interface ServiceLine {
 export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
     show,
     rfqId,
+    assignedEmployeeId,
     onClose,
     onQuoteSent
 }) => {
@@ -50,16 +51,26 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
     instance
 );
 
-    // Format without timezone based on Model
-    const formatDateWithoutTimezone = (dateString: string) => {
-        const date = new Date(dateString);
-        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}T00:00:00`;
-    }
-
     const { data: rfqData } = getRFQById(
         rfqId ? BigInt(rfqId) : BigInt(0),
         instance
     );
+
+    const resetForm = () => {
+        setServices([]);
+        setQuoteNumber('');
+        setStartDate('');
+        setEndDate('');
+        setSubtotal(0);
+        setTax(0);
+        setTotal(0);
+    };
+
+    useEffect(() => {
+        if (show) {
+            resetForm();
+        }
+    }, [show]);
 
     useEffect(() => {
         // Calculate totals whenever services change
@@ -71,6 +82,7 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
     }, [services]);
     
     const addItem = () => {
+        const today = new Date().toISOString().split('T')[0];
         setServices([
             ...services,
             {
@@ -78,8 +90,9 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
                 description: '',
                 quotePrice: 0,
                 quoteCost: 0,
-                quoteStartDate: startDate || formatDateWithoutTimezone(new Date().toISOString()),
-                quoteEndDate: endDate || formatDateWithoutTimezone(new Date().toISOString())
+                quoteStartDate: startDate || today,
+                quoteEndDate: endDate || today,
+                projectServiceTypeId: undefined
             }
         ]);
     };
@@ -126,12 +139,16 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
 
             // Create Project
             const projectData = {
-                // TODO: change to enum like RFQStatus
-                // TODO: Add quoteprice, quoteCost, quoteStartDate, quoteEndDate
-                // TODO: Push RFQ data to project
+                renovationType: rfqData?.renovationType || 'Unknown',
                 status: 'Quote Complete',
-                rfqId: rfqId ? bigIntConverter.toAPI(BigInt(rfqId)) : undefined,
-                clientId: rfqData.clientId
+                rfqId: rfqId ? Number(rfqId) : undefined,
+                createdByEmployee: assignedEmployeeId,
+                clientId: rfqData.clientId,
+                quoteNumber: quoteNumber,
+                quoteStartDate: `${startDate}T00:00:00`,
+                quoteEndDate: `${endDate}T00:00:00`,
+                quoteCost: services.reduce((sum, service) => sum + service.quoteCost, 0),
+                quotePrice: total
             };
 
             const createdProject = await createProject.mutateAsync(projectData);
@@ -139,19 +156,22 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
                 throw new Error('Project creation failed: No ID returned');
             }
 
-            await Promise.all(
-                services.map(service => 
-                    createService.mutateAsync({
-                        ...service,
-                        quoteStartDate: formatDateWithoutTimezone(startDate),
-                        quoteEndDate: formatDateWithoutTimezone(endDate),
-                        quoteCost: Number(service.quoteCost),
-                        quotePrice: Number(service.quotePrice),
-                        status: 'Quoted'
-                    })
-                )
-            );
-            // TODO: Update project with project services
+            const servicePromises = services.map(service => {
+                const serviceDTO = {
+                    projectId: Number(createdProject.id),
+                    name: service.name || '',
+                    description: service.description || '',
+                    projectServiceTypeId: service.projectServiceTypeId ? Number(service.projectServiceTypeId) : undefined,
+                    quoteStartDate: `${service.quoteStartDate}T00:00:00`,
+                    quoteEndDate: `${service.quoteEndDate}T00:00:00`,
+                    quoteCost: Number(service.quoteCost),
+                    quotePrice: Number(service.quotePrice),
+                    status: 'Quoted'
+                };
+                return createService.mutateAsync(serviceDTO);
+            });
+
+            await Promise.all(servicePromises);
 
             // Update RFQ status to "Quoted"
             await updateRFQ.mutateAsync({
@@ -160,11 +180,12 @@ export const QuoteEstimateModal: React.FC<QuoteEstimateModalProps> = ({
                     status: RFQStatus.Quoted,
                 }
             });
+
+            resetForm();
             onQuoteSent();
             onClose();
         } catch (error) {
             console.error('Error creating project or services:', error);
-            console.error('Error generating PDF:', error);
         }
     };
 
