@@ -1,0 +1,35 @@
+@import "./variables";
+@import "../../node_modules/bootstrap/scss/bootstrap.scss";
+@import "./buttons";
+
+.admin-navbar {
+  background-color: $secondary;
+  height: $navbar-height;
+}
+
+.admin-sidebar {
+  background-color: $secondary;
+  width: $sidebar-width;
+  min-height: calc(100vh - #{$navbar-height});
+
+  .nav-link {
+    color: $light;
+    transition: all 0.2s ease-in-out;
+    border-left: 4px solid transparent;
+    
+    &:hover {
+      background-color: rgba($light, 0.1);
+      border-left-color: rgba($danger, 0.5);
+    }
+    
+    &.active {
+      background-color: $primary;
+      border-left: 4px solid $danger;
+    }
+  }
+}
+
+.admin-content {
+  background-color: $light;
+  min-height: calc(100vh - #{$navbar-height});
+}

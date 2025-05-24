@@ -8,7 +8,8 @@ import { MsalProvider } from '@azure/msal-react';
 import {
     QueryClient,
     QueryClientProvider,
-} from '@tanstack/react-query';
+  } from '@tanstack/react-query';
+import AuthComponent from '../components/Auth';
 
 const queryClient = new QueryClient()
 
@@ -28,7 +29,7 @@ function App({ instance }: { instance: IPublicClientApplication }) {
                         </Route>
 
                         {/* Admin Portal */}
-                        <Route path="/admin" element={<AdminLayout />}>
+                        <Route path="/admin" element={<AuthComponent><AdminLayout /></AuthComponent>}>
                             <Route index element={<Requests />} />
                             <Route path="requests" element={<Requests />} />
                             <Route path="projects" element={<Projects />} />

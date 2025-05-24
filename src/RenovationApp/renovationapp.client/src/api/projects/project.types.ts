@@ -37,6 +37,7 @@ export type ProjectFile = {
     fileName: string;
     type: 'image' | 'document';
     projectId: number;
+    size: number;
 };
 
 export type ProjectCommunication = {
@@ -129,6 +130,7 @@ export type ProjectTaskDTO = {
     title?: string;
     description?: string;
     status?: string;
+    completed?: boolean;
 };
 
 export type ProjectServiceCreateDTO = {
@@ -142,6 +144,7 @@ export type ProjectServiceCreateDTO = {
     actualStartDate?: string;
     actualEndDate?: string;
     status?: string;
+    projectId?: number;
 };
 
 export type ProjectServiceUpdateDTO = {
@@ -197,6 +200,9 @@ export type ProjectOutCommunication = {
 export type ProjectOutClientInvoice = {
     id: number;
     paid?: string | null;
+    description: string;
+    createdTimestamp: string;
+    amount: number;
 };
 
 export type ProjectOutService = {
@@ -204,6 +210,7 @@ export type ProjectOutService = {
     status?: string | null;
     name: string;
     serviceTypeName?: string | null;
+    projectServiceInvoices: ProjectServiceInvoice[];
 };
 
 export type ProjectOutTask = {
@@ -215,15 +222,36 @@ export type ProjectOutTask = {
 
 export type ProjectOutputDTO = {
     id: number;
+    clientId: string;
     status?: string | null;
     renovationType?: string | null;
-    rfq?: number | null;
+    rfqId?: number | null;
     comments?: ProjectOutComment[];
     files?: ProjectOutFile[];
     communications?: ProjectOutCommunication[];
     clientInvoices?: ProjectOutClientInvoice[];
     projectServices?: ProjectOutService[];
     projectTasks?: ProjectOutTask[];
+    createdByEmployee?: string | null;
+    quoteScheduleStartOverride?: string | null;
+    quoteScheduleEndOverride?: string | null;
+    projectAddress: {
+        street: string;
+        city: string;
+        province: string;
+        postalCode: string;
+        country: string;
+    };
+    client: {
+    name: string;
+    email: string;
+    phone: string;
+    address: {
+      street: string;
+      city: string;
+      province: string;
+      postalCode: string;
+      country: string;
+    };
+  }
 };
-
-

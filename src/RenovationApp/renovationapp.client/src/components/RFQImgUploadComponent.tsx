@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Button } from '../components/ButtonComponent/Button';
 
 interface RFQImageUploadComponentProps {
     rfqId: string;
@@ -102,7 +103,7 @@ const RFQImageUploadComponent: React.FC<RFQImageUploadComponentProps> = ({ rfqId
                     />
                 </label>
             </div>
-            <button onClick={handleUpload}>Upload</button>
+            <Button onClick={handleUpload}>Upload</Button>
             {uploadStatus && <p>{uploadStatus}</p>}
         </div>
     );

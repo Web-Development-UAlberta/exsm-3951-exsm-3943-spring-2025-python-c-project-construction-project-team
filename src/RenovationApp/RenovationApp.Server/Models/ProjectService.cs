@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace RenovationApp.Server.Models
 {
@@ -16,6 +17,7 @@ namespace RenovationApp.Server.Models
         [Required]
         [Column("project_id", TypeName = "int")]
         public int ProjectId { get; set; }
+        [JsonIgnore]
         [ForeignKey(nameof(ProjectId))]
         public Project Project { get; set; } = null!;
 

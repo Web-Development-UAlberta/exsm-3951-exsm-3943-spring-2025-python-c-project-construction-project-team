@@ -75,6 +75,16 @@ export const graphClient = (scopes: string[], msalInstance: IPublicClientApplica
         throw new Error('No active account! Please sign in before making API calls.');
       }
 
+      let scopes: string[];
+
+      if (config.url?.includes('/me')) {
+        scopes = ['User.Read'];
+      } else if (config.url?.includes('/users')) {
+        scopes = ['User.ReadBasic.All'];
+      } else {
+        scopes = ['User.Read'];
+      }
+
       // Attempt to acquire token silently
       const response = await msalInstance.acquireTokenSilent({
         // scopes: ['user.read'],

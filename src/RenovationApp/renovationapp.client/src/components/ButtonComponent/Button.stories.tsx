@@ -1,16 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Button } from './Button';
+import '../../styles/custom.scss';
 
 const meta = {
     title: 'Components/Button',
     component: Button,
     tags: ['autodocs'],
     argTypes: {
-        label: {
-            control: 'text',
-            description: 'The text label of the button.',
-            defaultValue: 'Click Me',
-        },
         onClick: {
             action: 'clicked',
             description: 'Function to call when the button is clicked.',
@@ -43,15 +39,20 @@ const meta = {
         variant: {
             control: { 
                 type: 'select', 
-                options: ['primary', 'secondary', 'success', 'danger', 'link'] 
+                options: ['primary', 'secondary', 'success', 'danger', 'link', 'transparent'] 
             },
             description: 'The variant of the button.',
             defaultValue: 'primary',
         },
         size: {
-            control: { type: 'select', options: ['small', 'medium', 'large'] },
-            description: 'The size of the button.',
-            defaultValue: 'medium',
+            control: { type: 'select', options: ['sm', 'lg'] },
+            description: 'The size of the button. Use "sm" for small, "lg" for large, or leave undefined for default.',
+            defaultValue: undefined,
+        },
+        outline: {
+            control: 'boolean',
+            description: 'Shows the button outline.',
+            defaultValue: false,
         },
         iconPosition: {
             control: { type: 'select', options: ['left', 'right'] },
@@ -63,11 +64,6 @@ const meta = {
           control:'boolean',
           description:'If true, only the icon will be shown without any text.',
           defaultValue:false,
-        },
-        className: {
-            control: 'text',
-            description: 'Additional CSS classes to apply to the button.',
-            defaultValue: '',
         }
     }
 } satisfies Meta<typeof Button>;
@@ -82,25 +78,34 @@ const baseArgs = {
     disabled: false,
     loading: false,
     type: 'button' as 'button',
-    size: 'medium' as 'medium',
+    size: undefined,
     iconPosition: 'left' as 'left',
     iconOnly: false,
-    className: '',
+    outline: false,
 }
 
 // Button variants
 export const Primary: Story = {
     args: {
         ...baseArgs,
-        label: 'Primary Button',
+        children: 'Primary Button',
         variant: 'primary',
+    }
+};
+
+export const OutlinePrimary: Story = {
+    args: {
+        ...baseArgs,
+        children: 'Outline Primary Button',
+        variant: 'primary',
+        outline: true,
     }
 };
 
 export const Secondary: Story = {
     args: {
         ...baseArgs,
-        label: 'Secondary Button',
+        children: 'Secondary Button',
         variant: 'secondary',
     },
 };
@@ -108,7 +113,7 @@ export const Secondary: Story = {
 export const Success: Story = {
   args: {
     ...baseArgs,
-    label: 'Success Button',
+    children: 'Success Button',
     variant: 'success',
   },
 };
@@ -116,7 +121,7 @@ export const Success: Story = {
 export const Danger: Story = {
   args: {
     ...baseArgs,
-    label: 'Danger Button',
+    children: 'Danger Button',
     variant: 'danger',
   },
 };
@@ -124,7 +129,7 @@ export const Danger: Story = {
 export const Link: Story = {
   args: {
     ...baseArgs,
-    label: 'Link Button',
+    children: 'Link Button',
     variant: 'link',
   },
 };
@@ -133,53 +138,26 @@ export const Link: Story = {
 export const Small: Story = {
     args: {
         ...baseArgs,
-        label: 'Small Button',
+        children: 'Small Button',
         variant: 'primary',
-        size: 'small',
+        size: 'sm',
     }
-};
-
-export const Medium: Story = {
-    args: {
-        ...baseArgs,
-        label: 'Medium Button',
-        variant: 'primary',
-        size: 'medium',
-    },
 };
 
 export const Large: Story = {
     args: {
         ...baseArgs,
-        label: 'Large Button',
+        children: 'Large Button',
         variant: 'primary',
-        size: 'large',
+        size: 'lg',
     },
 };
 
 // States
-export const Active: Story = {
-  args: {
-    ...baseArgs,
-    label: 'Active Button',
-    variant: 'primary',
-    active: true,
-  }
-};
-
-export const Hover: Story = {
-  args: {
-    ...baseArgs,
-    label: 'Hover Button',
-    variant: 'primary',
-    hover: true,
-  }
-};
-
 export const Disabled: Story = {
   args: {
     ...baseArgs,
-    label: 'Disabled Button',
+    children: 'Disabled Button',
     variant: 'primary',
     disabled: true,
   }
@@ -188,7 +166,7 @@ export const Disabled: Story = {
 export const Loading: Story = {
   args: {
     ...baseArgs,
-    label: 'Loading Button',
+    children: 'Loading Button',
     variant: 'primary',
     loading: true,
   }
@@ -198,9 +176,13 @@ export const Loading: Story = {
 export const IconLeft: Story = {
   args: {
     ...baseArgs,
-    label: 'Icon Left',
+    children: (
+      <>
+        <i className="bi bi-plus-lg"></i>
+        Icon Left
+      </>
+    ),
     variant: 'primary',
-    children: <i className="bi bi-plus-lg"></i>,
     iconPosition: 'left',
   }
 };
@@ -208,9 +190,13 @@ export const IconLeft: Story = {
 export const IconRight: Story = {
   args: {
     ...baseArgs,
-    label: 'Icon Right',
     variant: 'primary',
-    children: <i className="bi bi-arrow-right"></i>,
+    children: (
+      <>
+        <i className="bi bi-arrow-right"></i>
+        Icon Right
+      </>
+    ),
     iconPosition: 'right',
   }
 };
@@ -218,53 +204,57 @@ export const IconRight: Story = {
 export const IconOnly: Story = {
   args: {
     ...baseArgs,
-    variant: 'primary',
     children: <i className="bi bi-check-lg"></i>,
     iconOnly: true,
+  },
+};
+
+export const TransparentIconButton: Story = {
+  args: {
+    ...baseArgs,
+    children: <i className="bi bi-check-lg"></i>,
+    variant: 'transparent',
+    iconOnly: true
   },
 };
 
 // Button types
 export const ButtonType: Story = {
   args: {
-    ...baseArgs,
-    label: 'Button Type',
+    children: 'Submit Type',
     variant: 'primary',
     type: 'button',
   }
 };
-
 export const SubmitType: Story = {
   args: {
-    ...baseArgs,
-    label: 'Submit Type',
+    children: 'Click Me',
     variant: 'primary',
     type: 'submit',
   },
 };
 
-// Click behaviour
 export const Clickable: Story = {
   args: {
-    label: 'Click Me',
+    ...baseArgs,
+    children: 'This is an extremely long text that should be truncated or wrapped depending on the button size and CSS properties.',
+    variant: 'primary',
     onClick: () => console.log('Button clicked!'),
   }
 };
 
-// Edge Cases
 export const ExtremelyLongText: Story = {
   args: {
-    ...baseArgs,
-    label: 'This is an extremely long text that should be truncated or wrapped depending on the button size and CSS properties.',
+    children: 'This is an extremely long text that should be truncated or wrapped depending on the button size and CSS properties.',
     variant: 'primary',
-    size: 'small',
+    size: 'sm',
   }
 };
 
 export const EmptyLabel: Story = {
   args: {
     ...baseArgs,
-    label: '',
+    children: '',
     variant: 'primary',
   }
 };
@@ -272,7 +262,7 @@ export const EmptyLabel: Story = {
 export const LoadingAndDisabled: Story = {
   args: {
     ...baseArgs,
-    label: 'Loading and Disabled',
+    children: 'Loading and Disabled',
     variant: 'primary',
     loading: true,
     disabled: true,

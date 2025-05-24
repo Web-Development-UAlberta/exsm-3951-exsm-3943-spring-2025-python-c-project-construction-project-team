@@ -61,6 +61,14 @@ console.log('Target URI: ', target)
 // https://vitejs.dev/config/
 export default defineConfig({
     plugins: [plugin()],
+    css: {
+        preprocessorOptions: {
+            scss: {
+                api: 'legacy',
+                includePaths: ['node_modules']
+            }
+        }
+    },
     resolve: {
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url)),

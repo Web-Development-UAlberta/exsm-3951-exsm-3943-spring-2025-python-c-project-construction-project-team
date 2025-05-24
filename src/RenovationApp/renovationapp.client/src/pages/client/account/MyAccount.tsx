@@ -5,6 +5,7 @@ import "./MyAccount.css";
 import PersonalInfoTab from './PersonalInfoTab';
 import SubmittedRequestsTab from './SubmittedRequestsTab';
 import { getActiveUserInfo } from '../../../api/identity/graph';
+import { Button } from '../../../components/ButtonComponent/Button';
 
 
 const MyAccount: React.FC = () => {
@@ -27,18 +28,20 @@ const MyAccount: React.FC = () => {
         <div className="px-2 py-4">
           <h3 className="mb-4">My Account</h3>
           <div className="nav flex-column">
-            <button
+            <Button
+              variant="link"
               className={`nav-link text-dark py-2 text-start ${activeTab === 'personal' ? 'active fw-bold' : ''}`}
               onClick={() => setActiveTab('personal')}
             >
               Personal Information
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="link"
               className={`nav-link text-dark py-2 text-start ${activeTab === 'requests' ? 'active fw-bold' : ''}`}
               onClick={() => setActiveTab('requests')}
             >
               Submitted Requests
-            </button>
+            </Button>
           </div>
         </div>
       </div>

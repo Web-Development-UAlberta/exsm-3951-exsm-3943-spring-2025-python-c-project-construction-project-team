@@ -4,6 +4,33 @@ A full-stack web application developed for **Bob & Susan Renovations**, designed
 
 ---
 
+<details>
+<summary>Table of Contents</summary>
+
+1. [Tech Stack](#-tech-stack)
+2. [Project Structure](#-project-structure)
+3. [Getting Started](#-getting-started)
+   - [Prerequisites](#prerequisites)
+   - [Running the Application](#running-the-application)
+4. [Usage](#-usage)
+   - [Role-Specific Workflows](#role-specific-workflows)
+   - [Authentication](#-authentication)
+   - [For HomeOwners](#-for-homeowners)
+   - [Contractors](#-contractors)
+5. [Troubleshooting](#-troubleshooting)
+   - [Startup Issues](#startup-issues)
+   - [SSL Certificate Issues](#ssl-certificate-issues)
+6. [Features](#-features)
+   - [Homeowner Portal](#-homeowner-portal)
+   - [Contractor Portal](#-contractor-portal)
+7. [Roles & Permissions](#-roles--permissions)
+8. [Future Enhancements](#-future-enhancements)
+9. [Authors](#-authors)
+
+</details>
+
+---
+
 ## 🔧 Tech Stack
 
 * **Backend:** .NET Core API
@@ -41,17 +68,24 @@ Ensure you have the following installed:
 ### Running the Application
 
 1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Web-Development-UAlberta/exsm-3951-exsm-3943-spring-2025-python-c-project-construction-project-team.git
+   ```
+2. **Install NPM packages**
+   ```bash
+   npm install
+   ```
 
-2. **Start Docker Desktop**
+3. **Start Docker Desktop**
 
-3. **Generate and export a developer https certificate**
+4. **Generate and export a developer https certificate**
 
 Under src\RenovationApp, do
 
 * dotnet dev-certs https --export-path ./certs/devLocalCert.pem --format PEM -p AStrongPassword --trust
 * echo AStrongPassword > .\certs\devLocalCert.pw
 
-4. **Launch the project**
+5. **Launch the project**
 
    * Open `RenovationApp.sln` in Visual Studio.
    * Select `docker-compose` as the startup item and run.
@@ -62,9 +96,11 @@ This will:
 * Build and run the backend and frontend
 * Start the NGINX reverse proxy
 
-5. **Access the App**
+6. **Access the App**
 
    * Frontend: [http://localhost](http://localhost)
+
+      ([if you are unable to access the front end from Visual Studio](#-troubleshooting))
    * Backend API: [http://localhost/api](http://localhost/api)
    * Swagger Docs: [https://localhost:60848/swagger/index.html](https://localhost:60848/swagger/index.html)
 
@@ -157,14 +193,14 @@ Contractors and Admins are directed to the internal dashboard.
 ## 🔧 Troubleshooting
 
 ### Startup Issues
-If you are unable to access the application for the backend or frontend:
+If you are unable to access the application or see the updated version for the frontend:
 
-1. **Backend with Swagger**
-- Open `RenovationApp.sln` in Visual Studio
-- Select `RenovationApp.Server` as the start up project
-- Click the ▶️ Debug button or press F5 to start. Make sure you are using `Container (Dockerfile)`.
-
-2. **Frontend with Vite**
+1. **Frontend with Vite**
+- Using Visual Studio Code, populate the database.
+- cd to the renovationapp.server folder
+   ```bash
+   dotnet ef database update
+   ```
 - cd to the renovationapp.client folder
    ```bash
    cd src/RenovationApp/renovationapp.client
@@ -228,4 +264,5 @@ dotnet dev-certs https --export-path ./certs/devLocalCert.perm --format PEM -p {
 ---
 
 **Created:** 2025-04-25
-**Last Updated:** 2025-05-07
+
+**Last Updated:** 2025-05-24

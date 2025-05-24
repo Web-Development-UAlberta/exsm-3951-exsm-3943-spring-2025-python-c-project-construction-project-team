@@ -1,4 +1,5 @@
 import { graphMe } from "../../../api/identity/graph.types";
+import { Button } from "../../../components/ButtonComponent/Button";
 
 interface PersonalInfoTabProps {
     graphData: graphMe | undefined;
@@ -14,12 +15,14 @@ const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({ graphData }) => {
         <div className="mb-5">
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h3>Personal Information</h3>
-                <button
-                    className="btn btn-sm btn-outline-secondary ms-3"
+                <Button
+                    variant="secondary"
+                    size="sm"
+                    className="ms-3"
                     onClick={onClick}
                 >
                     Edit
-                </button>
+                </Button>
             </div>
             <div className="row">
                 <div className="col-md-6 mb-3">

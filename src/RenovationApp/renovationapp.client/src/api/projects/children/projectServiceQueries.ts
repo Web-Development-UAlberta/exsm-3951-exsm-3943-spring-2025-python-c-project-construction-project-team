@@ -5,17 +5,22 @@ import {
     ProjectServiceCreateDTO,
     ProjectServiceUpdateDTO
 } from "../project.types";
+import { bigIntConverter } from '../../../utils/bigIntConvert';
 
 // Fetch all services for a project
 export async function fetchProjectServices(
     projectId: bigint,
     msalInstance: IPublicClientApplication
 ): Promise<ProjectService[]> {
-    const response = await apiClient(msalInstance).get(`/projects/${projectId}/services`, {});
+    const response = await apiClient(msalInstance).get(`/projects/${bigIntConverter.toAPI(projectId)}/services`, {});
     if (!response.data) {
         throw new Error(`Failed to fetch services for project ${projectId}`);
     }
-    return response.data;
+    return response.data.map((service: any) => ({
+        ...service,
+        id: bigIntConverter.fromAPI(service.id),
+        projectId: bigIntConverter.fromAPI(service.projectId)
+    }));
 }
 
 // Fetch a single service by id
@@ -24,11 +29,15 @@ export async function fetchProjectServiceById(
     serviceId: bigint,
     msalInstance: IPublicClientApplication
 ): Promise<ProjectService> {
-    const response = await apiClient(msalInstance).get(`/projects/${projectId}/services/${serviceId}`, {});
+    const response = await apiClient(msalInstance).get(`/projects/${bigIntConverter.toAPI(projectId)}/services/${bigIntConverter.toAPI(serviceId)}`, {});
     if (!response.data) {
         throw new Error(`Failed to fetch service ${serviceId}`);
     }
-    return response.data;
+    return {
+        ...response.data,
+        id: bigIntConverter.fromAPI(response.data.id),
+        projectId: bigIntConverter.fromAPI(response.data.projectId)
+    }
 }
 
 // Create a new service
@@ -37,11 +46,15 @@ export async function createProjectService(
     service: ProjectServiceCreateDTO,
     msalInstance: IPublicClientApplication
 ): Promise<ProjectService> {
-    const response = await apiClient(msalInstance).post(`/projects/${projectId}/services`, service, {});
+    const response = await apiClient(msalInstance).post(`/projects/${bigIntConverter.toAPI(projectId)}/services`, service, {});
     if (!response.data) {
         throw new Error(`Failed to create service for project ${projectId}`);
     }
-    return response.data;
+    return {
+        ...response.data,
+        id: bigIntConverter.fromAPI(response.data.id),
+        projectId: bigIntConverter.fromAPI(response.data.projectId)
+    }
 }
 
 // Update a service
@@ -51,11 +64,15 @@ export async function updateProjectService(
     service: ProjectServiceUpdateDTO,
     msalInstance: IPublicClientApplication
 ): Promise<ProjectService> {
-    const response = await apiClient(msalInstance).put(`/projects/${projectId}/services/${serviceId}`, service, {});
+    const response = await apiClient(msalInstance).put(`/projects/${bigIntConverter.toAPI(projectId)}/services/${bigIntConverter.toAPI(serviceId)}`, service, {});
     if (!response.data) {
         throw new Error(`Failed to update service ${serviceId}`);
     }
-    return response.data;
+    return {
+        ...response.data,
+        id: bigIntConverter.fromAPI(response.data.id),
+        projectId: bigIntConverter.fromAPI(response.data.projectId)
+    }
 }
 
 // Delete a service
@@ -64,7 +81,7 @@ export async function deleteProjectService(
     serviceId: bigint,
     msalInstance: IPublicClientApplication
 ): Promise<boolean> {
-    const response = await apiClient(msalInstance).delete(`/projects/${projectId}/services/${serviceId}`, {});
+    const response = await apiClient(msalInstance).delete(`/projects/${bigIntConverter.toAPI(projectId)}/services/${bigIntConverter.toAPI(serviceId)}`, {});
     if (response.status !== 204) {
         throw new Error(`Failed to delete service ${serviceId}`);
     }

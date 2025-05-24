@@ -174,15 +174,13 @@ export const FileUploadComponent: React.FC<FileUploadComponentProps> = ({ projec
                 </label>
             </div>
             <Button 
-                label="Upload"
                 onClick={handleUpload}
                 loading={isLoading}
                 disabled={isLoading}
                 variant="primary"
-                size="medium"
                 className="mt-3"
                 data-testid="upload-button"
-            />
+            >Upload</Button>
             {uploadStatus && <p data-testid="status-message">{uploadStatus}</p>}
         </div>
     );

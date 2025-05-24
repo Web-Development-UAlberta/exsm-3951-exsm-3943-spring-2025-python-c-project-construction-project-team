@@ -1,17 +1,22 @@
 import { apiClient } from '../../axios';
 import { IPublicClientApplication } from "@azure/msal-browser";
 import { ProjectFile } from "../project.types";
+import { bigIntConverter } from '../../../utils/bigIntConvert';
 
 // Fetch all files for a project
 export async function fetchProjectFiles(
     projectId: bigint,
     msalInstance: IPublicClientApplication
 ): Promise<ProjectFile[]> {
-    const response = await apiClient(msalInstance).get(`/projects/${projectId}/files`, {});
+    const response = await apiClient(msalInstance).get(`/projects/${bigIntConverter.toAPI(projectId)}/files`, {});
     if (!response.data) {
         throw new Error(`Failed to fetch files for project ${projectId}`);
     }
-    return response.data;
+    return response.data.map((file: any) => ({
+        ...file,
+        id: bigIntConverter.fromAPI(file.id),
+        projectId: bigIntConverter.fromAPI(file.projectId),
+    }));
 }
 
 
@@ -24,7 +29,7 @@ export async function uploadProjectFile(
 ): Promise<boolean> {
     // Step 1: Get signed upload URL, passing fileName, fileType, and projectId in the body
     const urlResponse = await apiClient(msalInstance).post(
-        `/projects/${projectId}/files/upload-url`,
+        `/projects/${bigIntConverter.toAPI(projectId)}/files/upload-url`,
         {
             fileName: file.name,
             fileType: fileType
