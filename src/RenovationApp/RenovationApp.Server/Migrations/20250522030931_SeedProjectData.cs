@@ -9,11 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace RenovationApp.Server.Migrations
 {
     /// <inheritdoc />
-<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.cs
-    public partial class InitialUpdate : Migration
-========
     public partial class SeedProjectData : Migration
->>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.cs
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -79,8 +75,6 @@ namespace RenovationApp.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.cs
-========
                 name: "RenovationTags",
                 columns: table => new
                 {
@@ -92,7 +86,6 @@ namespace RenovationApp.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
->>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.cs
                 name: "RFQs",
                 columns: table => new
                 {
@@ -226,11 +219,7 @@ namespace RenovationApp.Server.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.cs
-                    created_timestamp = table.Column<DateTime>(type: "timestamp without time zone", nullable: true, defaultValueSql: "NOW()"),
-========
                     created_timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
->>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.cs
                     created_by_employee = table.Column<string>(type: "varchar(255)", nullable: false),
                     client_id = table.Column<string>(type: "varchar(255)", nullable: false),
                     rfq_id = table.Column<int>(type: "int", nullable: true),
@@ -239,12 +228,7 @@ namespace RenovationApp.Server.Migrations
                     quote_price_override = table.Column<decimal>(type: "numeric(10,2)", nullable: true),
                     quote_schedule_start_override = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     quote_schedule_end_override = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.cs
-                    renovation_type = table.Column<int>(type: "integer", nullable: true),
-                    renovation_tags = table.Column<string>(type: "text", nullable: true)
-========
                     renovation_type = table.Column<string>(type: "text", nullable: true)
->>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.cs
                 },
                 constraints: table =>
                 {
@@ -477,37 +461,6 @@ namespace RenovationApp.Server.Migrations
 
             migrationBuilder.InsertData(
                 table: "Projects",
-<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.cs
-                columns: new[] { "id", "client_id", "created_by_employee", "is_public", "quote_price_override", "quote_schedule_end_override", "quote_schedule_start_override", "rfq_id", "renovation_tags", "renovation_type", "status" },
-                values: new object[,]
-                {
-                    { 1, "client-001", "employee-001", true, 12500m, null, null, null, "modern,luxury", 0, null },
-                    { 2, "client-002", "employee-002", true, 9500m, null, null, null, "rustic", 1, null },
-                    { 3, "client-003", "employee-003", true, 18000m, null, null, null, "modern,luxury", 2, null },
-                    { 4, "client-004", "employee-004", true, null, null, null, null, "rustic", 1, null },
-                    { 5, "client-005", "employee-001", true, 7600m, null, null, null, "countrstyle", 0, null },
-                    { 6, "client-006", "employee-002", true, null, null, null, null, "rustic,modern", 3, null },
-                    { 7, "client-007", "employee-001", true, 12300m, null, null, null, "rustic,modern", 3, null },
-                    { 8, "client-008", "employee-004", true, null, null, null, null, "countrstyle,luxury", 0, null },
-                    { 9, "client-009", "employee-001", true, null, null, null, null, "luxury,modern", 2, null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "ClientInvoices",
-                columns: new[] { "id", "amount", "created_timestamp", "description", "paid", "payment_instructions", "project_id" },
-                values: new object[,]
-                {
-                    { 1, 5500m, new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1260), null, null, null, 1 },
-                    { 2, 3000m, new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1265), null, null, null, 1 },
-                    { 3, 6000m, new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1267), null, null, null, 2 },
-                    { 4, 9000m, new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1268), null, null, null, 3 },
-                    { 5, 8000m, new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1269), null, null, null, 4 },
-                    { 6, 8000m, new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1270), null, null, null, 5 },
-                    { 7, 8000m, new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1271), null, null, null, 6 },
-                    { 8, 4000m, new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1272), null, null, null, 7 },
-                    { 9, 5000m, new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1272), null, null, null, 8 },
-                    { 10, 3500m, new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1273), null, null, null, 9 }
-========
                 columns: new[] { "id", "client_id", "created_by_employee", "created_timestamp", "is_public", "quote_price_override", "quote_schedule_end_override", "quote_schedule_start_override", "rfq_id", "renovation_type", "status" },
                 values: new object[,]
                 {
@@ -550,7 +503,6 @@ namespace RenovationApp.Server.Migrations
                     { 7, "Sophisticated" },
                     { 8, "Modern" },
                     { 8, "Rustic" }
->>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.cs
                 });
 
             migrationBuilder.CreateIndex(
@@ -611,14 +563,11 @@ namespace RenovationApp.Server.Migrations
                 column: "project_id");
 
             migrationBuilder.CreateIndex(
-<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.cs
-========
                 name: "IX_ProjectRenovationTags_RenovationTagsId",
                 table: "ProjectRenovationTags",
                 column: "RenovationTagsId");
 
             migrationBuilder.CreateIndex(
->>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.cs
                 name: "IX_Projects_rfq_id",
                 table: "Projects",
                 column: "rfq_id",
@@ -699,12 +648,9 @@ namespace RenovationApp.Server.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.cs
-========
                 name: "RenovationTags");
 
             migrationBuilder.DropTable(
->>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.cs
                 name: "ProjectServices");
 
             migrationBuilder.DropTable(

@@ -31,7 +31,6 @@ namespace RenovationApp.Server.Models
         [Display(Name = "Cancelled")]
         Cancelled
     }
-
     public class Project
     {
         [Key]
@@ -72,10 +71,6 @@ namespace RenovationApp.Server.Models
 
         [Column("renovation_type")]
         public RenovationType? RenovationType { get; set; }
-
-
-        [Column("renovation_tags")]
-        public RenovationTag[]? RenovationTags { get; set; }
 
         // Navigation collections
         [InverseProperty("Project")]

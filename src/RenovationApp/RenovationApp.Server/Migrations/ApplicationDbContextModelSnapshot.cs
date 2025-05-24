@@ -192,78 +192,6 @@ namespace RenovationApp.Server.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("ClientInvoices");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Amount = 5500m,
-                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1260),
-                            ProjectId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Amount = 3000m,
-                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1265),
-                            ProjectId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Amount = 6000m,
-                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1267),
-                            ProjectId = 2
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Amount = 9000m,
-                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1268),
-                            ProjectId = 3
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Amount = 8000m,
-                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1269),
-                            ProjectId = 4
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Amount = 8000m,
-                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1270),
-                            ProjectId = 5
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Amount = 8000m,
-                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1271),
-                            ProjectId = 6
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Amount = 4000m,
-                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1272),
-                            ProjectId = 7
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Amount = 5000m,
-                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1272),
-                            ProjectId = 8
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Amount = 3500m,
-                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1273),
-                            ProjectId = 9
-                        });
                 });
 
             modelBuilder.Entity("RenovationApp.Server.Models.Project", b =>
@@ -285,11 +213,9 @@ namespace RenovationApp.Server.Migrations
                         .HasColumnType("varchar(255)")
                         .HasColumnName("created_by_employee");
 
-                    b.Property<DateTime?>("CreatedTimestamp")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("created_timestamp")
-                        .HasDefaultValueSql("NOW()");
+                    b.Property<DateTime>("CreatedTimestamp")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_timestamp");
 
                     b.Property<bool>("IsPublic")
                         .HasColumnType("boolean")

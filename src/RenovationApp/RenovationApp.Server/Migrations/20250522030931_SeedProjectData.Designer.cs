@@ -12,13 +12,8 @@ using RenovationApp.Server.Data;
 namespace RenovationApp.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.Designer.cs
-    [Migration("20250516161357_InitialUpdate")]
-    partial class InitialUpdate
-========
     [Migration("20250522030931_SeedProjectData")]
     partial class SeedProjectData
->>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -200,78 +195,6 @@ namespace RenovationApp.Server.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("ClientInvoices");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Amount = 5500m,
-                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1260),
-                            ProjectId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Amount = 3000m,
-                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1265),
-                            ProjectId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Amount = 6000m,
-                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1267),
-                            ProjectId = 2
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Amount = 9000m,
-                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1268),
-                            ProjectId = 3
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Amount = 8000m,
-                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1269),
-                            ProjectId = 4
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Amount = 8000m,
-                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1270),
-                            ProjectId = 5
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Amount = 8000m,
-                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1271),
-                            ProjectId = 6
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Amount = 4000m,
-                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1272),
-                            ProjectId = 7
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Amount = 5000m,
-                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1272),
-                            ProjectId = 8
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Amount = 3500m,
-                            CreatedTimestamp = new DateTime(2025, 5, 16, 16, 13, 56, 653, DateTimeKind.Utc).AddTicks(1273),
-                            ProjectId = 9
-                        });
                 });
 
             modelBuilder.Entity("RenovationApp.Server.Models.Project", b =>
@@ -293,11 +216,9 @@ namespace RenovationApp.Server.Migrations
                         .HasColumnType("varchar(255)")
                         .HasColumnName("created_by_employee");
 
-                    b.Property<DateTime?>("CreatedTimestamp")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("created_timestamp")
-                        .HasDefaultValueSql("NOW()");
+                    b.Property<DateTime>("CreatedTimestamp")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_timestamp");
 
                     b.Property<bool>("IsPublic")
                         .HasColumnType("boolean")
@@ -319,17 +240,8 @@ namespace RenovationApp.Server.Migrations
                         .HasColumnType("int")
                         .HasColumnName("rfq_id");
 
-<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.Designer.cs
-                    b.Property<string>("RenovationTags")
-                        .HasColumnType("text")
-                        .HasColumnName("renovation_tags");
-
-                    b.Property<int?>("RenovationType")
-                        .HasColumnType("integer")
-========
                     b.Property<string>("RenovationType")
                         .HasColumnType("text")
->>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.Designer.cs
                         .HasColumnName("renovation_type");
 
                     b.Property<string>("Status")
@@ -347,160 +259,82 @@ namespace RenovationApp.Server.Migrations
                         new
                         {
                             Id = 1,
-<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.Designer.cs
-                            ClientId = "client-001",
-                            CreatedByEmployee = "employee-001",
-                            IsPublic = true,
-                            QuotePriceOverride = 12500m,
-                            RenovationTags = "modern,luxury",
-                            RenovationType = 0
-========
                             ClientId = "2025-05-19T17:37:40.401185Z",
                             CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
                             CreatedTimestamp = new DateTime(2025, 5, 21, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsPublic = true,
                             QuotePriceOverride = 15000.00m,
                             RenovationType = "KitchenRemodels"
->>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.Designer.cs
                         },
                         new
                         {
                             Id = 2,
-<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.Designer.cs
-                            ClientId = "client-002",
-                            CreatedByEmployee = "employee-002",
-                            IsPublic = true,
-                            QuotePriceOverride = 9500m,
-                            RenovationTags = "rustic",
-                            RenovationType = 1
-========
                             ClientId = "2025-05-19T17:37:40.401185Z",
                             CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
                             CreatedTimestamp = new DateTime(2025, 5, 21, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsPublic = true,
                             QuotePriceOverride = 9800.50m,
                             RenovationType = "BathroomRenovations"
->>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.Designer.cs
                         },
                         new
                         {
                             Id = 3,
-<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.Designer.cs
-                            ClientId = "client-003",
-                            CreatedByEmployee = "employee-003",
-                            IsPublic = true,
-                            QuotePriceOverride = 18000m,
-                            RenovationTags = "modern,luxury",
-                            RenovationType = 2
-========
                             ClientId = "2025-05-19T17:37:40.401185Z",
                             CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
                             CreatedTimestamp = new DateTime(2025, 5, 21, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsPublic = true,
                             QuotePriceOverride = 20000.00m,
                             RenovationType = "BasementFinishing"
->>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.Designer.cs
                         },
                         new
                         {
                             Id = 4,
-<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.Designer.cs
-                            ClientId = "client-004",
-                            CreatedByEmployee = "employee-004",
-                            IsPublic = true,
-                            RenovationTags = "rustic",
-                            RenovationType = 1
-========
                             ClientId = "2025-05-19T17:37:40.401185Z",
                             CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
                             CreatedTimestamp = new DateTime(2025, 5, 21, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsPublic = true,
                             QuotePriceOverride = 45000.00m,
                             RenovationType = "HomeAdditions"
->>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.Designer.cs
                         },
                         new
                         {
                             Id = 5,
-<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.Designer.cs
-                            ClientId = "client-005",
-                            CreatedByEmployee = "employee-001",
-                            IsPublic = true,
-                            QuotePriceOverride = 7600m,
-                            RenovationTags = "countrstyle",
-                            RenovationType = 0
-========
                             ClientId = "2025-05-19T17:37:40.401185Z",
                             CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
                             CreatedTimestamp = new DateTime(2025, 5, 21, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsPublic = true,
                             QuotePriceOverride = 12300.00m,
                             RenovationType = "KitchenRemodels"
->>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.Designer.cs
                         },
                         new
                         {
                             Id = 6,
-<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.Designer.cs
-                            ClientId = "client-006",
-                            CreatedByEmployee = "employee-002",
-                            IsPublic = true,
-                            RenovationTags = "rustic,modern",
-                            RenovationType = 3
-========
                             ClientId = "2025-05-19T17:37:40.401185Z",
                             CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
                             CreatedTimestamp = new DateTime(2025, 5, 21, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsPublic = true,
                             QuotePriceOverride = 8700.75m,
                             RenovationType = "BathroomRenovations"
->>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.Designer.cs
                         },
                         new
                         {
                             Id = 7,
-<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.Designer.cs
-                            ClientId = "client-007",
-                            CreatedByEmployee = "employee-001",
-                            IsPublic = true,
-                            QuotePriceOverride = 12300m,
-                            RenovationTags = "rustic,modern",
-                            RenovationType = 3
-========
                             ClientId = "2025-05-19T17:37:40.401185Z",
                             CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
                             CreatedTimestamp = new DateTime(2025, 5, 21, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsPublic = true,
                             QuotePriceOverride = 17450.20m,
                             RenovationType = "BasementFinishing"
->>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.Designer.cs
                         },
                         new
                         {
                             Id = 8,
-<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.Designer.cs
-                            ClientId = "client-008",
-                            CreatedByEmployee = "employee-004",
-                            IsPublic = true,
-                            RenovationTags = "countrstyle,luxury",
-                            RenovationType = 0
-                        },
-                        new
-                        {
-                            Id = 9,
-                            ClientId = "client-009",
-                            CreatedByEmployee = "employee-001",
-                            IsPublic = true,
-                            RenovationTags = "luxury,modern",
-                            RenovationType = 2
-========
                             ClientId = "2025-05-19T17:37:40.401185Z",
                             CreatedByEmployee = "2caf9d13-45db-4960-8a81-a4ffb48dc8f3",
                             CreatedTimestamp = new DateTime(2025, 5, 21, 0, 0, 0, 0, DateTimeKind.Utc),
                             IsPublic = true,
                             QuotePriceOverride = 39999.99m,
                             RenovationType = "HomeAdditions"
->>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.Designer.cs
                         });
                 });
 
@@ -945,8 +779,6 @@ namespace RenovationApp.Server.Migrations
                     b.ToTable("RFQImages");
                 });
 
-<<<<<<<< HEAD:src/RenovationApp/RenovationApp.Server/Migrations/20250516161357_InitialUpdate.Designer.cs
-========
             modelBuilder.Entity("RenovationApp.Server.Models.RenovationTag", b =>
                 {
                     b.Property<string>("Id")
@@ -973,7 +805,6 @@ namespace RenovationApp.Server.Migrations
                         });
                 });
 
->>>>>>>> 88e3c6ef608bf1a784aecab8611c7605321bf6ce:src/RenovationApp/RenovationApp.Server/Migrations/20250522030931_SeedProjectData.Designer.cs
             modelBuilder.Entity("RenovationApp.Server.Models.User", b =>
                 {
                     b.Property<int>("Id")
