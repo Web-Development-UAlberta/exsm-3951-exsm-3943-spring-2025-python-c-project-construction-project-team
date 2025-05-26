@@ -1,0 +1,53 @@
+.data-area-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    width: 100%; /* Add width 100% to ensure it takes available space */
+}
+
+.claims-table {
+    max-width: 100%; /* Change from 90% to 100% of parent */
+    width: 100%;
+    overflow-x: auto; /* Add horizontal scrolling for overflow content */
+    table-layout: fixed;
+    border-collapse: collapse; /* Improve table appearance */
+}
+
+.claims-table table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.claims-table tr {
+    width: 100%;
+}
+
+.claims-table td, .claims-table th {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    max-width: 100%;
+    padding: 8px; /* Add some padding for better readability */
+    text-align: left; /* Align text to the left */
+}
+
+/* Make the first column as small as possible */
+.claims-table th:first-child,
+.claims-table td:first-child {
+    width: 17%;
+    min-width: 100px;
+}
+
+/* Allow the second column (Value) to grow and take more space */
+.claims-table th:nth-child(2),
+.claims-table td:nth-child(2) {
+    width: 33%;
+}
+
+/* Allow the third column (Description) to take remaining space */
+.claims-table th:nth-child(3),
+.claims-table td:nth-child(3) {
+    width: 50%;
+}

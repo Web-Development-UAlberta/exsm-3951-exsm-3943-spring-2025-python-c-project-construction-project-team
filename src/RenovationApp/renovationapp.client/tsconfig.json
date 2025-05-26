@@ -1,0 +1,16 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    }
+  ],
+  "compilerOptions": {
+    "types": [
+      "jest",
+      "node"
+    ],
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  }
+}

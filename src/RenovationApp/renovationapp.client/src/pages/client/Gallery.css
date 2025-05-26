@@ -1,0 +1,326 @@
+.gallery-carousel .carousel-control-prev,
+.gallery-carousel .carousel-control-next {
+    width: 15%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.gallery-carousel:hover .carousel-control-prev,
+.gallery-carousel:hover .carousel-control-next {
+    opacity: 0.7;
+}
+
+.gallery-carousel .carousel-indicators {
+    margin-bottom: 0;
+}
+
+.gallery-carousel .carousel-indicators button {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.6);
+    margin: 0 3px;
+}
+
+.gallery-carousel .carousel-indicators button.active {
+    background-color: white;
+}
+
+.gallery-carousel {
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.gallery-card .gallery-image {
+    object-fit: cover;
+    height: 200px;
+}
+
+/* Fullscreen modal styles */
+.fullscreen-modal .modal-dialog {
+    max-width: 90vw;
+    margin: 10px auto;
+}
+
+.fullscreen-modal .carousel-item img {
+    max-height: 80vh;
+    object-fit: contain;
+    margin: 0 auto;
+}
+
+.gallery-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.gallery-carousel:hover .gallery-caption {
+    opacity: 1;
+}
+
+.badge-cost-category {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 5px 8px;
+    border-radius: 20px;
+    font-size: 12px;
+    z-index: 1;
+}
+
+
+.filter-sidebar {
+    padding-top: 180px;
+    background-color: #f2f2f2;
+    height: 100vh;
+}
+
+.filter-heading {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.filter-subheading {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #444;
+}
+
+.filter-section {
+    margin-bottom: 1.5rem;
+}
+
+.gallery-card {
+    border: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.gallery-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.gallery-image {
+    height: 250px;
+    object-fit: cover;
+    background-color: #eee;
+}
+
+.images-per-row-info {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.gallery-size-indicator {
+    font-size: 0.85rem;
+    color: #888;
+    position: relative;
+}
+
+.gallery-arrows {
+    position: relative;
+    display: flex;
+}
+
+.arrow {
+    font-size: 1.2rem;
+    margin-left: 10px;
+}
+
+.arrow.horizontal {
+    display: inline-block;
+}
+
+.arrow.vertical {
+    display: inline-block;
+    transform: rotate(90deg);
+    margin-left: 5px;
+}
+
+.project-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.project-description {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+
+
+
+/* Make filter sidebar sticky on larger screens */
+@media (min-width: 992px) {
+    .filter-sidebar {
+        position: sticky;
+        top: 20px;
+        /* height: fit-content; */
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+    .filter-sidebar {
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* New Fullscreen Modal Styles */
+.fullscreen-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.95);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.fullscreen-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background-color: transparent;
+    border: none;
+    color: white !important;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+}
+
+.fullscreen-close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.fullscreen-navigation-container {
+    display: flex;
+    width: 100%;
+    height: 85%;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+.fullscreen-nav-btn {
+    background-color: transparent;
+    border: none;
+    color: white !important;
+    font-size: 60px;
+    cursor: pointer;
+    padding: 0 30px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s ease;
+    z-index: 10000;
+}
+
+.fullscreen-nav-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.fullscreen-image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.fullscreen-image {
+    max-height: 85vh;
+    max-width: 90%;
+    object-fit: contain;
+    margin: auto;
+}
+
+.fullscreen-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 15px 30px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.fullscreen-project-info {
+    flex: 1;
+}
+
+.fullscreen-project-info h3 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.fullscreen-project-info p {
+    margin: 5px 0 0 0;
+    opacity: 0.8;
+}
+
+.fullscreen-counter {
+    font-size: 1rem;
+    opacity: 0.7;
+    margin-left: 20px;
+}
+
+.budget-badge {
+    display: inline-block;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 3px 10px;
+    border-radius: 12px;
+    margin-left: 10px;
+    font-size: 0.8rem;
+}
+
+/* Responsive adjustments for fullscreen modal */
+@media (max-width: 768px) {
+    .fullscreen-nav-btn {
+        font-size: 40px;
+        padding: 0 15px;
+    }
+    
+    .fullscreen-footer {
+        padding: 10px 20px;
+        flex-direction: column;
+    }
+    
+    .fullscreen-counter {
+        margin-left: 0;
+        margin-top: 5px;
+    }
+    
+    .fullscreen-project-info h3 {
+        font-size: 1.2rem;
+    }
+}

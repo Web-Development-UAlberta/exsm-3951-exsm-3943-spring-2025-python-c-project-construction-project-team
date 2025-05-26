@@ -1,0 +1,85 @@
+services:
+  nginx:
+    image: nginx:latest
+    depends_on:
+      RenovationDatabase:
+        condition: service_healthy
+      renovationapp.client:
+        condition: service_started
+      renovationapp.server:
+        condition: service_started
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certs:/etc/nginx/certs
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - internal-network
+    command: [nginx-debug, '-g', 'daemon off;']
+
+  renovationapp.server:
+    image: ${DOCKER_REGISTRY-}renovationappserver
+    build:
+      context: .
+      dockerfile: RenovationApp.Server/Dockerfile
+    environment:
+      POSTGRES_HOST: RenovationDatabase
+      POSTGRES_PORT: 5432
+      POSTGRES_USERNAME: ${POSTGRES_USER}
+      POSTGRES_DATABASE: ${POSTGRES_DB}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      MINIO_ACCESSKEY: ${MINIO_ROOT_USER}
+      MINIO_SECRET: ${MINIO_ROOT_PASSWORD}
+      MINIO_ENDPOINT: http://renovationapp.fileserver:9000
+      MINIO_RFQ_BUCKET: rfq-files
+      MINIO_PROJECT_BUCKET: project-files
+      SERVICE_PORT: 80
+
+    networks:
+      - internal-network
+
+  renovationapp.client:
+    build:
+      context: renovationapp.client/
+      dockerfile: Dockerfile
+    networks:
+      - internal-network
+
+    environment:
+     VITE_BACKEND_URI: https://localhost/api
+
+  renovationapp.fileserver:
+    image: quay.io/minio/minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    volumes:
+      - ./minio-data:/data
+    networks:
+      - internal-network
+
+  RenovationDatabase:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    networks:
+      - internal-network
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+networks:
+  internal-network:
+    driver: bridge
