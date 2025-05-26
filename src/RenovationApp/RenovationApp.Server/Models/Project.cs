@@ -31,7 +31,6 @@ namespace RenovationApp.Server.Models
         [Display(Name = "Cancelled")]
         Cancelled
     }
-
     public class Project
     {
         [Key]
@@ -40,7 +39,7 @@ namespace RenovationApp.Server.Models
         public int Id { get; set; }
 
         [Column("created_timestamp", TypeName = "timestamp with time zone")]
-        public DateTime CreatedTimestamp { get; set; }
+        public DateTime CreatedTimestamp { get; set; } = DateTime.UtcNow; // Default value
 
         [Column("created_by_employee", TypeName = "varchar(255)")]
         required public string CreatedByEmployee { get; set; }
@@ -93,11 +92,5 @@ namespace RenovationApp.Server.Models
         public virtual ICollection<ProjectTask>? ProjectTasks { get; set; } = new List<ProjectTask>();
 
         public virtual ICollection<RenovationTag>? RenovationTags { get; set; } = new List<RenovationTag>();
-
-        // Constructor to ensure UTC DateTime
-        public Project()
-        {
-            CreatedTimestamp = DateTime.UtcNow;
-        }
     }
 }

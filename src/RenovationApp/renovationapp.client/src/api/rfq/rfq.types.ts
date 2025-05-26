@@ -1,3 +1,10 @@
+export enum RFQStatus {
+    Created = 0,
+    Quoted = 1,
+    Approved = 2,
+    Declined = 3
+}
+
 export type RFQImage = {
     id: bigint,
     fileName: string,
@@ -31,11 +38,12 @@ export type RFQCreate ={
 }
 
 export type RFQUpdate ={
-    status?: string,
+    status?: RFQStatus,
     renovationType?: string,
     roomSize?: string,
     preferredMaterial?: string,
     description?: string,
     budget?: number,
-    projectAddress?: string
+    projectAddress?: string,
+    assignedEmployeeId?: string
 }

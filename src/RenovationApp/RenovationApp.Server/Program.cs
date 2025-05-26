@@ -155,12 +155,12 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
+app.UseCors(MyAllowSpecificOrigins);
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseCors(MyAllowSpecificOrigins);
 
 app.MapFallbackToFile("/index.html");
 

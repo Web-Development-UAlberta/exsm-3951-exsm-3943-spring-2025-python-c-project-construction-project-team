@@ -1,49 +1,13 @@
 // components/Requests.tsx
-import { useState } from 'react';
+import { useUpdateRFQ, getAllRFQs, getRFQById, getRFQImagesByRFQId } from '../../../api/rfq/rfq';
+import { RFQImage, RFQStatus } from '../../../api/rfq/rfq.types';
+import { useMsal } from '@azure/msal-react';
+import { useState, useEffect } from 'react';
 import { QuoteEstimateModal } from './components/QuoteEstimateModal';
 import RequestDetailsModal from './components/RequestDetailsModal';
 import { getRequestStatusBadgeClass } from '../../../utils/getStatusBadgeClass';
-import { useMsal } from '@azure/msal-react';
-import { getAllUserInfo } from '../../../api/identity/graph';
+import { Button } from '../../../components/ButtonComponent/Button';
 
-// Define the request type based on the columns shown in the screenshot
-interface Request {
-  id: number;
-  client: string;
-  project_address: string;
-  project_manager: string;
-  status: string;
-}
-
-// Available project managers for dropdown
-const projectManagers = ['Name', 'Mike Smith', 'Sarah Johnson', 'Alex Wong', 'Emily Davis'];
-
-// Mock data based on the screenshot
-const requests: Request[] = [
-  {
-    id: 1,
-    client: 'Client Name',
-    project_address: 'Project Address',
-    project_manager: 'Name',
-    status: 'New'
-  },
-  {
-    id: 2,
-    client: 'Client Name',
-    project_address: 'Project Address',
-    project_manager: 'Name',
-    status: 'New'
-  },
-  {
-    id: 3,
-    client: 'Client Name',
-    project_address: 'Project Address',
-    project_manager: 'Name',
-    status: 'New'
-  }
-];
-
-// Define the detailed request interface with all properties shown in the modal
 interface RequestDetail {
   id: number;
   client: string;
@@ -52,68 +16,99 @@ interface RequestDetail {
   preferred_material: string;
   budget: number;
   description: string;
-  files: string[];
+  files: RFQImage[];
+}
+interface ProjectManager {
+  id: string;
+  name: string;
+  email: string;
 }
 
-// Mock detailed data for the modal
-const requestDetails: Record<number, RequestDetail> = {
-  1: {
-    id: 1,
-    client: 'John Doe',
-    project_address: '123 Main St City, Province 0AX 1A1',
-    renovation_type: 'Kitchen Remodel',
-    preferred_material: 'Nothing crazy. Just this one I found at Home Depot.',
-    budget: 10000,
-    description: 'Need new cabinets installed',
-    files: ['image0.png', 'likethisone.png']
+const projectManagers: ProjectManager[] = [
+  {
+    id: '2caf9d13-45db-4960-8a81-a4ffb48dc8f3',
+    name: 'Clarisse Buniel',
+    email: 'buniel@ualberta.ca'
   },
-  2: {
-    id: 2,
-    client: 'Jane Smith',
-    project_address: '456 Oak Ave City, Province 0BX 2B2',
-    renovation_type: 'Bathroom Renovation',
-    preferred_material: 'Porcelain tile, glass shower doors',
-    budget: 15000,
-    description: 'Complete bathroom remodel with new shower',
-    files: ['bathroom_plan.png']
+  {
+    id: '3a40d159-f5b2-4740-9fd2-c7da499d5daa',
+    name: 'David Rochefort',
+    email: 'drochefo+bob@ualberta.ca'
   },
-  3: {
-    id: 3,
-    client: 'Alex Johnson',
-    project_address: '789 Pine Rd City, Province 0CX 3C3',
-    renovation_type: 'Basement Finishing',
-    preferred_material: 'Laminate flooring, drywall',
-    budget: 20000,
-    description: 'Convert unfinished basement to entertainment space',
-    files: ['basement_sketch.png', 'inspiration.jpg']
+  {
+    id: 'c701d842-5da1-44b2-8783-eb6d9696b314',
+    name: 'Nina Shi',
+    email: 'sxjdehj@163.com'
   }
-};
+];
 
 const Requests = () => {
-  // Request Detail Modal State
+  const { instance } = useMsal();
+  const updateRFQMutation = useUpdateRFQ(instance);
+
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedRFQId, setSelectedRFQId] = useState<bigint | null>(null);
   const [selectedRequest, setSelectedRequest] = useState<RequestDetail | null>(null);
-  // State for managing requests data
-  const [requestsData, setRequestsData] = useState<Request[]>(requests);
-  // Quote Estimate Modal State
   const [showQuoteModal, setShowQuoteModal] = useState(false);
   const [quoteRequestId, setQuoteRequestId] = useState<number | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Request detail modal handlers
-  const openRequestDetail = (requestId: number) => {
-    const requestDetail = requestDetails[requestId];
-    if (requestDetail) {
-      setSelectedRequest(requestDetail);
-      setShowDetailModal(true);
+  const { data: rfqs, isLoading, error: queryError, refetch } = getAllRFQs(instance);
+
+  const { data: rfqDetail, error: detailError } = getRFQById(
+    selectedRFQId ?? BigInt(0),
+    instance
+  );
+
+  const { data: rfqImages = [], error: imagesError } = getRFQImagesByRFQId(
+    selectedRFQId ?? BigInt(0),
+    instance
+  );
+
+  useEffect(() => {
+    if (rfqDetail && selectedRFQId) {
+      setSelectedRequest({
+        id: Number(rfqDetail.id),
+        client: rfqDetail.clientId,
+        project_address: rfqDetail.projectAddress ?? 'N/A',
+        renovation_type: rfqDetail.renovationType ?? 'N/A',
+        preferred_material: rfqDetail.preferredMaterial ?? 'N/A',
+        budget: rfqDetail.budget ?? 0,
+        description: rfqDetail.description ?? 'N/A',
+        files: Array.isArray(rfqImages) ? rfqImages : []
+      });
     }
+  }, [rfqDetail, rfqImages, selectedRFQId]);
+
+  useEffect(() => {
+    const error = detailError?.message || imagesError?.message || queryError?.message
+    setErrorMessage(error ? error : null);
+  }, [detailError, imagesError, queryError]);
+
+  const handleProjectManagerChange = async (requestId: number, managerId: string) => {
+    setErrorMessage(null);
+    try {
+      await updateRFQMutation.mutateAsync({
+          rfqId: BigInt(requestId),
+          rfq: { assignedEmployeeId: managerId }
+      });
+    } catch (error) {
+      console.error('Failed to update project manager:', error);
+      setErrorMessage('Failed to update project manager. Please try again.');
+    }
+  };
+
+  const openRequestDetail = (requestId: number) => {
+    setSelectedRFQId(BigInt(requestId));
+    setShowDetailModal(true);
   };
 
   const closeRequestDetail = () => {
     setShowDetailModal(false);
+    setSelectedRFQId(null);
     setSelectedRequest(null);
   };
 
-  // Quote estimate modal handlers
   const openQuoteEstimate = (requestId: number) => {
     setQuoteRequestId(requestId);
     setShowQuoteModal(true);
@@ -124,84 +119,95 @@ const Requests = () => {
     setQuoteRequestId(null);
   };
 
-  // Handler for changing project manager
-  const handleProjectManagerChange = (requestId: number, newManager: string) => {
-    setRequestsData(prevRequests =>
-      prevRequests.map(request =>
-        request.id === requestId
-          ? { ...request, project_manager: newManager }
-          : request
-      )
-    );
-  };
-
-  const { instance } = useMsal();
-  const activeAccount = instance.getActiveAccount();
-  const { data } = getAllUserInfo(instance);
-  console.log(data);
-
-  if (!activeAccount) {
-    return <p>Please login to proceed.</p>;
-  }
-
   return (
     <div className="p-4">
       <h3 className="mb-3">Requests Dashboard</h3>
-
-      <div className="table-responsive">
-        <table className="table table-hover">
-          <thead className="table-light">
-            <tr>
-              <th>ID</th>
-              <th>Client</th>
-              <th>Project Address</th>
-              <th>Project Manager</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {requestsData.map(request => (
-              <tr key={request.id}>
-                <td>{request.id}</td>
-                <td>{request.client}</td>
-                <td>{request.project_address}</td>
-                <td>
-                  <select
-                    className="form-select form-select-sm"
-                    value={request.project_manager}
-                    onChange={(e) => handleProjectManagerChange(request.id, e.target.value)}
-                    aria-label="Project Manager selection"
-                  >
-                    {projectManagers.map((manager, index) => (
-                      <option key={index} value={manager}>{manager}</option>
-                    ))}
-                  </select>
-                </td>
-                <td>
-                  <span className={`badge ${getRequestStatusBadgeClass(request.status)}`}>
-                    {request.status}
-                  </span>
-                </td>
-                <td>
-                  <button
-                    className="btn btn-sm btn-outline-secondary me-2"
-                    onClick={() => openRequestDetail(request.id)}
-                  >
-                    Details
-                  </button>
-                  <button
-                    className="btn btn-sm btn-outline-success"
-                    onClick={() => openQuoteEstimate(request.id)}
-                  >
-                    Quote
-                  </button>
-                </td>
+      {isLoading && (
+        <div className="d-flex justify-content-center">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      )}
+      {queryError && (
+        <div className="alert alert-danger">
+          {errorMessage}
+          <Button
+            variant="danger"
+            size="sm"
+            outline
+            className="ms-2"
+            onClick={() => refetch()}
+          >
+            Retry
+          </Button>
+        </div>
+      )}
+      {!isLoading && !queryError && (
+        <div className="table-responsive">
+          <table className="table table-hover">
+            <thead className="table-light">
+              <tr>
+                <th>ID</th>
+                <th>Client</th>
+                <th>Project Address</th>
+                <th>Project Manager</th>
+                <th>Status</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {rfqs && rfqs.length > 0 ? (
+                rfqs
+                  .filter(request => request.status === "Created")
+                  .map(request => (
+                  <tr key={request.id.toString()}>
+                    <td>{request.id.toString()}</td>
+                    <td>{request.clientId}</td>
+                    <td>{request.projectAddress}</td>
+                    <td>
+                      <select
+                        className="form-select form-select-sm"
+                        value={request.assignedEmployeeId || ''}
+                        onChange={(e) => handleProjectManagerChange(Number(request.id), e.target.value)}
+                        aria-label="Select Project Manager"
+                      >
+                        <option value="">Select Project Manager</option>
+                        {projectManagers.map(manager => (
+                          <option key={manager.id} value={manager.id}>
+                            {manager.name}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td>
+                      <span className={`badge ${getRequestStatusBadgeClass(request.status ?? "")}`}>
+                        {request.status}
+                      </span>
+                    </td>
+                    <td>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        className="me-2"
+                        onClick={() => openRequestDetail(Number(request.id))}
+                      >
+                        Details
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={6} className="text-center">
+                    No requests available.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {/* Review Request Details Modal */}
       <RequestDetailsModal
@@ -210,18 +216,41 @@ const Requests = () => {
         onClose={closeRequestDetail}
         onAccept={(id) => {
           closeRequestDetail();
-          openQuoteEstimate(id);
+          openQuoteEstimate(Number(id));
         }}
+        onDeny={async (id) => {
+          closeRequestDetail();
+          updateRFQMutation.mutate({
+            rfqId: BigInt(id),
+            rfq: { status: RFQStatus.Declined }
+          }, 
+          {
+            onError: (error) => {
+              console.error('Failed to update request status:', error);
+              setErrorMessage('Failed to update request status. Please try again.');
+            }
+          });
+        }} 
       />
 
       {/* Quote Estimate Modal */}
       <QuoteEstimateModal
         show={showQuoteModal}
-        requestId={quoteRequestId}
         onClose={closeQuoteEstimate}
+        rfqId={quoteRequestId}
+        assignedEmployeeId={
+          (() => {
+            const id = rfqs?.find(rfq => rfq.id === BigInt(quoteRequestId || 0))?.assignedEmployeeId;
+            return id === null ? undefined : id;
+          })()
+        }
+        onQuoteSent={() => {
+          closeQuoteEstimate();
+          refetch();
+        }}
       />
     </div>
   );
 };
 
-export default Requests
+export default Requests;

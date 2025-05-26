@@ -41,6 +41,11 @@ export const msalConfig = {
 },
 };
 
+export const createLoginRequest = (redirectUri: string) => ({
+    ...loginRequest,
+    redirectUri,
+})
+
 /**
  * Scopes you add here will be prompted for user consent during sign-in.
  * By default, MSAL.js will add OIDC scopes (openid, profile, email) to any login request.

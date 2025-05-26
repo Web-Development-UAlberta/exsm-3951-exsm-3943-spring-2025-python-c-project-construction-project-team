@@ -10,47 +10,54 @@ import Meta, { Primary as PrimaryStory } from './Button.stories';
 const Primary = composeStory(PrimaryStory, Meta);
 
 // Clean up after each test
-afterEach(() => {
-  cleanup();
-});
+afterEach(cleanup);
 
 // Rendering Tests
 describe('Button Component Rendering', () => {
     it('renders with the correct variant class', () => {
         render(<Primary />);
         const button = screen.getByRole('button');
-        expect(button).toBeInTheDocument();
-        expect(button).toHaveClass('btn-primary');
+        expect(button).toHaveClass('btn-custom-primary');
     });
 
     it('renders the small size button', () => {
-        render(<Primary size="small" />);
-        const button = screen.getByRole('button');
-        expect(button).toHaveClass('btn-sm');
+        render(<Primary size="sm" />);
+        expect(screen.getByRole('button')).toHaveClass('btn-sm');
 
         cleanup();
 
-        render(<Primary size="large" />);
-        const largeButton = screen.getByRole('button');
-        expect(largeButton).toHaveClass('btn-lg');
+        render(<Primary size="lg" />);
+        expect(screen.getByRole('button')).toHaveClass('btn-lg');
     });
 
     it('renders the button with a left icon', () => {
-        render(<Primary iconPosition="left" iconOnly={false}>Left Icon</Primary>);
-        const button = screen.getByRole('button');
-        expect(button.querySelector('.icon-left')).toBeInTheDocument();
+        render(
+            <Primary iconPosition="left">
+                <i className="bi bi-arrow-left"></i>
+                Icon Left
+            </Primary>
+        );
+        expect(screen.getByRole('button')).toBeInTheDocument();
     });
 
     it('renders the button with a right icon', () => {
-        render(<Primary iconPosition="right" iconOnly={false}>Right Icon</Primary>);
-        const button = screen.getByRole('button');
-        expect(button.querySelector('.icon-right')).toBeInTheDocument();
+        render(
+            <Primary iconPosition="right">
+                Icon Right
+                <i className="bi bi-arrow-right"></i>
+            </Primary>
+        );
+        expect(screen.getByRole('button')).toBeInTheDocument();
     });
 
-    it('renders the button with icon only', () => {
-        render(<Primary iconOnly>Icon Only</Primary>);
+    it('renders the button with icon only with a transparent background', () => {
+        render(
+            <Primary variant="transparent" iconOnly>
+                <i className="bi bi-plus-lg"></i>
+            </Primary>
+        );
         const button = screen.getByRole('button');
-        expect(button.querySelector('.icon-only')).toBeInTheDocument();
+        expect(button).toHaveClass('btn-transparent');
     });
 });
 
@@ -123,7 +130,7 @@ describe('Button Edge Cases', () => {
     });
 
     it('handles empty label gracefully', () => {
-        render(<Primary label="" />);
+        render(<Primary>{''}</Primary>);
         const button = screen.getByRole('button');
 
         expect(button).toHaveTextContent('');

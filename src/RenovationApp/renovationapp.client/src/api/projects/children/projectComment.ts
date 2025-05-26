@@ -8,17 +8,18 @@ import {
     deleteProjectComment,
 } from "./projectCommentQueries";
 import { ProjectCommentEdit } from "../project.types";
+import { bigIntConverter } from "../../../utils/bigIntConvert";
 
 export function useProjectComments(projectId: bigint, msalInstance: IPublicClientApplication) {
     return useQuery({
-        queryKey: ["projects", projectId, "comments"],
+        queryKey: ["projects", bigIntConverter.toAPI(projectId), "comments"],
         queryFn: () => fetchProjectComments(projectId, msalInstance),
     });
 }
 
 export function useProjectComment(projectId: bigint, commentId: bigint, msalInstance: IPublicClientApplication) {
     return useQuery({
-        queryKey: ["projects", projectId, "comments", commentId],
+        queryKey: ["projects", bigIntConverter.toAPI(projectId), "comments", bigIntConverter.toAPI(commentId)],
         queryFn: () => fetchProjectCommentById(projectId, commentId, msalInstance),
     });
 }
@@ -29,7 +30,7 @@ export function useCreateProjectComment(projectId: bigint, msalInstance: IPublic
         mutationFn: (comment: ProjectCommentEdit) =>
             createProjectComment(projectId, comment, msalInstance),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["projects", projectId, "comments"] });
+            queryClient.invalidateQueries({ queryKey: ["projects", bigIntConverter.toAPI(projectId), "comments"] });
         }
     });
 }

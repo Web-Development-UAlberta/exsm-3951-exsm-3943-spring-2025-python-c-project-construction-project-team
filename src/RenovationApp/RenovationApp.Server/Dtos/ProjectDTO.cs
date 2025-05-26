@@ -11,7 +11,7 @@ namespace RenovationApp.Server.Dtos
         {
             required public string ClientId { get; set; }
             public int? RFQId { get; set; }
-            public List<string>? RenovationTagIds { get; set; }
+            public List<RenovationTag>? RenovationTags { get; set; }
         }
         public class ProjectUpdateDTO
         {
@@ -21,15 +21,15 @@ namespace RenovationApp.Server.Dtos
             public DateTime? QuoteScheduleStartOverride { get; set; }
             public DateTime? QuoteScheduleEndOverride { get; set; }
             public string? RenovationType { get; set; }
-            public List<string>? RenovationTagIds { get; set; }
+            public List<RenovationTag>? RenovationTags { get; set; }
         }
 
         public class ProjectPublicInfo
         {
             public int Id { get; set; }
             public RenovationType? RenovationType { get; set; }
-            public decimal CostCategory { get; set; }
-            public List<string>? RenovationTagIds { get; set; }
+            public decimal Cost { get; set; }
+            public List<RenovationTag>? RenovationTags { get; set; }
         }
 
         public class ProjectOutputDTO

@@ -1,25 +1,18 @@
-// components/ProjectDetail.tsx
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useMsal } from "@azure/msal-react";
 import Overview from './components/Overview';
 import Files from './components/Files';
 import Invoices from './components/Invoices';
 
-
-
 const ProjectDetail = () => {
-  // Get project ID from URL params
   const { id } = useParams();
   const navigate = useNavigate();
-
-  // State for managing tabs
   const [activeTab, setActiveTab] = useState('overview');
-
-  // In a real application, you would fetch the project data based on the ID
+  const { instance } = useMsal();
 
   return (
     <div className="p-2">
-      {/* Back button and header */}
       <div className="mt-2">
         <button
           className="btn btn-outline-secondary"
@@ -59,14 +52,20 @@ const ProjectDetail = () => {
         </li>
       </ul>
 
-      {/* Overview tab content */}
-      {activeTab === 'overview' && (<Overview />)}
+       {/* Overview tab content */}
+      {activeTab === 'overview' && id && (
+        <Overview projectId={Number(id)} instance={instance} />
+      )}
 
       {/* Files tab content */}
-      {activeTab === 'files' && (<Files />)}
+      {activeTab === 'files' && id && (
+        <Files projectId={BigInt(id)} instance={instance} />
+      )}
 
       {/* Invoices tab content */}
-      {activeTab === 'invoices' && (<Invoices />)}
+      {activeTab === 'invoices' && id && (
+        <Invoices projectId={BigInt(id)} instance={instance} />
+      )}
     </div>
   );
 };
